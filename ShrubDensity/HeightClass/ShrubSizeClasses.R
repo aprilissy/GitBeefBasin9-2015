@@ -2,8 +2,6 @@
 #install.packages('plyr')
 library(plyr)
 
-# track changes?
-
 #read in shrub density detail data
 class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 8-21.csv')
 
@@ -24,7 +22,7 @@ write.csv(Sage.l,file="F:/ShrubDensity/HeightClass/USGSLivePlotXSizeClass.csv", 
 write.csv(Sage.d,file="F:/ShrubDensity/HeightClass/USGSDeadPlotXSizeClass.csv", row.names=FALSE)
 
 ##################### 9/2/2015 #########################################
-# I want plot by size class for live and for dead 
+# I want plot by size class for live and for dead
 # This is for use as environmental factor in NMDS
 
 sage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on plot
@@ -37,6 +35,7 @@ sage.d <- sage.d[,-2]# remove transect total column
 sage.d <- sage.d[-c(1:59),] # remove usgs data
 write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row.names=FALSE)
 
+
 ############## Binary Size Classes #############################
 ##  this just means using relative cover (points hit/total points)
 ##  use this for NMDS instead
@@ -44,11 +43,19 @@ l <- read.csv('F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv',row.names=1)
 d <- read.csv('F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv',row.names=1)
 
 total.l.d <- rowSums(l)+ rowSums(d)
-l.rel <- ((l)/(rowSums(l)+ rowSums(d)))*100
-d.rel <- ((d)/(rowSums(l)+ rowSums(d)))*100
-write.csv(l.rel,file="F:/ShrubDensity/HeightClass/LiveSizeClassPctCover.csv")
-write.csv(d.rel,file="F:/ShrubDensity/HeightClass/DeadSizeClassPctCover.csv")
+l.rel.sage <- ((l)/(rowSums(l)+ rowSums(d)))*100
+d.rel.sage <- ((d)/(rowSums(l)+ rowSums(d)))*100
+write.csv(l.rel.sage,file="F:/ShrubDensity/HeightClass/LiveSizeClassSagePctCover.csv")
+write.csv(d.rel.sage,file="F:/ShrubDensity/HeightClass/DeadSizeClassSagePctCover.csv")
 
+TotalplotXspp<-xtabs(total~Plot+SpeciesCode, total) # put in plot by spp matrix
+write.csv(TotalplotXspp,file="F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv")
+Total <- read.csv("F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv",row.names=1)
+Total <- Total[-c(1:60),] # remove usgs data
+l.rel.total <- ((l)/rowSums(Total))*100
+d.rel.total <- ((d)/rowSums(Total))*100
+write.csv(l.rel.total,file="F:/ShrubDensity/HeightClass/LiveSizeClassTotalPctCover.csv")
+write.csv(d.rel.total,file="F:/ShrubDensity/HeightClass/DeadSizeClassTotalPctCover.csv")
 
 ###### This sums shrub totals across transects 2,3, and 4 #####
 ###### And puts into Plot by Species matrix ###################

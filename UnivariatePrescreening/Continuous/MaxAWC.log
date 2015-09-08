@@ -1,0 +1,612 @@
+NOTE: Copyright (c) 2002-2010 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.3 (TS1M1)
+      Licensed to UTAH STATE UNIV-COMPUTER SERVICES-SFA-T&R, Site 70126222.
+NOTE: This session is executing on the X64_ES08R2  platform.
+
+
+
+NOTE: Updated analytical products:
+
+SAS/STAT 9.3_M1, SAS/ETS 9.3_M1, SAS/OR 9.3_M1
+
+NOTE: SAS initialization used:
+      real time           3.01 seconds
+      cpu time            1.39 seconds
+
+1    /* Enter data */
+2    data maxSand;
+3        input Sand Shrub;
+4        cards;
+
+NOTE: The data set WORK.MAXSAND has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+103  ;
+104  run;
+
+105  proc print data=maxSand;
+NOTE: Writing HTML Body file: sashtml.htm
+106  run;
+
+NOTE: There were 98 observations read from the data set WORK.MAXSAND.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.03 seconds
+      cpu time            0.62 seconds
+
+
+107  /* Look at numerical data summaries */
+108  proc means data=maxSand mean;
+109      class Shrub;
+110      var Sand;
+111      title1 'Mean Comparison';
+112      title2 '(And number of experimental units per shrub class)';
+113  run;
+
+NOTE: There were 98 observations read from the data set WORK.MAXSAND.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.04 seconds
+
+
+114  /* Fit model and check assumptions */
+115  proc glm data=maxSand plots=diagnostics;
+116      class Shrub;
+117      model Sand=Shrub;
+118      means Shrub / HOVtest=Levene;
+119      title1 'comparison of all shrub classes';
+120  run;
+
+121  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           9:05.23
+      cpu time            7.90 seconds
+
+
+122  data mydata;
+123      input Soil Shrub;
+124      cards;
+
+NOTE: Invalid data for Soil in line 125 1-9.
+NOTE: Invalid data for Shrub in line 125 13-17.
+RULE:      ----+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+-
+125        Elevation   Class
+Soil=. Shrub=. _ERROR_=1 _N_=1
+NOTE: SAS went to a new line when INPUT statement reached past the end of a line.
+NOTE: The data set WORK.MYDATA has 99 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+225  ;
+226  run;
+
+227  /* Enter data */
+228  data mydata;
+229      input Soil Shrub;
+230      cards;
+
+NOTE: SAS went to a new line when INPUT statement reached past the end of a line.
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+330  ;
+331  run;
+
+332  proc print data=mydata;
+333  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+334  /* Look at numerical data summaries */
+335  proc means data=mydata mean;
+336      class Shrub;
+337      var Soil;
+338      title1 'Mean Comparison';
+339      title2 '(And number of experimental units per shrub class)';
+340  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+341  /* Fit model and check assumptions */
+342  proc glm data=mydata plots=diagnostics;
+343      class Shrub;
+344      model Soil=Shrub;
+345      means Shrub / HOVtest=Levene;
+346      title1 'comparison of all shrub classes';
+347  run;
+
+348  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           17:56.10
+      cpu time            8.99 seconds
+
+
+349  data mydata;
+350      input Soil Shrub;
+351      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+450  ;
+451  run;
+
+452  proc print data=mydata;
+453  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+454  /* Look at numerical data summaries */
+455  proc means data=mydata mean;
+456      class Shrub;
+457      var Soil;
+458      title1 'Mean Comparison';
+459      title2 '(And number of experimental units per shrub class)';
+460  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.03 seconds
+
+
+461  /* Fit model and check assumptions */
+462  proc glm data=mydata plots=diagnostics;
+463      class Shrub;
+464      model Soil=Shrub;
+465      means Shrub / HOVtest=Levene;
+466      title1 'comparison of all shrub classes';
+467  run;
+
+468  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           8:18.55
+      cpu time            5.18 seconds
+
+
+469  data mydata;
+470      input Shrub Soil;
+471      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+570  ;
+571  run;
+
+572
+573  proc print data=mydata;
+574  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+575
+576  /* Look at numerical data summaries */
+577  proc means data=mydata mean;
+578      class Shrub;
+579      var Soil;
+580      title1 'Mean Comparison';
+581      title2 '(And number of experimental units per shrub class)';
+582  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+583  /* Fit model and check assumptions */
+584  proc glm data=mydata plots=diagnostics;
+585      class Shrub;
+586      model Soil=Shrub;
+587      means Shrub / HOVtest=Levene;
+588      title1 'comparison of all shrub classes';
+589  run;
+
+590  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           11:31.59
+      cpu time            5.09 seconds
+
+
+591  data mydata;
+592      input Shrub Soil;
+593      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+692  ;
+693  run;
+
+694
+695  proc print data=mydata;
+696  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+697  /* Look at numerical data summaries */
+698  proc means data=mydata mean;
+699      class Shrub;
+700      var Soil;
+701      title1 'Mean Comparison';
+702      title2 '(And number of experimental units per shrub class)';
+703  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+704  /* Enter data */
+705  data mydata;
+706      input Soil Shrub;
+707      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+806  ;
+807  run;
+
+808  proc print data=mydata;
+809  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+810  /* Look at numerical data summaries */
+811  proc means data=mydata mean;
+812      class Shrub;
+813      var Soil;
+814      title1 'Mean Comparison';
+815      title2 '(And number of experimental units per shrub class)';
+816  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.04 seconds
+
+
+817  /* Fit model and check assumptions */
+818  proc glm data=mydata plots=diagnostics;
+819      class Shrub;
+820      model Soil=Shrub;
+821      means Shrub / HOVtest=Levene;
+822      title1 'comparison of all shrub classes';
+823  run;
+
+824  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           6:33.61
+      cpu time            3.46 seconds
+
+
+825  data mydata;
+826      input Soil Shrub;
+827      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+926  ;
+927  run;
+
+928  proc print data=mydata;
+929  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+
+
+930  /* Look at numerical data summaries */
+931  proc means data=mydata mean;
+932      class Shrub;
+933      var Soil;
+934      title1 'Mean Comparison';
+935      title2 '(And number of experimental units per shrub class)';
+936  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+937  /* Fit model and check assumptions */
+938  proc glm data=mydata plots=diagnostics;
+939      class Shrub;
+940      model Soil=Shrub;
+941      means Shrub / HOVtest=Levene;
+942      title1 'comparison of all shrub classes';
+943  run;
+
+944  /* Consider transformation */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           7:03.50
+      cpu time            3.90 seconds
+
+
+945  proc transreg data=mydata;
+946      model boxcox(Soil / lambda= 2 to 7 by 0.05)
+947          =class(Shrub);
+948      title1 'Box-Cox on Minimum Sand Percentage';
+949  run;
+
+WARNING: The BOXCOX LAMBDA= list contains extreme values.  Large values may cause overflows.
+WARNING: The maximum log likelihood was found for either the first or last LAMBDA= value.  The
+         actual maximum may be outside the range of specified lambdas.  You should consider
+         rerunning BoxCox(Soil) extending the LAMBDA= and CLL= lists so that the values extend
+         past the ends of the confidence interval.
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE TRANSREG used (Total process time):
+      real time           0.63 seconds
+      cpu time            0.14 seconds
+
+
+950  /* Consider transformation */
+951  proc transreg data=mydata;
+952      model boxcox(Soil / lambda= -1 to 1 by 0.05)
+953          =class(Shrub);
+954      title1 'Box-Cox on Minimum Sand Percentage';
+955  run;
+
+WARNING: The maximum log likelihood was found for either the first or last LAMBDA= value.  The
+         actual maximum may be outside the range of specified lambdas.  You should consider
+         rerunning BoxCox(Soil) extending the LAMBDA= and CLL= lists so that the values extend
+         past the ends of the confidence interval.
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE TRANSREG used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.12 seconds
+
+
+956  /* Consider transformation */
+957  proc transreg data=mydata;
+958      model boxcox(Soil / lambda= 0 to 2 by 0.05)
+959          =class(Shrub);
+960      title1 'Box-Cox on Minimum Sand Percentage';
+961  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE TRANSREG used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.09 seconds
+
+
+962
+963  /* Re-fit model on transformed data */
+964  data mydata; set mydata;
+965      trnsSoil = Soil**1;
+966  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: The data set WORK.MYDATA has 98 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+967  proc glm data=mydata plots=diagnostics;
+968      class Shrub;
+969      model trnsSoil = Shrub / solution;
+970      output out = out1 p=pred r=resid;
+971      means method / Bon HOVtest=Levene;
+ERROR: Variable method not found.
+NOTE: The previous statement has been deleted.
+972      title1 'Comparison of all Shrub Classes'
+973      title2 '(lambda 4.5)';
+WARNING: The TITLE statement is ambiguous due to invalid options or unquoted text.
+974  run;
+
+975  /* Enter data */
+
+NOTE: The data set WORK.OUT1 has 98 observations and 5 variables.
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           8:38.08
+      cpu time            5.04 seconds
+
+
+976  data mydata;
+977      input Soil Shrub;
+978      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+1077  ;
+1078  run;
+
+1079  proc print data=mydata;
+1080  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+1081  /* Look at numerical data summaries */
+1082  proc means data=mydata mean;
+1083      class Shrub;
+1084      var Soil;
+1085      title1 'Mean Comparison';
+1086      title2 '(And number of experimental units per shrub class)';
+1087  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+1088  /* Fit model and check assumptions */
+1089  proc glm data=mydata plots=diagnostics;
+1090      class Shrub;
+1091      model Soil=Shrub;
+1092      means Shrub / HOVtest=Levene;
+1093      title1 'comparison of all shrub classes';
+1094  run;
+
+1095  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           15:38.76
+      cpu time            17.37 seconds
+
+
+1096  data mydata;
+1097      input Soil Shrub;
+1098      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+1197  ;
+1198  run;
+
+1199  proc print data=mydata;
+1200  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.06 seconds
+
+
+1201
+1202  /* Look at numerical data summaries */
+1203  proc means data=mydata mean;
+1204      class Shrub;
+1205      var Soil;
+1206      title1 'Mean Comparison';
+1207      title2 '(And number of experimental units per shrub class)';
+1208  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+1209  /* Fit model and check assumptions */
+1210  proc glm data=mydata plots=diagnostics;
+1211      class Shrub;
+1212      model Soil=Shrub;
+1213      means Shrub / HOVtest=Levene;
+1214      title1 'comparison of all shrub classes';
+1215  run;
+
+1216  /* Enter data */
+
+NOTE: PROCEDURE GLM used (Total process time):
+      real time           8:07.82
+      cpu time            6.34 seconds
+
+
+1217  data mydata;
+1218      input Soil Shrub;
+1219      cards;
+
+NOTE: The data set WORK.MYDATA has 98 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+1318  ;
+1319  run;
+1320
+1321  proc print data=mydata;
+1322  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+
+
+1323
+1324  /* Look at numerical data summaries */
+1325  proc means data=mydata mean;
+1326      class Shrub;
+1327      var Soil;
+1328      title1 'Mean Comparison';
+1329      title2 '(And number of experimental units per shrub class)';
+1330  run;
+
+NOTE: There were 98 observations read from the data set WORK.MYDATA.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+1331  /* Fit model and check assumptions */
+1332  proc glm data=mydata plots=diagnostics;
+1333      class Shrub;
+1334      model Soil=Shrub;
+1335      means Shrub / HOVtest=Levene;
+1336      title1 'comparison of all shrub classes';
+1337  run;
+

@@ -1,0 +1,24 @@
+Note, all R code is (at least should be) written so that it will access the files in this folder. Basically, if you move the .csv/.xlsx files around it will break the code, though all you will have to do to fix the code is to change where the code looks for the files. 
+
+
+formattedR - site and pedon data formatted as .csv for input to R (see ExcelToR.R). 
+
+Rosetta: Files associated with running the Rosetta (soil:water) model on the both april's and the USGS horizon level data.
+
+
+BeefBasin_AllPedons_edit.xlsx - edited USGS pedon data in excel format edited to included depth to root restricting layer, if a root restricing layer was reached, and with all MaxCarbStage data entered. 
+
+CombinedSoilVegDAta.csv - This is the file that you will probably want to use for soil veg relationships as it has all of the soil and veg data. 
+
+ExcelToR.R - Script to take data from excel files (e.g. BeefBasin_AllPedons.edit.xlsx) and format it for input into R. 
+
+Field_DataPoints_2013_2014_edit veg.csv - GPS points of all USGS vegetation sampling locations.  
+Field_DataPoints_2013_2014_edit.xlsx - GPS points of all the USGS pedon sampling locations. 
+
+locInfo.csv - GPS points of April's pedon locations. 
+SiteData.csv - Site data for April's pedon locations. 
+Soil_Data_cwb.csv - soil horizon data for April's pedons, slightly modifed by colby. 
+
+Soil-Veg Relationships.r - main code to read in soil data and make it more useful. Also contains some basic soil-veg relatinships exploration. 
+
+VegetationDataCompiled_edit.csv/.xlsx - belt transect and line-point intercept data for both April's and the USGS points.  

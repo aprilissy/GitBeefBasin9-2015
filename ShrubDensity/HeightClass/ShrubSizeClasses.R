@@ -2,6 +2,7 @@
 #install.packages('plyr')
 library(plyr)
 
+# track changes?
 
 #read in shrub density detail data
 class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 8-21.csv')
@@ -19,8 +20,8 @@ class.order <- class[order(class$SpeciesCode),]  #sort a dataframe by the order 
 Sage.l <- class.order[c(573:1071),]
 Sage.d <- class.order[c(1072:1543),]
 
-write.csv(Sage.l,file="F:/ShrubDensity/HeightClass/USGSLivePlotXSizeClass.csv")
-write.csv(Sage.d,file="F:/ShrubDensity/HeightClass/USGSDeadPlotXSizeClass.csv")
+write.csv(Sage.l,file="F:/ShrubDensity/HeightClass/USGSLivePlotXSizeClass.csv", row.names=FALSE)
+write.csv(Sage.d,file="F:/ShrubDensity/HeightClass/USGSDeadPlotXSizeClass.csv", row.names=FALSE)
 
 ##################### 9/2/2015 #########################################
 # I want plot by size class for live and for dead 

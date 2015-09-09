@@ -39,10 +39,14 @@ data.env <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv",header=
 # read in Artr live and dead as environmental data
 data.l <- read.csv("F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", header=TRUE, row.names=1)
 data.d <- read.csv("F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", header=TRUE, row.names=1)
-rel.l <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassPctCover.csv", header=TRUE, row.names=1)
-rel.d <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassPctCover.csv", header=TRUE, row.names=1)
-rel.l[is.na(rel.l)] <- 0 # replace NA with 0
-rel.d[is.na(rel.d)] <- 0 # replace NA with 0
+rel.l.sage <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassSagePctCover.csv", header=TRUE, row.names=1)
+rel.d.sage <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassSagePctCover.csv", header=TRUE, row.names=1)
+rel.l.total <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
+rel.d.total <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
+rel.l.sage[is.na(rel.l.sage)] <- 0 # replace NA with 0
+rel.d.sage[is.na(rel.d.sage)] <- 0 # replace NA with 0
+rel.l.total[is.na(rel.l.total)] <- 0 # replace NA with 0
+rel.d.total[is.na(rel.d.total)] <- 0 # replace NA with 0
 # #add shrub height class densities as environmental data
 #   # remove columns with only 0 values where there were no shrubs of that species in that size class found.
 # A <- read.csv("F:/ShrubDensity/HeightClass/AprilAdensityM2.csv",row.names=1)
@@ -61,8 +65,10 @@ rel.d[is.na(rel.d)] <- 0 # replace NA with 0
 fit.env <- envfit(data.mds,data.env,perm=1000)
 fit.l <- envfit(data.mds,data.l,perm=1000)
 fit.d <- envfit(data.mds,data.d,perm=1000)
-fit.rl <- envfit(data.mds,rel.l,perm=1000)
-fit.rd <- envfit(data.mds,rel.d,perm=1000)
+fit.rls <- envfit(data.mds,rel.l.sage,perm=1000)
+fit.rds <- envfit(data.mds,rel.d.sage,perm=1000)
+fit.rlt <- envfit(data.mds,rel.l.total,perm=1000)
+fit.rdt <- envfit(data.mds,rel.d.total,perm=1000)
 # fit.a<-envfit(data.mds,A,perm=1000)
 # fit.b<-envfit(data.mds,B,perm=1000)
 # fit.c<-envfit(data.mds,C,perm=1000)
@@ -72,8 +78,10 @@ fit.rd <- envfit(data.mds,rel.d,perm=1000)
 fit.env
 fit.l
 fit.d
-fit.rl
-fit.rd
+fit.rls
+fit.rds
+fit.rlt
+fit.rdt
 # fit.a
 # fit.b
 # fit.c
@@ -113,16 +121,21 @@ text(data.mds, display="sites", col="black", cex=0.7)
 text(data.mds, display="species", col="red", cex=0.7)
 
 #plot environmental loadings
-plot(data.mds,type="t",main="NMDS using Euclidean Distance, Soil Data")
+plot(data.mds,type="t",main="NMDS Soil Data")
   plot(sig.fit.env,col="blue", cex=0.7)
-plot(data.mds,type="t",main="NMDS using Euclidean Distance, ARTR.L Data")
+plot(data.mds,type="t",main="NMDS ARTR.L Data")
   plot(fit.l,col="green", cex=0.7)
-plot(data.mds,type="t",main="NMDS using Euclidean Distance, ARTR.D Data")
+plot(data.mds,type="t",main="NMDS ARTR.D Data")
   plot(fit.d,col="purple", cex=0.7)
-plot(data.mds,type="t",main="NMDS using Euclidean Distance, % ARTR.L Data")
-  plot(fit.rl,col="yellow", cex=0.7)
-plot(data.mds,type="t",main="NMDS using Euclidean Distance, % ARTR.D Data")
-  plot(fit.rd,col="orange", cex=0.7)
+plot(data.mds,type="t",main="NMDS % ARTR.L/All ARTR Data")
+  plot(fit.rls,col="yellow", cex=0.7)
+plot(data.mds,type="t",main="NMDS % ARTR.D/All ARTR Data")
+  plot(fit.rds,col="orange", cex=0.7)
+plot(data.mds,type="t",main="NMDS % ARTR.L/All Shrubs Data")
+  plot(fit.rlt,col="brown", cex=0.7)
+plot(data.mds,type="t",main="NMDS % ARTR.D/All Shrubs Data")
+  plot(fit.rdt,col="sienna", cex=0.7)
+
 # plot(data.mds,type="t",main="NMDS using Euclidean Distance, Shrubs <15cm Juvenile ")
 #   plot(sig.fit.A,col="orange", cex=0.7)
 # plot(data.mds,type="t",main="NMDS using Euclidean Distance, Shrubs <15cm Mature")

@@ -33,7 +33,6 @@ Total$L.D.DenM2 <- (Total$ARTR2 + Total$ARTR2.D)
 # Sage density (live)
 Total$L.DenM2 <- Total$ARTR2
 Sage.Env.USGS <- Total[,c(3:4)]
-Sage.Env.April <- Sage.Env.USGS[-c(1:60),] # remove usgs data
 
 # 3 
 # Proportion Sage individuals alive (talk to Susan about how to deal with sage absences)
@@ -63,5 +62,11 @@ lpi <- read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv")
 lpi <- lpi[-c(160:162),] # remove SUMS and COUNTIF rows at the bottom
 row.names(lpi)<-lpi$X
 lpi <- lpi[,-1] # remove extra plot id column
+Sage.Env.USGS$PG.RelCov <- (lpi$ACHY+lpi$ARPU9+lpi$BOGR2+lpi$BOGR2.D+lpi$ELEL+lpi$HECO26+lpi$HECO26.D+lpi$SPCR+lpi$SPCR.D+lpi$HIJA)
 
-colnames(lpi)
+#######################################################################
+# Remove USGS, only April Data
+Sage.Env.April <- Sage.Env.USGS[-c(1:60),] # remove usgs data
+# Write USGS and April Data
+write.csv(Sage.Env.April,file="F:/SageNMDSvariables/Sage.Env.April.csv")
+write.csv(Sage.Env.USGS,file="F:/SageNMDSvariables/Sage.Env.USGS.csv")

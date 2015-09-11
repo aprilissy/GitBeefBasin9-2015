@@ -58,3 +58,10 @@ Sage.Env.USGS$L.RelCov <- ((Total$ARTR2)/rowSums(Total))*100
 
 # 7 
 # Perrenial Grass relative cover
+
+lpi <- read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv")
+lpi <- lpi[-c(160:162),] # remove SUMS and COUNTIF rows at the bottom
+row.names(lpi)<-lpi$X
+lpi <- lpi[,-1] # remove extra plot id column
+
+colnames(lpi)

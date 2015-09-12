@@ -95,6 +95,18 @@ ordiplot(e.data.mds, display ="species", type ="n")
 text(e.data.mds, display="sites", col="black", cex=0.7)
 text(e.data.mds, display="species", col="red", cex=0.7)
 
+
+p<-ordiplot(b.data.mds, display ="species", type ="n")
+text(b.data.mds, display="sites",type="p", col="black", cex=0.7)
+text(b.data.mds, display="species", col="red", cex=0.7)
+fit.env <- envfit(b.data.mds,data.env,perm=1000)
+fit.env
+sig.data.env<-data.env[,c(5,7,9,12,15:17,19:25,28:29)]
+sig.fit.env<-envfit(e.data.mds,sig.data.env,perm=1000)
+sig.fit.env # Check that you pulled up the right factors.
+plot(p,type="t",main="NMDS Soil Data")
+plot(sig.fit.env,col="blue", cex=0.7)
+
 #plot environmental loadings
 plot(e.data.mds,type="t",main="NMDS Soil Data")
   plot(sig.fit.env,col="blue", cex=0.7)
@@ -105,10 +117,23 @@ plot(e.data.mds,type="t",main="NMDS ARTR.L Data")
 plot(e.data.mds,type="t",main="NMDS ARTR.D Data")
   plot(fit.d,col="purple", cex=0.7)
 plot(e.data.mds,type="t",main="NMDS % ARTR.L/All ARTR Data")
-  plot(fit.rls,col="yellow", cex=0.7)
+  plot(fit.rls,col="dodgerblue", cex=0.7)
 plot(e.data.mds,type="t",main="NMDS % ARTR.D/All ARTR Data")
   plot(fit.rds,col="orange", cex=0.7)
 plot(e.data.mds,type="t",main="NMDS % ARTR.L/All Shrubs Data")
-  plot(fit.rlt,col="brown", cex=0.7)
+  plot(fit.rlt,col="darkmagenta", cex=0.7)
 plot(e.data.mds,type="t",main="NMDS % ARTR.D/All Shrubs Data")
-  plot(fit.rdt,col="sienna", cex=0.7)
+  plot(fit.rdt,col="blueviolet", cex=0.7)
+
+
+##########
+# Sample plots
+
+stems <- colSums(data)
+plot(e.data.mds, disp="sp",type="n")
+sel <- orditorp(e.data.mds, dis="sp", priority=stems,pcol="gray",pch="+")
+
+
+
+pl <- plot(e.data.mds,dis="sp")
+identify(pl,"sp")

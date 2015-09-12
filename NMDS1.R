@@ -137,3 +137,11 @@ sel <- orditorp(e.data.mds, dis="sp", priority=stems,pcol="gray",pch="+")
 
 pl <- plot(e.data.mds,dis="sp")
 identify(pl,"sp")
+
+
+
+plot(e.data.mds, type="n",xlim=c(-1.5,2),ylim=c(-1,0.5),main="NMDS Soil Data") 
+points(e.data.mds,display="sites",cex=0.5,pch=21,col="red", bg="red")
+text(e.data.mds,display="species", cex=0.7, col="blue")
+plot(sig.fit.env,col="green4", cex=0.7,font=2)
+

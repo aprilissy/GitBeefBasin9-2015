@@ -22,7 +22,7 @@ write.csv(Sage.l,file="F:/ShrubDensity/HeightClass/USGSLivePlotXSizeClass.csv", 
 write.csv(Sage.d,file="F:/ShrubDensity/HeightClass/USGSDeadPlotXSizeClass.csv", row.names=FALSE)
 
 ##################### 9/2/2015 #########################################
-# I want plot by size class for live and for dead
+# I want plot by size class for live and for dead, and live+dead
 # This is for use as environmental factor in NMDS
 
 sage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on plot
@@ -35,13 +35,13 @@ sage.d <- sage.d[,-2]# remove transect total column
 sage.d <- sage.d[-c(1:59),] # remove usgs data
 write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row.names=FALSE)
 
-
 ############## Binary Size Classes #############################
 ##  this just means using relative cover (points hit/total points)
 ##  use this for NMDS instead
 l <- read.csv('F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv',row.names=1)
 d <- read.csv('F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv',row.names=1)
 l.d <- (l+d)
+write.csv(l.d,file="F:/ShrubDensity/HeightClass/LiveDeadPlotbySizeClass.csv")
 
 total.l.d <- rowSums(l)+ rowSums(d)
 l.rel.sage <- ((l)/(rowSums(l)+ rowSums(d)))*100

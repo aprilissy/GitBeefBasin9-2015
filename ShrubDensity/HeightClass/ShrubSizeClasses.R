@@ -19,7 +19,8 @@ Sage.l <- class.order[c(573:1071),]
 Sage.d <- class.order[c(1072:1543),]
 
 ##################### 9/2/2015 #########################################
-# I want plot by size class for live and for dead, and live+dead
+# I want plot by size class for live, dead, and live+dead
+# then /180 to get density per m2
 # This is for use as environmental factor in NMDS
 
 sage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on plot
@@ -28,6 +29,8 @@ sage.l <- sage.l[-c(1:59),] # remove usgs data
 write.csv(sage.l,file="F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", row.names=FALSE)
 rownames(sage.l) <- sage.l[,1]
 sage.l <- sage.l[,-1]
+den.sage.l <- sage.l/180
+write.csv(den.sage.l,file="F:/ShrubDensity/HeightClass/LiveDensityM2Class", row.names=FALSE)
 
 sage.d <- ddply(Sage.d, "Plot", numcolwise(sum)) # Sum all columns based on plot
 sage.d <- sage.d[,-2]# remove transect total column
@@ -35,6 +38,13 @@ sage.d <- sage.d[-c(1:59),] # remove usgs data
 write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row.names=FALSE)
 rownames(sage.d) <- sage.d[,1]
 sage.d <- sage.d[,-1]
+den.sage.d <- sage.d/180
+write.csv(den.sage.d,file="F:/ShrubDensity/HeightClass/DeadDensityM2Class", row.names=FALSE)
+
+den.sage.l.d <- (sage.l+sage.d)/180
+write.csv(den.sage.l.d,file="F:/ShrubDensity/HeightClass/LiveDeadDensityM2Class", row.names=FALSE)
+
+
 ############## Binary Size Classes #############################
 ##  this just means using relative cover (points hit/total points)
 ##  use this for NMDS instead

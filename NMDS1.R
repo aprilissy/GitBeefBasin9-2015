@@ -100,9 +100,9 @@ sig.fit.env # Check that you pulled up the right factors.
 
 
 #plotMDS
-#orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.7,0.7),ylim=c(-0.7,0.4),title="NMDS Soil Data")
-plot(Take9)
-title(main = "NMDS Soil Parameters")
+orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.7,0.7),ylim=c(-0.7,0.4),title="NMDS Soil Data")
+plot(Plot)
+title(main = "NMDS Class LiveDead Parameters")
 
 plot(sig.fit.env,col="blue", cex=0.7,font=2)
 plot(fit.sage,col="chartreuse4", cex=0.7,font=2)

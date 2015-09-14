@@ -53,16 +53,16 @@ data.sage[is.na(data.sage)] <- 0 # replace NA with 0
 data.l <- read.csv("F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", header=TRUE, row.names=1)
 data.d <- read.csv("F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", header=TRUE, row.names=1)
 data.l.d <-read.csv("F:/ShrubDensity/HeightClass/LiveDeadPlotbySizeClass.csv", header=TRUE, row.names=1) 
-rel.l.sage <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassSagePctCover.csv", header=TRUE, row.names=1)
-rel.d.sage <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassSagePctCover.csv", header=TRUE, row.names=1)
-rel.ld.sage <- read.csv("F:/ShrubDensity/HeightClass/LiveDeadSizeClassSagePctCover.csv", header=TRUE, row.names=1)
+# rel.l.sage <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassSagePctCover.csv", header=TRUE, row.names=1)
+# rel.d.sage <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassSagePctCover.csv", header=TRUE, row.names=1)
+# rel.l.d.sage <- read.csv("F:/ShrubDensity/HeightClass/LiveDeadSizeClassSagePctCover.csv", header=TRUE, row.names=1)
 rel.l.total <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
 rel.d.total <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
 rel.l.d.total <- read.csv("F:/ShrubDensity/HeightClass/LiveDeadSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
 
-rel.l.sage[is.na(rel.l.sage)] <- 0 # replace NA with 0
-rel.d.sage[is.na(rel.d.sage)] <- 0 # replace NA with 0
-rel.l.d.sage[is.na(rel.l.d.sage)] <- 0 # replace NA with 0
+# rel.l.sage[is.na(rel.l.sage)] <- 0 # replace NA with 0
+# rel.d.sage[is.na(rel.d.sage)] <- 0 # replace NA with 0
+# rel.l.d.sage[is.na(rel.l.d.sage)] <- 0 # replace NA with 0
 rel.l.total[is.na(rel.l.total)] <- 0 # replace NA with 0
 rel.d.total[is.na(rel.d.total)] <- 0 # replace NA with 0
 rel.l.d.total[is.na(rel.l.d.total)] <- 0 # replace NA with 0
@@ -74,9 +74,9 @@ fit.sage <- envfit(e.data.mds, data.sage,perm=1000)
 fit.l <- envfit(e.data.mds,data.l,perm=1000)
 fit.d <- envfit(e.data.mds,data.d,perm=1000)
 fit.l.d <- envfit(e.data.mds,data.l.d,perm=1000)
-fit.rls <- envfit(e.data.mds,rel.l.sage,perm=1000)
-fit.rds <- envfit(e.data.mds,rel.d.sage,perm=1000)
-fit.rlds <- envfit(e.data.mds,rel.l.d.sage,perm=1000)
+# fit.rls <- envfit(e.data.mds,rel.l.sage,perm=1000)
+# fit.rds <- envfit(e.data.mds,rel.d.sage,perm=1000)
+# fit.rlds <- envfit(e.data.mds,rel.l.d.sage,perm=1000)
 fit.rlt <- envfit(e.data.mds,rel.l.total,perm=1000)
 fit.rdt <- envfit(e.data.mds,rel.d.total,perm=1000)
 fit.rldt <- envfit(e.data.mds,rel.l.d.total,perm=1000)
@@ -86,9 +86,9 @@ fit.sage
 fit.l
 fit.d
 fit.l.d
-fit.rls
-fit.rds
-fit.rlds
+# fit.rls
+# fit.rds
+# fit.rlds
 fit.rlt
 fit.rdt
 fit.rldt
@@ -108,15 +108,15 @@ plot(sig.fit.env,col="blue", cex=0.7,font=2)
 plot(fit.sage,col="chartreuse4", cex=0.7,font=2)
 
 plot(fit.l,col="pink4", cex=0.7,font=2)
-plot(fit.rls,col="dodgerblue", cex=0.7,font=2)
+# plot(fit.rls,col="dodgerblue", cex=0.7,font=2)
 plot(fit.rlt,col="darkmagenta", cex=0.7,font=2)
 
 plot(fit.d,col="purple", cex=0.7,font=2)
-plot(fit.rds,col="orange", cex=0.7,font=2)
+# plot(fit.rds,col="orange", cex=0.7,font=2)
 plot(fit.rdt,col="blueviolet", cex=0.7,font=2)
 
 plot(fit.l.d,col="blue", cex=0.7,font=2)
-plot(fit.rlds,col="chartreuse4", cex=0.7,font=2)
+# plot(fit.rlds,col="chartreuse4", cex=0.7,font=2)
 plot(fit.rldt,col="pink4", cex=0.7,font=2)
 
 #ordiplot(data.mds)

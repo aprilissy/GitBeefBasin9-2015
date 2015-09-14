@@ -41,21 +41,27 @@ write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row
 ##  use this for NMDS instead
 l <- read.csv('F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv',row.names=1)
 d <- read.csv('F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv',row.names=1)
+l.d <- (l+d)
 
 total.l.d <- rowSums(l)+ rowSums(d)
 l.rel.sage <- ((l)/(rowSums(l)+ rowSums(d)))*100
 d.rel.sage <- ((d)/(rowSums(l)+ rowSums(d)))*100
+l.d.rel.sage <- ((l.d)/rowSums(l)+rowSums(d))*100
 write.csv(l.rel.sage,file="F:/ShrubDensity/HeightClass/LiveSizeClassSagePctCover.csv")
 write.csv(d.rel.sage,file="F:/ShrubDensity/HeightClass/DeadSizeClassSagePctCover.csv")
+write.csv(l.d.rel.sage,file="F:/ShrubDensity/HeightClass/LiveDeadSizeClassSagePctCover.csv")
 
-TotalplotXspp<-xtabs(total~Plot+SpeciesCode, total) # put in plot by spp matrix
-write.csv(TotalplotXspp,file="F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv")
+
+# TotalplotXspp<-xtabs(total~Plot+SpeciesCode, total) # put in plot by spp matrix
+# write.csv(TotalplotXspp,file="F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv")
 Total <- read.csv("F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv",row.names=1)
 Total <- Total[-c(1:60),] # remove usgs data
 l.rel.total <- ((l)/rowSums(Total))*100
 d.rel.total <- ((d)/rowSums(Total))*100
+l.d.rel.total <- ((l.d)/rowSums(Total))*100
 write.csv(l.rel.total,file="F:/ShrubDensity/HeightClass/LiveSizeClassTotalPctCover.csv")
 write.csv(d.rel.total,file="F:/ShrubDensity/HeightClass/DeadSizeClassTotalPctCover.csv")
+write.csv(l.d.rel.total,file="F:/ShrubDensity/HeightClass/LiveDeadSizeClassTotalPctCover.csv")
 
 ###### This sums shrub totals across transects 2,3, and 4 #####
 ###### And puts into Plot by Species matrix ###################

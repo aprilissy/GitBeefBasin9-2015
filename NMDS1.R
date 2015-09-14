@@ -102,22 +102,22 @@ sig.fit.env # Check that you pulled up the right factors.
 #plotMDS
 orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.7,0.7),ylim=c(-0.7,0.4),title="NMDS Soil Data")
 plot(Plot)
-title(main = "NMDS Class LiveDead Parameters")
+title(main = "NMDS Class Dead Parameters")
 
 plot(sig.fit.env,col="blue", cex=0.7,font=2)
 plot(fit.sage,col="chartreuse4", cex=0.7,font=2)
 
-plot(fit.l,col="pink4", cex=0.7,font=2)
+plot(fit.l,col="blue", cex=0.7,font=2)
 # plot(fit.rls,col="dodgerblue", cex=0.7,font=2)
-plot(fit.rlt,col="darkmagenta", cex=0.7,font=2)
+plot(fit.rlt,col="dodgerblue", cex=0.7,font=2)
 
-plot(fit.d,col="purple", cex=0.7,font=2)
+plot(fit.d,col="blue", cex=0.7,font=2)
 # plot(fit.rds,col="orange", cex=0.7,font=2)
-plot(fit.rdt,col="blueviolet", cex=0.7,font=2)
+plot(fit.rdt,col="pink4", cex=0.7,font=2)
 
 plot(fit.l.d,col="blue", cex=0.7,font=2)
 # plot(fit.rlds,col="chartreuse4", cex=0.7,font=2)
-plot(fit.rldt,col="pink4", cex=0.7,font=2)
+plot(fit.rldt,col="blue", cex=0.7,font=2)
 
 #ordiplot(data.mds)
 # ordiplot(e.data.mds, display ="species", type ="n")

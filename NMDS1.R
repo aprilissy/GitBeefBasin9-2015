@@ -2,7 +2,7 @@
 library(vegan)
 library(MASS)
 library(colorspace)
-# pal <- choose_palette()
+#pal <- choose_palette()
 
 #---NMDS Script for Beef Basin Data --------
 # this code has been modified from Plant Community Ecology at USU and various online sources
@@ -15,33 +15,31 @@ library(colorspace)
 data<-read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv",header=TRUE, row.names=1)
 ###data<-data[,2:ncol(data)] 
 
-# calculate dissimilarities, use function "vegdist"in VEGAN package
-data.dis<-vegdist(data,method="euc")
-dis.matrix<-as.matrix(data.dis)
-# rankindex compares euclidean, bray-curtis, etc... for my data
-rankindex(dis.matrix,data)
+# # calculate dissimilarities, use function "vegdist"in VEGAN package
+# data.dis<-vegdist(data,method="euc")
+# dis.matrix<-as.matrix(data.dis)
+# # rankindex compares euclidean, bray-curtis, etc... for my data
+# rankindex(dis.matrix,data)
 
 e.data.mds<-metaMDS(comm=data,distance="euc",trace=FALSE)
-m.data.mds<-metaMDS(comm=data,distance="man",trace=FALSE)
-g.data.mds<-metaMDS(comm=data,distance="gow",trace=FALSE)
-b.data.mds<-metaMDS(comm=data,distance="bray",trace=FALSE)
-k.data.mds<-metaMDS(comm=data,distance="kul",trace=FALSE)
+# m.data.mds<-metaMDS(comm=data,distance="man",trace=FALSE)
+# g.data.mds<-metaMDS(comm=data,distance="gow",trace=FALSE)
+# b.data.mds<-metaMDS(comm=data,distance="bray",trace=FALSE)
+# k.data.mds<-metaMDS(comm=data,distance="kul",trace=FALSE)
 
 e.data.mds #.09
-m.data.mds #.13
-g.data.mds #.20
-b.data.mds #.13
-k.data.mds #.14
+# m.data.mds #.13
+# g.data.mds #.20
+# b.data.mds #.13
+# k.data.mds #.14
 
-
+plot.sc = scores(e.data.mds)
 # Stress <0.10 indicates that the ordination is good "with no real 
 # risk of drawing false inferences" (Clarke 1993, p. 26). 
-# My stress is ~0.13
 # linear fit is the fit between ordination values and distances
 stressplot(e.data.mds) 
 
 ###########################  ENVIRONMENTAL DATA  ###########################################
-
 
 # read in Soil environmental data
 data.env <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv",header=TRUE, row.names=1)
@@ -49,6 +47,7 @@ data.env <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv",header=
 # read in SageEnvironmentalNMDS data
 data.sage <- read.csv("F:/SageNMDSvariables/Sage.Env.April.csv",header=TRUE,row.names=1)
 data.sage[is.na(data.sage)] <- 0 # replace NA with 0
+
 
 # read in Artr live and dead as environmental data
 data.l <- read.csv("F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", header=TRUE, row.names=1)
@@ -84,28 +83,33 @@ fit.rlt
 fit.rdt
 
 ### Choose only the significant environmental data
-sig.data.env<-data.env[,c(8:9,12,16,17,24)]
+sig.data.env<-data.env[,c(8,9,12,16:18,24)]
 sig.fit.env<-envfit(e.data.mds,sig.data.env,perm=1000)
 sig.fit.env # Check that you pulled up the right factors.
+
 
 #plotMDS
+#orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.7,0.7),ylim=c(-0.7,0.4),title="NMDS Soil Data")
+plot(Take9)
+title(main = "NMDS Soil Parameters")
+plot(sig.fit.env,col="blue", cex=0.7,font=2)
+plot(fit.sage,col="chartreuse4", cex=0.7,font=2)
+plot(fit.l,col="pink4", cex=0.7,font=2)
+plot(fit.rls,col="dodgerblue", cex=0.7,font=2)
+plot(fit.rlt,col="darkmagenta", cex=0.7,font=2)
+plot(fit.d,col="purple", cex=0.7,font=2)
+plot(fit.rds,col="orange", cex=0.7,font=2)
+plot(fit.rdt,col="blueviolet", cex=0.7,font=2)
+
 
 #ordiplot(data.mds)
-ordiplot(e.data.mds, display ="species", type ="n")
-text(e.data.mds, display="sites", col="black", cex=0.7)
-text(e.data.mds, display="species", col="red", cex=0.7)
-
-
-p<-ordiplot(b.data.mds, display ="species", type ="n")
-text(b.data.mds, display="sites",type="p", col="black", cex=0.7)
-text(b.data.mds, display="species", col="red", cex=0.7)
-fit.env <- envfit(b.data.mds,data.env,perm=1000)
-fit.env
-sig.data.env<-data.env[,c(5,7,9,12,15:17,19:25,28:29)]
-sig.fit.env<-envfit(e.data.mds,sig.data.env,perm=1000)
-sig.fit.env # Check that you pulled up the right factors.
-plot(p,type="t",main="NMDS Soil Data")
-plot(sig.fit.env,col="blue", cex=0.7)
+# ordiplot(e.data.mds, display ="species", type ="n")
+# text(e.data.mds, display="sites", col="black", cex=0.7)
+# text(e.data.mds, display="species", col="red", cex=0.7)
+# 
+# ordiplot(e.data.mds, type ="n",main="NMDS Soil Data")
+# text(e.data.mds, display="species", col="black", cex=0.7)
+# plot(sig.fit.env,col="blue", cex=0.7)
 
 #plot environmental loadings
 plot(e.data.mds,type="t",main="NMDS Soil Data")
@@ -124,24 +128,3 @@ plot(e.data.mds,type="t",main="NMDS % ARTR.L/All Shrubs Data")
   plot(fit.rlt,col="darkmagenta", cex=0.7)
 plot(e.data.mds,type="t",main="NMDS % ARTR.D/All Shrubs Data")
   plot(fit.rdt,col="blueviolet", cex=0.7)
-
-
-##########
-# Sample plots
-
-stems <- colSums(data)
-plot(e.data.mds, disp="sp",type="n")
-sel <- orditorp(e.data.mds, dis="sp", priority=stems,pcol="gray",pch="+")
-
-
-
-pl <- plot(e.data.mds,dis="sp")
-identify(pl,"sp")
-
-
-
-plot(e.data.mds, type="n",xlim=c(-1.5,2),ylim=c(-1,0.5),main="NMDS Soil Data") 
-points(e.data.mds,display="sites",cex=0.5,pch=21,col="red", bg="red")
-text(e.data.mds,display="species", cex=0.7, col="blue")
-plot(sig.fit.env,col="green4", cex=0.7,font=2)
-

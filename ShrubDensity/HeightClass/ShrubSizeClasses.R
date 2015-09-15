@@ -30,7 +30,7 @@ write.csv(sage.l,file="F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", row
 rownames(sage.l) <- sage.l[,1]
 sage.l <- sage.l[,-1]
 den.sage.l <- sage.l/180
-write.csv(den.sage.l,file="F:/ShrubDensity/HeightClass/LiveDensityM2Class", row.names=FALSE)
+write.csv(den.sage.l,file="F:/ShrubDensity/HeightClass/LiveDensityM2Class.csv")
 
 sage.d <- ddply(Sage.d, "Plot", numcolwise(sum)) # Sum all columns based on plot
 sage.d <- sage.d[,-2]# remove transect total column
@@ -39,10 +39,10 @@ write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row
 rownames(sage.d) <- sage.d[,1]
 sage.d <- sage.d[,-1]
 den.sage.d <- sage.d/180
-write.csv(den.sage.d,file="F:/ShrubDensity/HeightClass/DeadDensityM2Class", row.names=FALSE)
+write.csv(den.sage.d,file="F:/ShrubDensity/HeightClass/DeadDensityM2Class.csv")
 
 den.sage.l.d <- (sage.l+sage.d)/180
-write.csv(den.sage.l.d,file="F:/ShrubDensity/HeightClass/LiveDeadDensityM2Class", row.names=FALSE)
+write.csv(den.sage.l.d,file="F:/ShrubDensity/HeightClass/LiveDeadDensityM2Class.csv")
 
 
 ############## Binary Size Classes #############################

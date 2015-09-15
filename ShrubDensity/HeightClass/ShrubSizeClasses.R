@@ -4,7 +4,7 @@ library(plyr)
 
 #read in shrub density detail data
 class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 8-21.csv')
-
+class <- 
 #################################################################
 ## April's And USGS Data
 

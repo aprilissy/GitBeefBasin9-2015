@@ -27,24 +27,20 @@ stressplot(ord)
 fit.sage <- envfit(ord, sage,perm=1000)
 fit.sage
 
+
 #plotMDS
-orditkplot(ord, display="species", col="black", cex=0.7, pcol="gray",pch="+")
-saveRDS(bray, file="F:/SageNMDSvariables/bray.Rdata")
-# Plot <- readRDS("F:/SageNMDSvariables/Plot.Rdata")
+# orditkplot(ord, display="species", col="black", cex=0.7, pcol="gray",pch="+")
+# saveRDS(bray, file="F:/SageNMDSvariables/bray.Rdata")
+# bray <- readRDS("F:/SageNMDSvariables/bray.Rdata")
 
 plot(bray)
 title(main = "NMDS Bray-Curtis")
-plot(fit.sage,col="blue", cex=0.9,font=2)
+plot(fit.sage,col="blue", cex=0.9,font=2) #,xlim=c(-0.20,0.20),ylim=c(-0.1,0.1)
 
 
 
-,xlim=c(-0.20,0.20),ylim=c(-0.1,0.1)
-
-
-
-
-
-
+##########
+# Sagebrush Height Classes
 
 rel.l.total <- read.csv("F:/ShrubDensity/HeightClass/LiveSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
 rel.d.total <- read.csv("F:/ShrubDensity/HeightClass/DeadSizeClassTotalPctCover.csv", header=TRUE, row.names=1)
@@ -53,11 +49,9 @@ den.l <- read.csv("F:/ShrubDensity/HeightClass/LiveDensityM2Class.csv", header=T
 den.d <- read.csv("F:/ShrubDensity/HeightClass/DeadDensityM2Class.csv", header=TRUE, row.names=1)
 den.l.d <- read.csv("F:/ShrubDensity/HeightClass/LiveDeadDensityM2Class.csv", header=TRUE, row.names=1)
 
-
 rel.l.total[is.na(rel.l.total)] <- 0 # replace NA with 0
 rel.d.total[is.na(rel.d.total)] <- 0 # replace NA with 0
 rel.l.d.total[is.na(rel.l.d.total)] <- 0 # replace NA with 0
-
 
 fit.rlt <- envfit(ord,rel.l.total,perm=1000)
 fit.rdt <- envfit(ord,rel.d.total,perm=1000)
@@ -66,7 +60,6 @@ fit.den.l <- envfit(ord,den.l,perm=1000)
 fit.den.d <- envfit(ord,den.d,perm=1000)
 fit.den.l.d <- envfit(ord,den.l.d,perm=1000)
 
-
 fit.rlt
 fit.rdt
 fit.rldt
@@ -74,7 +67,15 @@ fit.den.l
 fit.den.d
 fit.den.l.d
 
+plot(bray)
+title(main = "NMDS Relative Cover")
+plot(fit.rldt,col="blue", cex=0.9,font=2)
+plot(fit.rdt,col="red", cex=0.9,font=2)
+plot(fit.rlt,col="chartreuse4", cex=0.9,font=2)
 
 plot(bray)
-title(main = "NMDS Bray-Curtis")
-plot(fit.sage,col="blue", cex=0.9,font=2)
+title(main = "NMDS Density")
+plot(fit.den.l.d,col="blue", cex=0.9,font=2)
+plot(fit.den.d,col="red", cex=0.9,font=2)
+plot(fit.den.l,col="chartreuse4", cex=0.9,font=2)
+

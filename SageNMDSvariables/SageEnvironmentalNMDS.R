@@ -57,8 +57,8 @@ Sage.Env.USGS$L.PropIndM2 <- ((Total$ARTR2)/(Total$ARTR2+Total$ARTR2.D))
 Sage.Env.USGS$L.RelCov <- ((Total$ARTR2)/rowSums(Total))*100
 # Code for #6
 Sage.Env.USGS$L.D.RelCov <- ((Total$ARTR2 + Total$ARTR2.D)/rowSums(Total))*100
-# Combine for #5
-Sage.Env.USGS$L.D.PropCov <- Sage.Env.USGS$L.RelCov/Sage.Env.USGS$L.D.RelCov
+# Combine for #4
+Sage.Env.USGS$L.PropCov <- Sage.Env.USGS$L.RelCov/Sage.Env.USGS$L.D.RelCov
 
 # 5
 # Sage relative cover (live+dead)

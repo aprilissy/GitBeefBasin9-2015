@@ -20,24 +20,56 @@ data <- data.env[,c(1,3:9,26:30)]
 rankindex(sage, data, c("euc","man","bray", "jac", "kul"))
 
 # run metaMDS
-ord <- metaMDS(comm=data,distance="bray",trace=FALSE)
-ord # 0.156 ~16%
+ord <- metaMDS(comm=data,distance="bray",trace=FALSE, k=3)
+ord # k2=0.156 ~16%  # k3=.091   #k4=.069   #k5=.053  #k6=.046
 stressplot(ord) 
 
 fit.sage <- envfit(ord, sage,perm=1000)
 fit.sage
 
+variableScores <- ord$species # Soil variable scores
+sampleScores <- ord$points # Plot scores
+
+# s3d <- scatterplot3d(variableScores)
+# text(variableScores,labels=row.names(variableScores))
+
 
 #plotMDS
-# orditkplot(ord, display="species", col="black", cex=0.7, pcol="gray",pch="+")
+# orditkplot(ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.2,0.15))
+# orditkplot(ord, display="species",choices=c(2,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.2,0.1),ylim=c(-0.1,0.2))
+# orditkplot(ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.05,0.15))
+# saveRDS(a12, file="F:/SageNMDSvariables/a12.Rdata")
+# saveRDS(a23, file="F:/SageNMDSvariables/a23.Rdata")
+# saveRDS(a13, file="F:/SageNMDSvariables/a13.Rdata")
 # saveRDS(bray, file="F:/SageNMDSvariables/bray.Rdata")
-# bray <- readRDS("F:/SageNMDSvariables/bray.Rdata")
+# a12 <- readRDS("F:/SageNMDSvariables/a12.Rdata")
+# a23 <- readRDS("F:/SageNMDSvariables/a23.Rdata")
+# a13 <- readRDS("F:/SageNMDSvariables/a13.Rdata")
 
-plot(bray)
-title(main = "NMDS Bray-Curtis")
-plot(fit.sage,col="blue", cex=0.9,font=2) #,xlim=c(-0.20,0.20),ylim=c(-0.1,0.1)
+plot(a12)
+title(main = "NMDS 1&2")
+plot(fit.sage,col="blue", cex=0.9,font=2) 
+
+plot(a23)
+title(main = "NMDS 2&3")
+plot(fit.sage,col="blue", cex=0.9,font=2) 
+
+plot(a13)
+title(main = "NMDS 1&3")
+plot(fit.sage,col="blue", cex=0.9,font=2) 
 
 
+ordiplot(ord, type ="n",main="NMDS 1&2", choices=c(1,2))
+ text(ord, display="species", col="black", cex=0.7)
+ plot(fit.sage,col="blue", cex=0.7)
+
+ordiplot(ord, type ="n",main="NMDS 2&3", choices=c(2,3))
+ text(ord, display="species", col="black", cex=0.7)
+ plot(fit.sage,col="blue", cex=0.7)
+
+ordiplot(ord, type ="n",main="NMDS 1&3", choices=c(1,3))
+ text(ord, display="species", col="black", cex=0.7)
+ plot(fit.sage,col="blue", cex=0.7)
 
 ##########
 # Sagebrush Height Classes

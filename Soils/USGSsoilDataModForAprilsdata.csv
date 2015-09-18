@@ -1,4 +1,4 @@
-id,bottom,bottom,Horizon,DryHue,DryValue,DryChroma,MoistHue,MoistValue,MoistChroma,Texture,SandPercent,SandSize,ClayPercent,pH,Effervescence,Theta_fc,Theta_pwp,AWHC,HzNum
+id,top,bottom,Horizon,DryHue,DryValue,DryChroma,MoistHue,MoistValue,MoistChroma,Texture,SandPercent,SandSize,ClayPercent,pH,Effervescence,Theta_fc,Theta_pwp,AWHC,HzNum
 CLHS01P,0,12,A,7.5YR,6,3,7.5YR,5,3,S,95,M,3,8.2,SL,0.054755763,0.053520169,0.123559336,1
 CLHS01P,12,30,AB,7.5YR,6,3,7.5YR,4,3,S,95,F,2,8.3,VE,0.051906155,0.050990095,0.091606059,2
 CLHS01P,30,30,R,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,3

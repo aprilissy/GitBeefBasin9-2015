@@ -5,17 +5,17 @@ library(data.table)
 library(splitstackshape)
 
 # Read in Soils Data
-dat <- read.csv("F:/Soils/SoilDataInputR.csv", header = T,nrows = 444)
-# Pull out meaningful factors
-df1 <- dat[,c(1:3,5:10,17,19,20,36,39:40,46,54)]
-df2 <- dat[,c(1,40)] # Slope shape
-SlopeShape <- df2[complete.cases(df2), ] #Remove rows with only NA
+dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
+dat <- subset(dat, select = -c(Horizon,Theta_fc,Theta_pwp) )
+SlopeShape <- dat[,c(1,21)] # Slope shape
+SlopeShape <- SlopeShape[complete.cases(SlopeShape), ] #Remove rows with only NA
 # Combine Slope Shape categories
 SlopeShape$SlopeShape <- sub("LC", "CL", SlopeShape$SlopeShape, ignore.case = FALSE)
 SlopeShape$SlopeShape <- sub("VC", "CV", SlopeShape$SlopeShape, ignore.case = FALSE)
 SlopeShape$SlopeShape <- sub("VL", "LV", SlopeShape$SlopeShape, ignore.case = FALSE)
+SlopeShape$SlopeShape <- as.factor(SlopeShape$SlopeShape)
+dat <- dat[,-21]
 
-df1$Elevation <- df1$Elevation/3.2808 # Change Elevation from ft to m
 
 #Numeric Data
 dat$top <- as.numeric(dat$top)
@@ -25,17 +25,23 @@ dat$Elevation <- as.numeric(dat$Elevation)
 dat$SandPercent <- as.numeric(dat$SandPercent)
 dat$pH <- as.numeric(dat$pH)
 dat$Slope <- as.numeric(dat$Slope)
+dat$AWHC <- as.numeric(dat$AWHC)
+
 # Factor Data
-dat$SlopeShape <- as.factor(dat$SlopeShape)
+dat$DryHue <- as.factor(dat$DryHue)
 dat$DryValue <- as.factor(dat$DryValue)
 dat$DryChroma <- as.factor(dat$DryChroma)
+dat$MoistHue <- as.factor(dat$MoistHue)
 dat$MoistValue <- as.factor(dat$MoistValue)
 dat$MoistChroma <- as.factor(dat$MoistChroma)
+dat$Texture <- as.factor(dat$Texture)
+dat$SandSize <- as.factor(dat$SandSize)
+dat$Effervescence <- as.factor(dat$Effervescence)
 dat$CarbonateStage <- as.factor(dat$CarbonateStage)
 dat$BioticCrustClass <- as.factor(dat$BioticCrustClass)
+dat$HzNum <- as.factor(dat$HzNum)
+dat$Aspect <- as.factor(dat$Aspect)
 
-dat$DryHue <- as.factor(dat$DryHue)
-dat$MoistHue <- as.factor(dat$MoistHue)
 
 # Create Functions for extracting to single value per unique id(plot)
 f1 <- function(x) max(x$ClayPercent, na.rm = T) 

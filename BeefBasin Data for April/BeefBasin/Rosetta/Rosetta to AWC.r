@@ -1,7 +1,7 @@
 #Code begun 3 Dec 2014, by Colby Brungard
 #Rosetta returns saturated and residual water contents, along with other van Genuchten parameters. 
 #AWC is the difference between field capacity and permanent wilting water contents. With the output from Rosetta it is possible to calculate field capacity and permanent wilting points. Then just difference these to get AWC. 
- #setwd("D:/BeefBasin")
+ #setwd("F:/BeefBasin Data For April/BeefBasin/Rosetta")
 
 #1. Read in Rosetta output, then remove the second header
 	cLHSro <- data.frame(read.table('./cLHS_RosettaOutput.txt', header = T, colClasses = "character"))

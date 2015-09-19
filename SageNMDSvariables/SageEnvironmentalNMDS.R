@@ -53,35 +53,33 @@ Sage.Env.USGS$L.PropIndM2 <- ((Total$ARTR2)/(Total$ARTR2+Total$ARTR2.D))
 # Proportion Sage cover alive
 # (SageRelativeCover(live))/(SageRelativeCover(live+dead))
 
-# Code for #5
-Sage.Env.USGS$L.RelCov <- ((Total$ARTR2)/rowSums(Total))*100
+lpi <- read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv")
+lpi <- lpi[-c(160:162),] # remove SUMS and COUNTIF rows at the bottom
+row.names(lpi)<-lpi$X
+lpi <- lpi[,-1] # remove extra plot id column
+
+lpi.l.relcov <- ((lpi$ARTR2)/rowSums(lpi))*100
 # Code for #6
-Sage.Env.USGS$L.D.RelCov <- ((Total$ARTR2 + Total$ARTR2.D)/rowSums(Total))*100
+lpi.l.d.relcov <- ((lpi$ARTR2 + lpi$ARTR2.D)/rowSums(lpi))*100
 # Combine for #4
-Sage.Env.USGS$L.PropCov <- Sage.Env.USGS$L.RelCov/Sage.Env.USGS$L.D.RelCov
+Sage.Env.USGS$L.PropCov <- lpi.l.relcov/lpi.l.d.relcov
 
 # 5
 # Sage relative cover (live+dead)
 # add all points of a spp. in a plot, then sum ARTR2 and ARTR2.D. Next divide by the total number of individuals of all species.
 
-# Completed in #4
-#Sage.Env.USGS$L.D.RelCov <- ((Total$ARTR2 + Total$ARTR2.D)/rowSums(Total))*100
+Sage.Env.USGS$L.D.RelCov <- ((Total$ARTR2 + Total$ARTR2.D)/rowSums(Total))*100
 
 # 6  
 # Sage relative cover (live)
 # add all points of a spp. in a plot, then take only ARTR2 and  divide by the total number of individuals of all species.
 
-# Completed in #4
-#Sage.Env.USGS$L.RelCov <- ((Total$ARTR2)/rowSums(Total))*100
+Sage.Env.USGS$L.RelCov <- ((Total$ARTR2)/rowSums(Total))*100
 
 
 # 7 
 # Perrenial Grass relative cover
 
-lpi <- read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv")
-lpi <- lpi[-c(160:162),] # remove SUMS and COUNTIF rows at the bottom
-row.names(lpi)<-lpi$X
-lpi <- lpi[,-1] # remove extra plot id column
 Sage.Env.USGS$PG.RelCov <- (lpi$ACHY+lpi$ARPU9+lpi$BOGR2+lpi$BOGR2.D+lpi$ELEL+lpi$HECO26+lpi$HECO26.D+lpi$SPCR+lpi$SPCR.D+lpi$HIJA)
 
 #######################################################################

@@ -35,9 +35,9 @@ sampleScores <- ord$points # Plot scores
 
 
 #plotMDS
-# orditkplot(ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.2,0.15))
+# orditkplot(ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.2,0.2))
 # orditkplot(ord, display="species",choices=c(2,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.2,0.1),ylim=c(-0.1,0.2))
-# orditkplot(ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.05,0.15))
+# orditkplot(ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.15,0.1),ylim=c(-0.1,0.15))
 # saveRDS(a12, file="F:/SageNMDSvariables/a12.Rdata")
 # saveRDS(a23, file="F:/SageNMDSvariables/a23.Rdata")
 # saveRDS(a13, file="F:/SageNMDSvariables/a13.Rdata")
@@ -99,15 +99,40 @@ fit.den.l
 fit.den.d
 fit.den.l.d
 
-plot(bray)
-title(main = "NMDS Relative Cover")
+plot(a12)
+title(main = "NMDS Relative Cover 1&2")
 plot(fit.rldt,col="blue", cex=0.9,font=2)
 plot(fit.rdt,col="red", cex=0.9,font=2)
 plot(fit.rlt,col="chartreuse4", cex=0.9,font=2)
 
-plot(bray)
-title(main = "NMDS Density")
+plot(a12)
+title(main = "NMDS Density1&2")
 plot(fit.den.l.d,col="blue", cex=0.9,font=2)
 plot(fit.den.d,col="red", cex=0.9,font=2)
 plot(fit.den.l,col="chartreuse4", cex=0.9,font=2)
 
+
+plot(a23)
+title(main = "NMDS Relative Cover 2&3")
+plot(fit.rldt,col="blue", cex=0.9,font=2)
+plot(fit.rdt,col="red", cex=0.9,font=2)
+plot(fit.rlt,col="chartreuse4", cex=0.9,font=2)
+
+plot(a23)
+title(main = "NMDS Density 2&3")
+plot(fit.den.l.d,col="blue", cex=0.9,font=2)
+plot(fit.den.d,col="red", cex=0.9,font=2)
+plot(fit.den.l,col="chartreuse4", cex=0.9,font=2)
+
+
+plot(a13)
+title(main = "NMDS Relative Cover 1&3")
+plot(fit.rldt,col="blue", cex=0.9,font=2)
+plot(fit.rdt,col="red", cex=0.9,font=2)
+plot(fit.rlt,col="chartreuse4", cex=0.9,font=2)
+
+plot(a13)
+title(main = "NMDS Density 1&3")
+plot(fit.den.l.d,col="blue", cex=0.9,font=2)
+plot(fit.den.d,col="red", cex=0.9,font=2)
+plot(fit.den.l,col="chartreuse4", cex=0.9,font=2)

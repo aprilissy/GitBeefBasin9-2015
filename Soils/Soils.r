@@ -8,15 +8,17 @@ library(reshape2)
 
 # Read in Soils Data
 dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
-dat <- subset(dat, select = -c(Horizon,Theta_fc,Theta_pwp, HzNum) )
-SlopeShape <- dat[,c(1,20)] # Slope shape
+
+# Subset Slope Shape and combine categories
+SlopeShape <- subset(dat, select=c(id, SlopeShape))
 SlopeShape <- SlopeShape[complete.cases(SlopeShape), ] #Remove rows with only NA
-# Combine Slope Shape categories
+# row.names(SlopeShape)<-SlopeShape$id
+# SlopeShape <- SlopeShape[,-1]
 SlopeShape$SlopeShape <- sub("LC", "CL", SlopeShape$SlopeShape, ignore.case = FALSE)
 SlopeShape$SlopeShape <- sub("VC", "CV", SlopeShape$SlopeShape, ignore.case = FALSE)
 SlopeShape$SlopeShape <- sub("VL", "LV", SlopeShape$SlopeShape, ignore.case = FALSE)
 SlopeShape$SlopeShape <- as.factor(SlopeShape$SlopeShape)
-dat <- dat[,-21]
+dat <- subset(dat, select = -c(Horizon,Theta_fc,Theta_pwp, HzNum,SlopeShape) )
 
 #Look at data
 names(dat)
@@ -123,14 +125,10 @@ dat$SandSize <- as.factor(dat$SandSize)
 dat$Effervescence <- as.factor(dat$Effervescence)
 dat$CarbonateStage <- as.factor(dat$CarbonateStage)
 dat$BioticCrustClass <- as.factor(dat$BioticCrustClass)
-dat$HzNum <- as.factor(dat$HzNum)
 dat$Aspect <- as.factor(dat$Aspect)
 
 
-all <- join(Elevation, SlopeShape, by = 'id', type = 'inner')
-all <- join(all, Slope, by = 'id', type = 'inner')
-all <- join(all, maxClay, by = 'id', type = 'inner')
-all <- join(all, minClay, by = 'id', type = 'inner')
+all <- join(maxClay, minClay, by = 'id', type = 'inner')
 all <- join(all, maxSand, by = 'id', type = 'inner')
 all <- join(all, minSand, by = 'id', type = 'inner')
 all <- join(all, maxDepth, by = 'id', type = 'inner')
@@ -144,8 +142,6 @@ all <- join(all, maxMoistValue, by = 'id', type = 'inner')
 all <- join(all, minMoistValue, by = 'id', type = 'inner')
 all <- join(all, maxMoistChroma, by = 'id', type = 'inner')
 all <- join(all, minMoistChroma, by = 'id', type = 'inner')
-all <- join(all, CarbonateStage, by = 'id', type = 'inner')
-all <- join(all, BioticCrustClass, by = 'id', type = 'inner')
 all <- join(all, Surface, by = 'id', type = 'inner')
 all <- join(all, Subsurface, by = 'id', type = 'inner')
 
@@ -184,5 +180,10 @@ all <- join(all, AWC50, by = 'id', type = 'inner')
 all <- join(all, AWC100, by = 'id', type = 'inner')
 all <- join(all, MaxAWC, by = 'id', type = 'inner')
 all <- join(all, TotalAWC, by = 'id', type = 'inner')
+all <- join(all, Elevation, by = 'id', type = 'inner')
+all <- join(all, Slope, by = 'id', type = 'inner')
+all <- join(all, SlopeShape, by = 'id', type = 'inner')
+all <- join(all, CarbonateStage, by = 'id', type = 'inner')
+all <- join(all, BioticCrustClass, by = 'id', type = 'inner')
 
 write.csv(all,file="F:/Soils/SoilEnvironmentalData.csv", row.names=FALSE)

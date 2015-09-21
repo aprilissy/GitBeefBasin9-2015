@@ -191,3 +191,9 @@ is.na(data$maxpH) <- !is.finite(data$maxpH)
 
 write.csv(data,file="F:/Soils/SoilEnvironmentaldataUSGS.csv", row.names=FALSE)
 
+#####
+# Add to April Soils
+
+april  <- read.csv("F:/Soils/SoilEnvironmentaldata.csv")
+
+total <- rbind(april, data)

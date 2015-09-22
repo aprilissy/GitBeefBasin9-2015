@@ -16,6 +16,7 @@ library(plyr)
 
 # Read in data
 dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
+# Manually in excel add in second IL1_9 row of NA so H2 still has 99obs
 dat <- getanID(data = dat, id.vars = "id") # Creates an ordered list of each horizon in a plot
 dat$depth <- dat$bottom-dat$top
 dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
@@ -66,55 +67,35 @@ dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,
 H2 <- dat[! which(dat$.id=='1'), ] # Pull out horizon #1
 
 
+
 # Functions for Max and Min
-H2$TotalAWC <- ddply(H2, 'id', summarize, TotalAWC = sum(AWCcm, na.rm = T))
-
-MaxAWC <- ddply(H2, 'id', summarize, MaxAWC = max(AWHC, na.rm = T))
-Slope <- ddply( H2, .(id), function(x) max(x$Slope, na.rm = T) )
-names(Slope)[2] <- 'Slope'
-maxDepth <- ddply( H2, .(id), function(x) max(x$bottom, na.rm = T) )
-names(maxDepth)[2] <- 'maxDepth'
-maxSand <- ddply( H2, .(id), function(x) max(x$SandPercent, na.rm = T) )
-names(maxSand)[2] <- 'maxSand'
-minSand <- ddply( H2, .(id), function(x) min(x$SandPercent, na.rm = T) )
-names(minSand)[2] <- 'minSand'
-minClay <- ddply( H2, .(id), function(x) min(x$ClayPercent, na.rm = T) )
-names(minClay)[2] <- 'minClay'
-maxClay <- ddply( H2, .(id), function(x) max(x$ClayPercent, na.rm = T) )
-names(maxClay)[2] <- 'maxClay'
-Elevation <- ddply( H2, .(id), function(x) max(x$Elevation, na.rm = T) )
-names(Elevation)[2] <- 'Elevation'
-maxpH <- ddply( H2, .(id), function(x) max(x$pH, na.rm = T) )
-names(maxpH)[2] <- 'maxpH'
-minpH <- ddply( H2, .(id), function(x) min(x$pH, na.rm = T) )
-names(minpH)[2] <- 'minpH'
-CarbonateStage <- ddply( H2, .(id), function(x) max(x$CarbonateStage, na.rm = T) )
-names(CarbonateStage)[2] <- 'CarbonateStage'
-BioticCrustClass <- ddply( H2, .(id), function(x) max(x$BioticCrustClass, na.rm = T) )
-names(BioticCrustClass)[2] <- 'BioticCrustClass'
-
-
-#Factor
-maxDryValue <- ddply(.data = H2, .(id), function(x) max(x$DryValue, na.rm = T))
-names(maxDryValue)[2] <- 'maxDryValue'
-minDryValue <- ddply(.data = H2, .(id), function(x) min(x$DryValue, na.rm = T))
-names(minDryValue)[2] <- 'minDryValue'
-maxDryChroma <- ddply(.data = dat, .(id), function(x) max(x$DryChroma, na.rm = T))
-names(maxDryChroma)[2] <- 'maxDryChroma'
-minDryChroma <- ddply(.data = dat, .(id), function(x) min(x$DryChroma, na.rm = T))
-names(minDryChroma)[2] <- 'minDryChroma'
-maxMoistValue <- ddply(.data = dat, .(id), function(x) max(x$MoistValue, na.rm = T))
-names(maxMoistValue)[2] <- 'maxMoistValue'
-minMoistValue <- ddply(.data = dat, .(id), function(x) min(x$MoistValue, na.rm = T))
-names(minMoistValue)[2] <- 'minMoistValue'
-maxMoistChroma <- ddply(.data = dat, .(id), function(x) max(x$MoistChroma, na.rm = T))
-names(maxMoistChroma)[2] <- 'maxMoistChroma'
-minMoistChroma <- ddply(.data = dat, .(id), function(x) min(x$MoistChroma, na.rm = T))
-names(minMoistChroma)[2] <- 'minMoistChroma'
+TotalAWC <- ddply(H2, 'id', summarize, TotalAWC = sum(AWCcm, na.rm = T))
+MaxAWC <- ddply(H2, 'id', summarize, MaxAWC = max(AWCcm, na.rm = T))
+MaxDepth <- ddply(H2, 'id', summarize, MaxDepth = max(depth, na.rm = T))
+MaxClay <- ddply( H2, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
+MinClay <- ddply( H2, 'id', summarize, MinClay = min(ClayPercent, na.rm = T))
+MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
+MinSand <- ddply(H2, 'id', summarize, MinSand = min(SandPercent, na.rm = T))
+MaxpH <- ddply(H2, 'id', summarize, MaxpH = max(pH, na.rm = T))
+MinpH <- ddply(H2, 'id', summarize, MinpH = min(pH, na.rm = T))
+MaxDryHue <- ddply(H2, 'id', summarize, MaxDryHue = max(DryHue, na.rm = T))
+MinDryHue <- ddply(H2, 'id', summarize, MinDryHue = min(DryHue, na.rm = T))
+MaxDryValue <- ddply(H2, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
+MinDryValue <- ddply(H2, 'id', summarize, MinDryValue = min(DryValue, na.rm = T))
+MaxDryChroma <- ddply(H2, 'id', summarize, MaxDryChroma = max(DryChroma, na.rm = T))
+MinDryChroma <- ddply(H2, 'id', summarize, MinDryChroma = min(DryChroma, na.rm = T))
+MaxMoistHue <- ddply(H2, 'id', summarize, MaxMoistHue = max(MoistHue, na.rm = T))
+MinMoistHue <- ddply(H2, 'id', summarize, MinMoistHue = min(MoistHue, na.rm = T))
+MaxMoistValue <- ddply(H2, 'id', summarize, MaxMoistValue = max(MoistValue, na.rm = T))
+MinMoistValue <- ddply(H2, 'id', summarize, MinMoistValue = min(MoistValue, na.rm = T))
+MaxMoistChroma <- ddply(H2, 'id', summarize, MaxMoistChroma = max(MoistChroma, na.rm = T))
+MinMoistChroma <- ddply(H2, 'id', summarize, MinMoistChroma = min(MoistChroma, na.rm = T))
 
 
 
-
+is.na(dat$MaxClay) <- !is.finite(dat$MaxClay) 
+is.na(dat$MinClay) <- !is.finite(dat$MinClay) 
+is.na(dat$MaxAWC) <- !is.finite(dat$MaxAWC) 
 
 
 colnames(H1) = paste("H1_", colnames(H1)) # Rename variables for H1

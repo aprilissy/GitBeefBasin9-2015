@@ -17,8 +17,12 @@ library(plyr)
 # Read in data
 dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
 dat <- getanID(data = dat, id.vars = "id") # Creates an ordered list of each horizon in a plot
+dat$depth <- dat$bottom-dat$top
+dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
 
-# unique(c(as.character(dat$MoistHue)))
+dat$AWCcm <- dat$AWHC*dat$depth
+
+# unique(c(as.character(H2$.id)))
 
   # Scale Hue - Redness Scale - Degree of Redness
   # I have 4 Hue values:2.5YR, 5YR, 7.5YR, and 10YR
@@ -47,56 +51,73 @@ dat$Effervescence <- as.factor(dat$Effervescence)
 }
 
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
-H1 <- subset(H1, select = -c(Horizon,top,.id, HzNum) ) # Remove top, Horizon, HzNum, .id
 # Pull out data that is not only for horizon 1, then take it out of H1
 Plot <- subset(H1, select = c(id,Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
 H1 <- subset(H1, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
 
-colnames(H1) = paste("H1_", colnames(H1)) # Rename variables for H1
-rename(H1, c("H1_ id"="id", "H1_ bottom"="H1_ Depth")) 
 
 {Plot$SlopeShape <- sub("LC", "CL", Plot$SlopeShape, ignore.case = FALSE)
 Plot$SlopeShape <- sub("VC", "CV", Plot$SlopeShape, ignore.case = FALSE)
 Plot$SlopeShape <- sub("VL", "LV", Plot$SlopeShape, ignore.case = FALSE)
 Plot$SlopeShape <- as.factor(Plot$SlopeShape)}
-# unique(c(as.character(Plot$SlopeShape)))
-
-dat <- subset(dat, select = -c(Horizon,Theta_fc,Theta_pwp, HzNum,SlopeShape) )
+dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass) )
 
 
+H2 <- dat[! which(dat$.id=='1'), ] # Pull out horizon #1
+
+
+# Functions for Max and Min
+H2$TotalAWC <- ddply(H2, 'id', summarize, TotalAWC = sum(AWCcm, na.rm = T))
+
+MaxAWC <- ddply(H2, 'id', summarize, MaxAWC = max(AWHC, na.rm = T))
+Slope <- ddply( H2, .(id), function(x) max(x$Slope, na.rm = T) )
+names(Slope)[2] <- 'Slope'
+maxDepth <- ddply( H2, .(id), function(x) max(x$bottom, na.rm = T) )
+names(maxDepth)[2] <- 'maxDepth'
+maxSand <- ddply( H2, .(id), function(x) max(x$SandPercent, na.rm = T) )
+names(maxSand)[2] <- 'maxSand'
+minSand <- ddply( H2, .(id), function(x) min(x$SandPercent, na.rm = T) )
+names(minSand)[2] <- 'minSand'
+minClay <- ddply( H2, .(id), function(x) min(x$ClayPercent, na.rm = T) )
+names(minClay)[2] <- 'minClay'
+maxClay <- ddply( H2, .(id), function(x) max(x$ClayPercent, na.rm = T) )
+names(maxClay)[2] <- 'maxClay'
+Elevation <- ddply( H2, .(id), function(x) max(x$Elevation, na.rm = T) )
+names(Elevation)[2] <- 'Elevation'
+maxpH <- ddply( H2, .(id), function(x) max(x$pH, na.rm = T) )
+names(maxpH)[2] <- 'maxpH'
+minpH <- ddply( H2, .(id), function(x) min(x$pH, na.rm = T) )
+names(minpH)[2] <- 'minpH'
+CarbonateStage <- ddply( H2, .(id), function(x) max(x$CarbonateStage, na.rm = T) )
+names(CarbonateStage)[2] <- 'CarbonateStage'
+BioticCrustClass <- ddply( H2, .(id), function(x) max(x$BioticCrustClass, na.rm = T) )
+names(BioticCrustClass)[2] <- 'BioticCrustClass'
+
+
+#Factor
+maxDryValue <- ddply(.data = H2, .(id), function(x) max(x$DryValue, na.rm = T))
+names(maxDryValue)[2] <- 'maxDryValue'
+minDryValue <- ddply(.data = H2, .(id), function(x) min(x$DryValue, na.rm = T))
+names(minDryValue)[2] <- 'minDryValue'
+maxDryChroma <- ddply(.data = dat, .(id), function(x) max(x$DryChroma, na.rm = T))
+names(maxDryChroma)[2] <- 'maxDryChroma'
+minDryChroma <- ddply(.data = dat, .(id), function(x) min(x$DryChroma, na.rm = T))
+names(minDryChroma)[2] <- 'minDryChroma'
+maxMoistValue <- ddply(.data = dat, .(id), function(x) max(x$MoistValue, na.rm = T))
+names(maxMoistValue)[2] <- 'maxMoistValue'
+minMoistValue <- ddply(.data = dat, .(id), function(x) min(x$MoistValue, na.rm = T))
+names(minMoistValue)[2] <- 'minMoistValue'
+maxMoistChroma <- ddply(.data = dat, .(id), function(x) max(x$MoistChroma, na.rm = T))
+names(maxMoistChroma)[2] <- 'maxMoistChroma'
+minMoistChroma <- ddply(.data = dat, .(id), function(x) min(x$MoistChroma, na.rm = T))
+names(minMoistChroma)[2] <- 'minMoistChroma'
 
 
 
 
 
 
-
-
-
-
-
-
-# Surface
-dat$Surface <- as.numeric(dat$top<1) # Turns surface horizon into 1, and all other into 0
-
-max.func.sur <- function(dat) {
-  max.moist.sur <- max(dat$Surface)
-  
-  return(data.frame(Surface = dat$MoistChroma[dat$Surface==max.moist.sur]))
-}
-
-Surface <- ddply(dat, .(id), max.func.sur)
-names(Surface)[2] <- 'Surface'
-
-# Subsurface
-dat$Subsurface <- as.numeric(dat$.id==2) # Makes subsurface horizon 1, and all other horizons 0
-dat$MoistChroma[is.na(dat$MoistChroma)] <- 0
-
-max.func.sub <- function(dat) {
-  max.moist.sub <- max(dat$Subsurface)
-  
-  return(data.frame(Subsurface = dat$MoistChroma[dat$Subsurface==max.moist.sub]))
-}
-
-Subsurface <- ddply(dat, .(id), max.func.sub)
-names(Subsurface)[2] <- 'Subsurface'
+colnames(H1) = paste("H1_", colnames(H1)) # Rename variables for H1
+rename(H1, c("H1_ id"="id")) 
+colnames(H2) = paste("H2_", colnames(H2)) # Rename variables for H1
+rename(H2, c("H2_ id"="id")) 

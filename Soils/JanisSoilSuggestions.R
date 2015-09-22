@@ -10,47 +10,25 @@
 # 8. Use this to find how much water is in the top 50cm(example)
 # 9. Gini index looks at node impurity, how pure are the nodes, how well is it able to split into categories?
 
-
-# Read in data
-dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
-
-# Subset Slope Shape and combine categories
-SlopeShape <- subset(dat, select=c(id, SlopeShape))
-SlopeShape <- SlopeShape[complete.cases(SlopeShape), ] #Remove rows with only NA
-# row.names(SlopeShape)<-SlopeShape$id
-# SlopeShape <- SlopeShape[,-1]
-SlopeShape$SlopeShape <- sub("LC", "CL", SlopeShape$SlopeShape, ignore.case = FALSE)
-SlopeShape$SlopeShape <- sub("VC", "CV", SlopeShape$SlopeShape, ignore.case = FALSE)
-SlopeShape$SlopeShape <- sub("VL", "LV", SlopeShape$SlopeShape, ignore.case = FALSE)
-SlopeShape$SlopeShape <- as.factor(SlopeShape$SlopeShape)
-dat <- subset(dat, select = -c(Horizon,Theta_fc,Theta_pwp, HzNum,SlopeShape) )
-
-
-
-
-
-
-
-
-
+library(splitstackshape)
+library(plyr)
 
 
 # Read in data
 dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
 dat <- getanID(data = dat, id.vars = "id") # Creates an ordered list of each horizon in a plot
 
-# Select horizon #1
-H1 <- dat[ which(dat$.id=='1'), ]
+H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
+H1 <- subset(H1, select = -c(Horizon,top,.id, HzNum) ) # Remove top, Horizon, HzNum, .id
+# Pull out data that is not only for horizon 1, then take it out of H1
+Plot <- subset(H1, select = c(id,Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
+H1 <- subset(H1, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
+colnames(H1) = paste("H1_", colnames(H1)) # Rename variables for H1
+rename(H1, c("H1_ id"="id", "H1_ bottom"="H1_ Depth")) 
 
-# Remove top, Horizon, HzNum, .id
-H1 <- subset(dat, select = -c(Horizon,top,.id, HzNum) )
-# Pull out data that is not only for horizon 1
-Plot <- subset(H1, select = c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
 
 
-# Rename for H1
-colnames(H1) <- c("id", "surface","H1_Depth")
-colnames(H1) = paste("H1_", colnames(H1))
+
 
 
 # Surface

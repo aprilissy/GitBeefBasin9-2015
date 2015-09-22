@@ -192,8 +192,13 @@ is.na(data$maxpH) <- !is.finite(data$maxpH)
 write.csv(data,file="F:/Soils/SoilEnvironmentaldataUSGS.csv", row.names=FALSE)
 
 #####
+# Keep only Soils data that has matching veg data.
 # Add to April Soils
 
-april  <- read.csv("F:/Soils/SoilEnvironmentaldata.csv")
+usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGS.csv", header = T,row.names=1)
+SoilstoKeep <- usgs[c("CLHS01P","CLHS02P","CLHS10P","CLHS11P","CLHS12P","CLHS14P","CLHS15P","CLHS16P","CLHS17P","CLHS18P","CLHS19P","CLHS20P","CLHS21P","CLHS23P","CLHS24P","CLHS32P","CLHS33P","CLHS38P","CLHS39P","CLHS40P","CLHS42P","CLHS43P","CLHS44P","CLHS47P","CLHS48P","CLHS50P","CLHS57P","CLHS59P","CLHS60P","CLHS61P","CLHS67P","CLHS68P","CLHS73P","CLHS77P","CLHS80P","CLHS82P","CLHS90P"),]
 
-total <- rbind(april, data)
+april  <- read.csv("F:/Soils/SoilEnvironmentaldata.csv", header = T,row.names=1)
+total <- rbind(april, SoilstoKeep)
+write.csv(total,file="F:/Soils/SoilEnvironmentaldataAll.csv", row.names=FALSE)
+

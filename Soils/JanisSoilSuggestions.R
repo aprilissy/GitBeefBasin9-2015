@@ -36,8 +36,6 @@ udat$depth <- udat$bottom-udat$top
 dat$AWCcm <- (dat$AWHC*dat$depth)
 udat$AWCcm <- (udat$AWHC*udat$depth)
 
-# AWC weighted average
-
 
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
 # Pull out data that is not only for horizon 1, then take it out of H1
@@ -86,8 +84,11 @@ loc <- read.csv("F:/BeefBasin Data For April/BeefBasin/formattedR/locInfo.csv")
 # Remove BLM Trend and Miller plots
 site <- site[-c(66:77),]
 site <- site[order(site$pedonID),] # Sort so plot 100 is by 9 same as data
+site$pedonID <- extract_numeric(site$pedonID) # removes CLHS and P leaving only numbers.
 loc <- loc[-c(66:77),]
 loc <- loc[order(loc$Plot.Name),] # Sort so plot 100 is by 9 same as data
+loc$Plot.Name <- extract_numeric(loc$Plot.Name) # removes CLHS and P leaving only numbers.
+
 # put into dataframe to add to april
 id <-site$pedonID
 Elevation <- loc$altitude

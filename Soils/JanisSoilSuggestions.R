@@ -15,20 +15,28 @@ library(plyr)
 library(aqp)
 library(data.table)
 library(reshape2)
+library(tidyr)
 
 # Read in data
 dat <- read.csv("F:/Soils/SoilDataFitUSGSColumns.csv", header = T,nrows = 444)
 udat <- read.csv("F:/Soils/USGSsoildataModForAprilsdata.csv", header = T,nrows = 444)
+udat$id <- extract_numeric(udat$id) # removes CLHS and P leaving only numbers.
 
-# Manually in excel add in second IL1_9 row of NA so H2 still has 99obs
-dat <- getanID(data = dat, id.vars = "id") # Creates an ordered list of each horizon in a plot
+# Manually in excel I added in second IL1_9 row of NA so H2 still has 99obs
+
+# Creates an ordered list of each horizon in a plot
+dat <- getanID(data = dat, id.vars = "id") 
+udat <- getanID(data = udat, id.vars = "id")
+
+# get the depth of each horizon
 dat$depth <- dat$bottom-dat$top
-
-udat <- getanID(data = udat, id.vars = "id") # Creates an ordered list of each horizon in a plot
 udat$depth <- udat$bottom-udat$top
 
-dat$AWCcm <- dat$AWHC*dat$depth
-udat$AWCcm <- udat$AWHC*udat$depth
+# AWC (cmH2O/cmSoil) * horizon depth(cmSoil)=AWC(cmH2O)
+dat$AWCcm <- (dat$AWHC*dat$depth)
+udat$AWCcm <- (udat$AWHC*udat$depth)
+
+# AWC weighted average
 
 
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
@@ -41,6 +49,7 @@ dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,
 dat <- rbind(dat,udat)
 write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
 dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
+dat <- subset(dat, select = -c(AWHC,AWCcm) )
 
 # unique(c(as.character(Plot$SlopeShape)))
 
@@ -168,8 +177,8 @@ AWC100 <- dcast(d100, id + top + bottom ~ variable, value.var = 'value')
 AWC100 <- AWC100[,-c(2,3)]
 names(AWC100)[2] <- 'AWC100'
 
-all <- join(all, MaxAWC, by = 'id', type = 'inner')
-all <- join(all, TotalAWC, by = 'id', type = 'inner')
+# all <- join(all, MaxAWC, by = 'id', type = 'inner')
+# all <- join(all, TotalAWC, by = 'id', type = 'inner')
 all <- join(all, AWC25, by = 'id', type = 'inner')
 all <- join(all, AWC50, by = 'id', type = 'inner')
 all <- join(all, AWC100, by = 'id', type = 'inner')
@@ -198,13 +207,12 @@ Soils <- merge(Soils,Plot,by='id')
 #####
 # Keep only Soils data that has matching veg data.
 # Add to April Soils
-
-SoilstoKeep <- Soils[c("CLHS01P","CLHS02P","CLHS10P","CLHS11P","CLHS12P","CLHS14P","CLHS15P","CLHS16P","CLHS17P","CLHS18P","CLHS19P","CLHS20P","CLHS21P","CLHS23P","CLHS24P","CLHS32P","CLHS33P","CLHS38P","CLHS39P","CLHS40P","CLHS42P","CLHS43P","CLHS44P","CLHS47P","CLHS48P","CLHS50P","CLHS57P","CLHS59P","CLHS60P","CLHS61P","CLHS67P","CLHS68P","CLHS73P","CLHS77P","CLHS80P","CLHS82P","CLHS90P"),]
-April1 <- Soils[c(1:38,104:164),]
+SoilstoKeep <- Soils[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+April1 <- Soils[c(1:99),]
 Veg <- rbind(April1, SoilstoKeep)
 
 # Add USGS points in N and S plain to April
-USGSinNSplain <- Soils[c("CLHS19P","CLHS22P","CLHS24P","CLHS33P","CLHS39P","CLHS43P","CLHS44P","CLHS47P","CLHS48P","CLHS50P"),]
+USGSinNSplain <- SoilstoKeep[c("19","24","33","39","43","44","47","48","50"),]
 NSveg <- rbind(April1,USGSinNSplain)
 
 # USGS & April
@@ -213,4 +221,3 @@ write.csv(Veg,file="F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=FALS
 write.csv(NSveg,file="F:/Soils/SoilEnvironmentaldataNSplain.csv", row.names=FALSE)
 # April
 write.csv(April1,file="F:/Soils/SoilEnvironmentaldataApril.csv", row.names=FALSE)
-

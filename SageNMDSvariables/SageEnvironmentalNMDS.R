@@ -96,4 +96,11 @@ VegtoKeep <- Sage.Env.USGS[c("1","2","10","11","12","14","15","16","17","18","19
 
 # Add April data back in 
 Keep <- rbind(Sage.Env.April, VegtoKeep)
-write.csv(Keep,file="F:/SageNMDSvariables/Sage.Env.USGS.Keep.csv")
+write.csv(Keep,file="F:/SageNMDSvariables/Sage.Env.USGS.csv")
+
+####
+# Choose 10 USGS plots in N&S plain
+NS <- Sage.Env.USGS[c("19","24","33","39","43","44","47","48","50"),]
+NSApril <- rbind(Sage.Env.April,NS)
+write.csv(NSApril,file="F:/SageNMDSvariables/Sage.Env.NSplainApril.csv")
+

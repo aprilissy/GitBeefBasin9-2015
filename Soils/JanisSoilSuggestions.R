@@ -36,7 +36,6 @@ udat$depth <- udat$bottom-udat$top
 dat$AWCcm <- (dat$AWHC*dat$depth)
 udat$AWCcm <- (udat$AWHC*udat$depth)
 
-
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
 # Pull out data that is not only for horizon 1, then take it out of H1
 Plot <- subset(H1, select = c(id,Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
@@ -45,6 +44,10 @@ dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,
 
 # Combine April and USGS soils data
 dat <- rbind(dat,udat)
+
+TotalDepth <- ddply( dat, .(id), function(x) max(x$bottom, na.rm = T) )
+names(TotalDepth)[2] <- 'TotalDepth'
+
 write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
 dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
 dat <- subset(dat, select = -c(AWHC,AWCcm) )
@@ -108,13 +111,13 @@ Plot$SlopeShape <- sub("LVQ", "LV", Plot$SlopeShape, ignore.case = FALSE)
 Plot$SlopeShape <- as.factor(Plot$SlopeShape)}
 
 H2 <- dat[! which(dat$.id=='1'), ] # Pull out horizon #1
+H2 <- subset(H2, select=-c(.id,depth))
 
 
 
 # Functions for Max and Min
 TotalAWC <- ddply(H2, 'id', summarize, TotalAWC = sum(AWCcm, na.rm = T))
 MaxAWC <- ddply(H2, 'id', summarize, MaxAWC = max(AWCcm, na.rm = T))
-TotalDepth <- ddply(H2, 'id', summarize, TotalDepth = max(depth, na.rm = T))
 MaxClay <- ddply( H2, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
 MinClay <- ddply( H2, 'id', summarize, MinClay = min(ClayPercent, na.rm = T))
 MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
@@ -196,11 +199,11 @@ names(all)[names(all)=="H2_AWC50"]<-"AWC50"
 names(all)[names(all)=="H2_AWC100"]<-"AWC100"
 
 # Create new soil parameter where depth is binary.
-# if the maximum depth is >50/100/150/200 then 1, if not then 0
-all$Depth50 <- as.numeric('all$H2_ MaxDepth' > 50)
-all$Depth100 <- as.numeric('all$H2_ MaxDepth' > 100)
-all$Depth150 <- as.numeric('all$H2_ MaxDepth' > 150)
-all$Depth200 <- as.numeric('all$H2_ MaxDepth' == 200)
+# if the maximum depth is >50/100/150 then 1, if not then 0
+all$Depth50 <- as.numeric(all$TotalDepth > 50)
+all$Depth100 <- as.numeric(all$TotalDepth > 100)
+all$Depth150 <- as.numeric(all$TotalDepth > 150)
+all$Depth200 <- as.numeric(all$TotalDepth == 200)
 
 Soils <- merge(H1,all,by='id')
 Soils <- merge(Soils,Plot,by='id')

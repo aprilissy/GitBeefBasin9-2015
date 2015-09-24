@@ -2,134 +2,165 @@ library(vegan)
 library(MASS)
 library(colorspace)
 
-# read in data
-data.env.A <- read.csv("F:/Soils/SoilEnvironmentalDataApril.csv",header=TRUE, row.names=1)
-data.env.A[is.na(data.env.A)] <- 0 # replace NA with 0
-data.A <- data.env.A[,c(1:40,42:43)]
-
-H1 <- data.A[,c(1:11)]
-H2 <- data.A[-c(30,32,38,45,46,69),c(12:29)]
-Plot <- data.A[,c(30:42)]
-Plot2 <- data.A[,c(11,30:42)]
-
-
-# add shrub environmental variables
-sage.A <- read.csv("F:/SageNMDSvariables/Sage.Env.April.csv",header=TRUE,row.names=1)
-sage.A[is.na(sage.A)] <- 0 # replace NA with 0
-sage.H2 <- sage.A[-c(30,32,38,45,46,69),]
-# # set factors to factor not numeric
-# ix <- c(41)
-# data.env.A[ix] <- lapply(data.env.A[ix], as.factor) 
-# id <- c(1:40,42:43)
-# data.env.A[id] <- lapply(data.env.A[id], as.numeric)
-# data.A <- data.env.A[,c(1:40,42:43)]
-
-# # look at distance methods
-# rankindex(sage.A, data.A, c("euc","man","bray", "jac", "kul"))
-
-#calculate dissimilarities, use function "vegdist"in VEGAN package
-# data.dis<-vegdist(data.A,method="bray")
-# dis.matrix<-as.matrix(data.dis)
-# rankindex(dis.matrix,data.A)
-
-
-ord<-metaMDS(comm=data.A,distance="bray",trace=FALSE, k=3,
-             autotransform = FALSE,trymax = 100, zerodist = "add")
-ord # k2=0.99 ~10%  # k3=.074 ~7.5%   #k4=.0585 ~6%   #k5=.048 ~5%  #k6=.0408 ~4%
-stressplot(ord)
 #Stress <0.10 indicates that the ordination is good "with no real 
 #risk of drawing false inferences" (Clarke 1993, p. 26). 
 # linear fit is the fit between ordination values and distances
 
+# read in data
+All <- read.csv("F:/Soils/SoilEnvironmentalDataApril.csv",header=TRUE, row.names=1)
+All[is.na(All)] <- 0 # replace NA with 0
+# add shrub environmental variables
+sage.A <- read.csv("F:/SageNMDSvariables/Sage.Env.April.csv",header=TRUE,row.names=1)
+sage.A[is.na(sage.A)] <- 0 # replace NA with 0
+sage.H2 <- sage.A[-c(30,32,38,45,46,69),] #remove H2 empty rows.
 
-H1.ord<-metaMDS(comm=H1,distance="bray",trace=FALSE, k=3,
-             autotransform = FALSE,trymax = 100, zerodist = "add")
-H1.ord # k2=0.105 ~10.5%  # k3=.079 ~8%   #k4=.0645 ~6.5%   #k5=.0557 ~5.6% 
+#
+# All Soil Variables
+#
+All <- All[,c(1:40,42:43)] # remove SlopeShape (categorical)
+All.ord<-metaMDS(comm=All,distance="euc",trace=FALSE, k=2,
+                 autotransform = FALSE,trymax = 100, zerodist = "add")
+All.ord # k2=0.0285 ~3%
+stressplot(All.ord)
+fit.sage.A <- envfit(All.ord, sage.A,perm=1000)
+fit.sage.A    #Sig = Den (l&ld), rel cov(l&ld)
+#orditkplot(All.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+plot(all)
+title(main = "NMDS All Soil Variables")
+plot(fit.sage.A,col="blue", cex=0.9,font=2) 
+# Shis shows 3 distinct sets, H1, H2, and Plot
+
+
+#
+# Surface Horizon Variables
+#
+H1 <- All[,c(1:11)]
+H1.ord<-metaMDS(comm=H1,distance="euc",trace=FALSE, k=2,
+                autotransform = FALSE,trymax = 100, zerodist = "add")
+H1.ord # k2=0.0265 ~3%
 stressplot(H1.ord)
+fit.sage.H1 <- envfit(H1.ord, sage.A,perm=1000)
+fit.sage.H1    #Sig = Den (l&ld), prop ind, rel cov(l)
+#orditkplot(H1.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+plot(h1)
+title(main = "NMDS Surface Horizon Soil Variables")
+plot(fit.sage.H1,col="blue", cex=0.9,font=2) 
 
-
-H2.ord<-metaMDS(comm=H2,distance="bray",trace=FALSE, k=3,
-             autotransform = FALSE,trymax = 100, zerodist = "ignore")
-H2.ord # k2=0.128 ~13%  # k3=0.914 ~9%   #k4=.0709 ~7%   #k5=.0617 ~6% 
+#
+# Subsurface Horizon Variables
+#
+H2 <- All[-c(30,32,38,45,46,69),c(12:29)] #H2 data, remove rows with no data
+H2.ord<-metaMDS(comm=H2,distance="euc",trace=FALSE, k=2,
+                autotransform = FALSE,trymax = 100, zerodist = "ignore")
+H2.ord # k2=0.066 ~7%
 stressplot(H2.ord)
-
-
-Plot.ord<-metaMDS(comm=Plot,distance="bray",trace=FALSE, k=2,
-             autotransform = FALSE,trymax = 100, zerodist = "add")
-Plot.ord # k2=0.0767 ~8%  # k3=.058 ~5.8%   #k4=.046 ~4.6%   #k5=.0367 ~3.7%  
-stressplot(Plot.ord)
-
-
-Plot2.ord<-metaMDS(comm=Plot2,distance="bray",trace=FALSE, k=2,
-             autotransform = FALSE,trymax = 100, zerodist = "add")
-Plot2.ord # k2=0.0768 ~8%  # k3=.0586 ~6%   #k4=.0467 ~4.7%   #k5=.037 ~3.7%  
-stressplot(Plot2.ord)
-
-
-
-
-
-
-fit.sage <- envfit(ord, sage.A,perm=1000)
-fit.sage
-
-fit.sage.H1 <- envfit(H1, sage.A,perm=1000)
-fit.sage.H1
-
 fit.sage.H2<- envfit(H2.ord, sage.H2,perm=1000)
-fit.sage.H2
+fit.sage.H2   # Sig = None
+#orditkplot(H2.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+plot(h2)
+title(main = "NMDS Subsurface Horizon Soil Variables")
+plot(fit.sage.H2,col="blue", cex=0.9,font=2) 
+# break into Max color, Min color, and all else
 
+  #
+  # Max Color
+  #
+      Max <- H2[,c(7,9,11,13,15,17)] # H2 data Max values
+      Max.ord<-metaMDS(comm=Max,distance="euc",trace=FALSE, k=3,
+                      autotransform = FALSE,trymax = 100, zerodist = "ignore")
+      Max.ord # k2=0.055 ~6%
+      stressplot(Max.ord)
+      fit.sage.max<- envfit(H2.ord, sage.H2,perm=1000)
+      fit.sage.max   # Sig = None
+      #orditkplot(Max.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(max)
+      title(main = "NMDS 1&2 Subsurface Horizon Maximum Color Soil Variables")
+      plot(fit.sage.max,col="blue", cex=0.9,font=2) 
+      #orditkplot(Max.ord, display="species",choices=c(2,3), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(max23)
+      title(main = "NMDS 2&3 Subsurface Horizon Maximum Color Soil Variables")
+      plot(fit.sage.max,col="blue", cex=0.9,font=2) 
+      #orditkplot(Max.ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(max13)
+      title(main = "NMDS 1&3 Subsurface Horizon Maximum Color Soil Variables")
+      plot(fit.sage.max,col="blue", cex=0.9,font=2) 
+
+
+  #
+  # Min Color
+  #
+      Min <- H2[,c(8,10,12,14,16,18)] # H2 data Min values
+      Min.ord<-metaMDS(comm=Min,distance="euc",trace=FALSE, k=3,
+                      autotransform = FALSE,trymax = 100, zerodist = "ignore")
+      Min.ord # k2=0.053 ~5%
+      stressplot(Min.ord)
+      fit.sage.min<- envfit(Min.ord, sage.H2,perm=1000)
+      fit.sage.min   # Sig = Sig = Den (l&ld), prop ind, rel cov(l)
+      #orditkplot(Min.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(min)
+      title(main = "NMDS 1&2 Subsurface Horizon Minimum Color Soil Variables")
+      plot(fit.sage.min,col="blue", cex=0.9,font=2) 
+      #orditkplot(Min.ord, display="species",choices=c(2,3), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(min23)
+      title(main = "NMDS 2&3 Subsurface Horizon Minimum Color Soil Variables")
+      plot(fit.sage.min,col="blue", cex=0.9,font=2) 
+      #orditkplot(Min.ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(min13)
+      title(main = "NMDS 1&3 Subsurface Horizon Minimum Color Soil Variables")
+      plot(fit.sage.min,col="blue", cex=0.9,font=2) 
+
+  #
+  # H2 Subset
+  #
+      H2.sub <- H2[,c(1,2,3,4,5,6)] # H2 data Min values
+      H2.sub.ord<-metaMDS(comm=H2.sub,distance="euc",trace=FALSE, k=2,
+                       autotransform = FALSE,trymax = 100, zerodist = "ignore")
+      H2.sub.ord # k2=0.063 ~6%
+      stressplot(H2.sub.ord)
+      fit.sage.H2.sub<- envfit(H2.sub.ord, sage.H2,perm=1000)
+      fit.sage.H2.sub   # Sig = None
+      #orditkplot(H2.sub.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+      plot(h2sub)
+      title(main = "NMDS Subsurface Horizon Subset Soil Variables")
+      plot(fit.sage.H2.sub,col="blue", cex=0.9,font=2) 
+
+
+
+#
+# Plot Soil Variables
+#
+Plot <- All[,c(30:42)]
+Plot.ord<-metaMDS(comm=Plot,distance="euc",trace=FALSE, k=2,
+                  autotransform = FALSE,trymax = 100, zerodist = "add")
+Plot.ord # k2=0.008 ~0.8%  
+stressplot(Plot.ord)
 fit.sage.Plot <- envfit(Plot.ord, sage.A,perm=1000)
-fit.sage.Plot
-
-fit.sage.Plot2 <- envfit(Plot2.ord, sage.A,perm=1000)
-fit.sage.Plot2
-
-
-
-variableScores <- ord$species # Soil variable scores
-sampleScores <- ord$points # Plot scores
+fit.sage.Plot    # Sig = Den (l&ld), rel cov(l&ld)
+#orditkplot(Plot.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+plot(plot)
+title(main = "NMDS Plot Level Soil Variables")
+plot(fit.sage.Plot,col="blue", cex=0.9,font=2) 
 
 
-# s3d <- scatterplot3d(variableScores)
-# text(variableScores,labels=row.names(variableScores))
+
 
 #plotMDS
-orditkplot(Plot.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.5,0.5),ylim=c(-0.5,0.5))
-orditkplot(Plot.ord, display="species",choices=c(2,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.5,0.5),ylim=c(-0.5,0.5))
-orditkplot(Plot.ord, display="species",choices=c(1,3), col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.5,0.5),ylim=c(-0.5,0.5))
-# saveRDS(a12, file="F:/SageNMDSvariables/a12.Rdata")
-# saveRDS(a23, file="F:/SageNMDSvariables/a23.Rdata")
-# saveRDS(a13, file="F:/SageNMDSvariables/a13.Rdata")
 # saveRDS(bray, file="F:/SageNMDSvariables/bray.Rdata")
 # a12 <- readRDS("F:/SageNMDSvariables/a12.Rdata")
-# a23 <- readRDS("F:/SageNMDSvariables/a23.Rdata")
-# a13 <- readRDS("F:/SageNMDSvariables/a13.Rdata")
-
-plot(plot12)
-title(main = "NMDS 1&2")
-plot(fit.sage.Plot,col="blue", cex=0.9,font=2) 
-
-plot(plot23)
-title(main = "NMDS 2&3")
-plot(fit.sage.Plot,col="blue", cex=0.9,font=2) 
-
-plot(plot13)
-title(main = "NMDS 1&3")
-plot(fit.sage,col="blue", cex=0.9,font=2) 
 
 
-ordiplot(ord, type ="n",main="NMDS 1&2", choices=c(1,2))
- text(ord, display="species", col="black", cex=0.7)
- plot(fit.sage,col="blue", cex=0.7)
 
-ordiplot(ord, type ="n",main="NMDS 2&3", choices=c(2,3))
- text(ord, display="species", col="black", cex=0.7)
- plot(fit.sage,col="blue", cex=0.7)
+ordiplot(All.ord, type ="n",main="NMDS 1&2", choices=c(1,2))
+ text(All.ord, display="species", col="black", cex=0.7)
+ plot(fit.sage.A,col="blue", cex=0.7)
 
-ordiplot(ord, type ="n",main="NMDS 1&3", choices=c(1,3))
- text(ord, display="species", col="black", cex=0.7)
- plot(fit.sage,col="blue", cex=0.7)
+ordiplot(All.ord, type ="n",main="NMDS 2&3", choices=c(2,3))
+ text(All.ord, display="species", col="black", cex=0.7)
+ plot(fit.sage.A,col="blue", cex=0.7)
+
+ordiplot(All.ord, type ="n",main="NMDS 1&3", choices=c(1,3))
+ text(All.ord, display="species", col="black", cex=0.7)
+ plot(fit.sage.A,col="blue", cex=0.7)
 
 ##########
 # Sagebrush Height Classes

@@ -17,27 +17,69 @@ library(plyr)
 #fancyRpartPlot(model)
 
 
+
 d.usgs <- read.csv("F:/ShrubDensity/PresenceAbsence/USGSplotXspp.csv", row.names=1)
+d.usgs[is.na(d.usgs)] <- 0 # replace NA with 0
 d.april <- d.usgs[-c(1:60),] # pull out april data
 d.usgs <- d.usgs[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),] # keep only veg with soils data
-d.usgs <- rbind(d.usgs,d.april)
-d.usgs <- d.usgs[,8]
-d.april <- d.april[,8] # choose only ARTR2 column
+d.usgs <- rbind(d.usgs,d.april) # combine april and usgs (with only those that have soils data) into one
+d.usgs <- d.usgs[ order(row.names(d.usgs)), ] # Order so row.names matches soils data
+d.usgs.l <- d.usgs[,8] # choose only ARTR2 column
+d.april.l <- d.april[,8] # choose only ARTR2 column
+d.usgs.ld <-d.usgs[,9] # choose only ARTR2.D column
+d.april.ld <- d.april[,9] # choose only ARTR2.D column
 s.usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=1)
-s.april <- s.usgs[c(1:99),]
-l.usgs <- cbind (d.usgs,s.usgs) # combine ARTR2 and soils
-l.april <- cbind(d.april,s.april) # combine ARTR2 and soils
-names(l.usgs)[1] <- "ARTR2"
-names(l.april)[1] <- "ARTR2"
+s.usgs[is.na(s.usgs)] <- 0 # replace NA with 0
+s.april <- s.usgs[c(1:99),] # pull our april data
+s.usgs <- s.usgs[ order(row.names(s.usgs)), ] # Order so row.names matches veg data
+l.april <- cbind(d.april.l,s.april) #combine density and soils for april ARTR
+l.usgs <- cbind(d.usgs.l,s.usgs) #combine density and soils for usgs ARTR
+ld.usgs <- d.usgs.l+d.usgs.ld # add ARTR & ARTR.D into ARTR.LD
+ld.april <-d.april.l+d.april.ld # add ARTR & ARTR.D into ARTR.LD
+ld.usgs <- cbind(ld.usgs,s.usgs) #combine density and soils for usgs ARTR.LD
+ld.april <- cbind(ld.april,s.april) #combine density and soils for april ARTR.LD
+names(l.usgs)[1] <- "ARTR2" # Rename to something meaningful
+names(l.april)[1] <- "ARTR2" # Rename to something meaningful
+names(ld.usgs)[1] <- "ARTR2LD" # Rename to something meaningful
+names(ld.april)[1] <- "ARTR2LD" # Rename to something meaningful
 
-#Combine SageLive, LPI, and soils
-sageL <- read.csv("F:/ShrubDensity/PresenceAbsence/AprilSageLivePresenceAbsence.csv", row.names=1)
-colnames(sageL) <- c("sage")
-# lpi <- read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv")
-# lpi <- lpi[,-1] # remove plot names so don't duplicate below
-soils <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv", row.names=1)
 
-live <- cbind(sageL,soils)
+
+# #Combine SageLive, LPI, and soils
+# sageL <- read.csv("F:/ShrubDensity/PresenceAbsence/AprilSageLivePresenceAbsence.csv", row.names=1)
+# colnames(sageL) <- c("sage")
+# # lpi <- read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv")
+# # lpi <- lpi[,-1] # remove plot names so don't duplicate below
+# soils <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv", row.names=1)
+# 
+# live <- cbind(sageL,soils)
+
+
+################ Boruta #######################################
+## Variable Selection
+
+set.seed(1)
+Boruta.live <- Boruta(ARTR2~., data = l.april, doTrace = 2, ntree = 1000)
+Boruta.live
+plot(Boruta.live)
+TentativeRoughFix(Boruta.live)
+TentativeRoughFix(Boruta.live, averageOver = Inf)
+getImpRfGini(l.april,l.april$ARTR2, ntree = 500, num.trees = ntree)
+getSelectedAttributes(Boruta.live, withTentative = F)
+
+
+plotImpHistory(Boruta.live, colCode = c("green", "yellow", "red", "blue"), col = NULL,
+               type = "l", lty = 1, pch = 0, xlab = "Classifier run",
+               ylab = "Importance")
+
+
+Boruta.ld <- Boruta(ARTR2LD~., data = ld.april, doTrace = 2, ntree = 1000)
+Boruta.ld
+plot(Boruta.ld,main="Boruta Live&Dead")
+TentativeRoughFix(Boruta.ld)
+TentativeRoughFix(Boruta.ld, averageOver = Inf)
+getImpRfGini(ld.april,ld.april$ARTR2LD, ntree = 500, num.trees = ntree)
+getSelectedAttributes(Boruta.ld, withTentative = T)
 
 #Kappa and Class Functions
 ## Cohen's Kappa is the percent correctly classified corrected
@@ -75,18 +117,6 @@ class.sum=function(truth,predicted){
   au=round(roc.area(truth,predicted)$A,4)
   list(round(c(pcc,spec,sens,kap,au),3))
 }
-
-################ Boruta #######################################
-## Variable Selection
-
-set.seed(1)
-Boruta.live <- Boruta(sage~., data = live, doTrace = 2, ntree = 1000)
-Boruta.live
-plot(Boruta.live)
-TentativeRoughFix(Boruta.live)
-plot(Boruta.live)
-plotZHistory(Boruta.live)
-
 
 ####
 #Random Forest

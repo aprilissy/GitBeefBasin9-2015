@@ -7,6 +7,7 @@ library(randomForest)
 library(rpart.plot)
 library(RColorBrewer)
 library(Boruta)
+library(plyr)
 #library(rattle)
 
 #The prp() has a lot of different options to check out
@@ -14,6 +15,20 @@ library(Boruta)
 
 #This one has the best default
 #fancyRpartPlot(model)
+
+
+d.usgs <- read.csv("F:/ShrubDensity/PresenceAbsence/USGSplotXspp.csv", row.names=1)
+d.april <- d.usgs[-c(1:60),] # pull out april data
+d.usgs <- d.usgs[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),] # keep only veg with soils data
+d.usgs <- rbind(d.usgs,d.april)
+d.usgs <- d.usgs[,8]
+d.april <- d.april[,8] # choose only ARTR2 column
+s.usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=1)
+s.april <- s.usgs[c(1:99),]
+l.usgs <- cbind (d.usgs,s.usgs) # combine ARTR2 and soils
+l.april <- cbind(d.april,s.april) # combine ARTR2 and soils
+names(l.usgs)[1] <- "ARTR2"
+names(l.april)[1] <- "ARTR2"
 
 #Combine SageLive, LPI, and soils
 sageL <- read.csv("F:/ShrubDensity/PresenceAbsence/AprilSageLivePresenceAbsence.csv", row.names=1)

@@ -58,14 +58,14 @@ names(ld.april)[1] <- "ARTR2LD" # Rename to something meaningful
 ################ Boruta #######################################
 ## Variable Selection
 
-set.seed(1)
+# set.seed(1)
 Boruta.live <- Boruta(ARTR2~., data = l.april, doTrace = 2, ntree = 1000)
 Boruta.live
 plot(Boruta.live)
 TentativeRoughFix(Boruta.live)
 TentativeRoughFix(Boruta.live, averageOver = Inf)
 getImpRfGini(l.april,l.april$ARTR2, ntree = 500, num.trees = ntree)
-getSelectedAttributes(Boruta.live, withTentative = F)
+getSelectedAttributes(Boruta.live, withTentative = T)
 
 
 plotImpHistory(Boruta.live, colCode = c("green", "yellow", "red", "blue"), col = NULL,
@@ -121,25 +121,39 @@ class.sum=function(truth,predicted){
 ####
 #Random Forest
 ####
-# Using only ARTR (live)
+# Using only ARTR2 (live)
+# Boruta ARTR2 important
+# H2_MinDryHue + Depth150 + TotalDepth +
+#   Elevation + H1_Effervescence
 
+live.rf = randomForest(as.factor(ARTR2) ~ 
+                         Aspect + AWC100 + AWC25 + H1_MoistChroma +
+                         AWC50 + BioticCrustClass + H1_pH +
+                       CarbonateStage + Depth100 + Depth150 +
+                         Depth200 + Depth50 + H2_MaxClay +
+                       Elevation + H1_ClayPercent + H1_Depth +
+                         H1_DryChroma + H1_DryHue + H2_MaxpH +
+                       H1_DryValue + H1_Effervescence + H2_MinpH +
+                         H1_MoistHue + H1_MoistValue + H2_MinSand +
+                         H1_SandPercent + H2_MaxDryChroma +
+                         H2_MaxDryHue + H2_MaxMoistChroma +
+                         H2_MaxMoistValue + TotalDepth +
+                         H2_MaxMoistHue + H2_MaxDryValue +
+                         H2_MaxSand + H2_MinClay + H2_MinDryChroma +
+                         H2_MinDryHue + H2_MinDryValue + Slope +
+                         H2_MinMoistChroma + H2_MinMoistHue +
+                         H2_MinMoistValue + SlopeShape
+                       , data = l.april,proximity=TRUE,
+                       importance=TRUE,keep.forest=TRUE,
+                       na.action = na.omit, mtry = 2, 
+                       ntree = 1000)
 
-live.rf = randomForest(as.factor(sage) ~ 
-                         AWC100 + AWC25 + AWC50 + BioticCrustClass +
-                         CarbonateStage + Depth100 + Depth150 + Depth200 +
-                         Depth50 + Elevation + MaxAWC + maxClay + maxSand +
-                         maxDepth + maxDryChroma + maxDryValue + minClay +
-                         maxMoistChroma + maxMoistValue + maxpH + minpH +
-                         minDryChroma + minDryValue + minMoistChroma +
-                         minMoistValue + minSand + SlopeShape +Subsurface +
-                         Surface + TotalAWC
-                       , data = live,proximity=TRUE,importance=TRUE,
-                       keep.forest=TRUE)
-
-live.rf$confusion
-class.sum(live$sage,predict(live.rf,type="prob")[,2])
+live.rf
+# live.rf$confusion
+# class.sum(l.april$ARTR2,predict(live.rf,type="prob")[,2])
 
 varImpPlot(live.rf, main = 'Live Sagebrush')
+     
 
 ####
 ## Crossvalidation
@@ -147,68 +161,78 @@ varImpPlot(live.rf, main = 'Live Sagebrush')
  # remove factors that are below 0 on variable importance plot
  #   looking at the Mean Decrease in Accuracy.
 
-live.rf.xval.prob=rep(0,nrow(live))
-xvs=rep(1:10,length=nrow(live))
+live.rf.xval.prob=rep(0,nrow(l.april))
+xvs=rep(1:10,length=nrow(l.april))
 xvs=sample(xvs)
 for(i in 1:10){
-  train=live[xvs!=i,]
-  test=live[xvs==i,]
-  rf=randomForest(as.factor(sage) ~ 
-                    AWC100 + AWC25 + AWC50 + BioticCrustClass +
-                    CarbonateStage + Depth100 + Depth150 + Depth200 +
-                    Depth50 + Elevation + MaxAWC + maxClay + maxSand +
-                    maxDepth + maxDryChroma + maxDryValue + minClay +
-                    maxMoistChroma + maxMoistValue + maxpH + minpH +
-                    minDryChroma + minDryValue + minMoistChroma +
-                    minMoistValue + minSand + SlopeShape +Subsurface +
-                    Surface + TotalAWC                   
-                  ,data=train)
+  train=l.april[xvs!=i,]
+  test=l.april[xvs==i,]
+  rf=randomForest(as.factor(ARTR2) ~ 
+                    Aspect + AWC100 + AWC25 + H1_MoistChroma +
+                    AWC50 + BioticCrustClass + H1_pH +
+                    CarbonateStage + Depth100 + Depth150 +
+                    Depth200 + Depth50 + H2_MaxClay +
+                    Elevation + H1_ClayPercent + H1_Depth +
+                    H1_DryChroma + H1_DryHue + H2_MaxpH +
+                    H1_DryValue + H1_Effervescence + H2_MinpH +
+                    H1_MoistHue + H1_MoistValue + H2_MinSand +
+                    H1_SandPercent + H2_MaxDryChroma +
+                    H2_MaxDryHue + H2_MaxMoistChroma +
+                    H2_MaxMoistValue + TotalDepth +
+                    H2_MaxMoistHue + H2_MaxDryValue +
+                    H2_MaxSand + H2_MinClay + H2_MinDryChroma +
+                    H2_MinDryHue + H2_MinDryValue + Slope +
+                    H2_MinMoistChroma + H2_MinMoistHue +
+                    H2_MinMoistValue + SlopeShape
+                    ,data=train)
   live.rf.xval.prob[xvs==i]=predict(rf,test,type="prob")[,2]
 }
 
-live.rf.confuse.xval=table(live$sage,live.rf.xval.prob)
-100-100*sum(diag(live.rf.xval.prob))/nrow(live)
+live.rf.confuse.xval=table(l.april$ARTR2,live.rf.xval.prob)
+100-100*sum(diag(live.rf.xval.prob))/nrow(l.april)
 
-table(live$sage,round(live.rf.xval.prob+ 0.0000001))
-class.sum(live$sage,live.rf.xval.prob)
+table(l.april$ARTR2,round(live.rf.xval.prob+ 0.0000001))
+class.sum(l.april$ARTR2,live.rf.xval.prob)
 
+rf
+varImpPlot(rf, main = 'Live Sagebrush')
 
 ###
 # Variable Importance and Partial Dependence Plots
 ###
 varImpPlot(live.rf)
 
-partialPlot(live.rf,live, BioticCrustClass, which.class="1", main = 'Live Sagebrush Partial Dependence on Biotic Crust Class')
+partialPlot(live.rf,l.april, BioticCrustClass, which.class="1", main = 'Live Sagebrush Partial Dependence on Biotic Crust Class')
 
-partialPlot(live.rf,live, CarbonateStage, which.class="1", main = 'Live Sagebrush Partial Dependence on CarbonateStage Crust Class')
+partialPlot(live.rf,l.april, CarbonateStage, which.class="1", main = 'Live Sagebrush Partial Dependence on CarbonateStage Crust Class')
 
-partialPlot(live.rf,live, Depth50, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth50 ')
+partialPlot(live.rf,l.april, Depth50, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth50 ')
 
-partialPlot(live.rf,live, Depth100, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth100')
+partialPlot(live.rf,l.april, Depth100, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth100')
 
-partialPlot(live.rf,live, Depth150, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth150')
+partialPlot(live.rf,l.april, Depth150, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth150')
 
-partialPlot(live.rf,live, Depth200, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth200')
+partialPlot(live.rf,l.april, Depth200, which.class="1", main = 'Live Sagebrush Partial Dependence on Depth200')
 
-partialPlot(live.rf,live, Elevation, which.class="1", main = 'Live Sagebrush Partial Dependence on Elevation')
+partialPlot(live.rf,l.april, Elevation, which.class="1", main = 'Live Sagebrush Partial Dependence on Elevation')
 
-partialPlot(live.rf,live, MaxAWC, which.class="1", main = 'Live Sagebrush Partial Dependence on MaxAWC')
+# partialPlot(live.rf,live, MaxAWC, which.class="1", main = 'Live Sagebrush Partial Dependence on MaxAWC')
 
-partialPlot(live.rf,live, maxDepth, which.class="1", main = 'Live Sagebrush Partial Dependence on maxDepth')
+partialPlot(live.rf,l.april, TotalDepth, which.class="1", main = 'Live Sagebrush Partial Dependence on maxDepth')
 
-partialPlot(live.rf,live, maxDryValue, which.class="1", main = 'Live Sagebrush Partial Dependence on maxDryValue')
-
-partialPlot(live.rf,live, maxpH, which.class="1", main = 'Live Sagebrush Partial Dependence on maxpH')
-
-partialPlot(live.rf,live, minDryChroma, which.class="1", main = 'Live Sagebrush Partial Dependence on minDryChroma')
-
-partialPlot(live.rf,live, minDryValue, which.class="1", main = 'Live Sagebrush Partial Dependence on minDryValue')
-
-partialPlot(live.rf,live, minMoistChroma, which.class="1", main = 'Live Sagebrush Partial Dependence on minMoistChroma')
-
-partialPlot(live.rf,live, minMoistValue, which.class="1", main = 'Live Sagebrush Partial Dependence on minMoistValue')
-
-partialPlot(live.rf,live, SlopeShape, which.class="1", main = 'Live Sagebrush Partial Dependence on SlopeShape')
+# partialPlot(live.rf,live, maxDryValue, which.class="1", main = 'Live Sagebrush Partial Dependence on maxDryValue')
+# 
+# partialPlot(live.rf,live, maxpH, which.class="1", main = 'Live Sagebrush Partial Dependence on maxpH')
+# 
+# partialPlot(live.rf,live, minDryChroma, which.class="1", main = 'Live Sagebrush Partial Dependence on minDryChroma')
+# 
+# partialPlot(live.rf,live, minDryValue, which.class="1", main = 'Live Sagebrush Partial Dependence on minDryValue')
+# 
+# partialPlot(live.rf,live, minMoistChroma, which.class="1", main = 'Live Sagebrush Partial Dependence on minMoistChroma')
+# 
+# partialPlot(live.rf,live, minMoistValue, which.class="1", main = 'Live Sagebrush Partial Dependence on minMoistValue')
+# 
+partialPlot(live.rf,l.april, SlopeShape, which.class="1", main = 'Live Sagebrush Partial Dependence on SlopeShape')
 
 
 
@@ -216,43 +240,44 @@ partialPlot(live.rf,live, SlopeShape, which.class="1", main = 'Live Sagebrush Pa
 # Random Forests for Important Variable Only
 ####
 
-live.rf.imp=randomForest(as.factor(sage)~  BioticCrustClass +CarbonateStage + Depth100 + 
-                           Depth150 + Depth200 + Depth50 + Elevation + 
-                           MaxAWC + maxDepth + maxDryValue + maxpH +
-                           minDryChroma + minDryValue + minMoistChroma +
-                           minMoistValue + SlopeShape   
-                       ,proximity=TRUE,importance=TRUE,keep.forest=TRUE,data=live)
-live.rf.imp$confusion
-class.sum(live$sage,predict(live.rf.imp,type="prob")[,2])
+live.rf.imp=randomForest(as.factor(ARTR2)~  
+                           Depth150 +Depth100 + TotalDepth +
+                           H2_MinDryChroma + Elevation +
+                           H1_DryChroma
+                       ,proximity=TRUE,importance=TRUE,keep.forest=TRUE,data=l.april)
+# live.rf.imp$confusion
+# class.sum(live$sage,predict(live.rf.imp,type="prob")[,2])
+# 
+# live.rf.confuse.xval=table(live$sage,live.rf.xval.prob)
+# 100-100*sum(diag(live.rf.xval.prob))/nrow(live)
+live.rf.imp
+varImpPlot(live.rf.imp)
 
-live.rf.confuse.xval=table(live$sage,live.rf.xval.prob)
-100-100*sum(diag(live.rf.xval.prob))/nrow(live)
 ####
 ## Crossvalidation for Important Variables
 ####
 
-live.rf.imp.xval.prob=rep(0,nrow(live))
-xvs=rep(1:10,length=nrow(live))
+live.rf.imp.xval.prob=rep(0,nrow(l.april))
+xvs=rep(1:10,length=nrow(l.april))
 xvs=sample(xvs)
 for(i in 1:10){
-  train=live[xvs!=i,]
-  test=live[xvs==i,]
-  rf=randomForest(as.factor(sage)~ BioticCrustClass +CarbonateStage + Depth100 + 
-                    Depth150 + Depth200 + Depth50 + Elevation + 
-                    MaxAWC + maxDepth + maxDryValue + maxpH +
-                    minDryChroma + minDryValue + minMoistChroma +
-                    minMoistValue + SlopeShape  
+  train=l.april[xvs!=i,]
+  test=l.april[xvs==i,]
+  rf=randomForest(as.factor(ARTR2)~  
+                    Depth150 +Depth100 + TotalDepth +
+                    H2_MinDryChroma + Elevation +
+                    H1_DryChroma
                   ,data=train)
   live.rf.imp.xval.prob[xvs==i]=predict(rf,test,type="prob")[,2]
 }
 
-table(live$sage,round(live.rf.imp.xval.prob+ 0.0000001))
-class.sum(live$sage,live.rf.imp.xval.prob)
-
-live.rf.confuse.xval=table(live$sage,live.rf.imp.xval.prob)
-100-100*sum(diag(live.rf.imp.xval.prob))/nrow(live)
-
-
+# table(live$sage,round(live.rf.imp.xval.prob+ 0.0000001))
+# class.sum(live$sage,live.rf.imp.xval.prob)
+# 
+# live.rf.confuse.xval=table(live$sage,live.rf.imp.xval.prob)
+# 100-100*sum(diag(live.rf.imp.xval.prob))/nrow(live)
+# 
+rf
 
 ## Interpretation ##
 

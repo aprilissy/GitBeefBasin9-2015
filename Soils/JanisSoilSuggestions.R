@@ -45,8 +45,8 @@ dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,
 # Combine April and USGS soils data
 dat <- rbind(dat,udat)
 
-TotalDepth <- ddply( dat, .(id), function(x) max(x$bottom, na.rm = T) )
-names(TotalDepth)[2] <- 'TotalDepth'
+PedonDepth <- ddply( dat, .(id), function(x) max(x$bottom, na.rm = T) )
+names(PedonDepth)[2] <- 'PedonDepth'
 
 write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
 dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
@@ -155,7 +155,7 @@ all <- join(all, MaxMoistValue, by = 'id', type = 'inner')
 all <- join(all, MinMoistValue, by = 'id', type = 'inner')
 all <- join(all, MaxMoistChroma, by = 'id', type = 'inner')
 all <- join(all, MinMoistChroma, by = 'id', type = 'inner')
-all <- join(all, TotalDepth, by = 'id', type = 'inner')
+all <- join(all, PedonDepth, by = 'id', type = 'inner')
 
 
 #Now calculate depth weighted averages of each continuous variable, then append these to the other variables. 
@@ -193,17 +193,17 @@ colnames(H1) = paste("H1", sep="_", colnames(H1)) # Rename variables for H1
 rename(H1, c("H1_id"="id")) 
 colnames(all) = paste("H2",sep="_", colnames(all)) # Rename variables for H1
 names(all)[names(all)=="H2_id"]<-"id"
-names(all)[names(all)=="H2_TotalDepth"]<-"TotalDepth"
+names(all)[names(all)=="H2_PedonDepth"]<-"PedonDepth"
 names(all)[names(all)=="H2_AWC25"]<-"AWC25"
 names(all)[names(all)=="H2_AWC50"]<-"AWC50"
 names(all)[names(all)=="H2_AWC100"]<-"AWC100"
 
 # Create new soil parameter where depth is binary.
 # if the maximum depth is >50/100/150 then 1, if not then 0
-all$Depth50 <- as.numeric(all$TotalDepth > 50)
-all$Depth100 <- as.numeric(all$TotalDepth > 100)
-all$Depth150 <- as.numeric(all$TotalDepth > 150)
-all$Depth200 <- as.numeric(all$TotalDepth == 200)
+all$Depth50 <- as.numeric(all$PedonDepth > 50)
+all$Depth100 <- as.numeric(all$PedonDepth > 100)
+all$Depth150 <- as.numeric(all$PedonDepth > 150)
+all$Depth200 <- as.numeric(all$PedonDepth == 200)
 
 Soils <- merge(H1,all,by='id')
 Soils <- merge(Soils,Plot,by='id')

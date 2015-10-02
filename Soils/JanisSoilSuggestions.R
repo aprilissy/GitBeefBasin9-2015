@@ -10,6 +10,10 @@
 # 8. Use this to find how much water is in the top 50cm(example)
 # 9. Gini index looks at node impurity, how pure are the nodes, how well is it able to split into categories?
 
+
+# unique(c(as.character(Plot$SlopeShape)))
+
+
 library(splitstackshape)
 library(plyr)
 library(aqp)
@@ -28,6 +32,39 @@ udat$id <- extract_numeric(udat$id) # removes CLHS and P leaving only numbers.
 dat <- getanID(data = dat, id.vars = "id") 
 udat <- getanID(data = udat, id.vars = "id")
 
+H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
+Plot <- subset(H1, select = c(id,Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))# Pull out data that is for the whole plot
+H1 <- subset(H1, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))# Remove out data that is for the whole plot
+dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))# Remove out data that is for the whole plot
+
+# Combine April and USGS soils data
+dat <- rbind(dat,udat)
+
+  # Scale Hue - Redness Scale - Degree of Redness
+  # I have 4 Hue values:2.5YR, 5YR, 7.5YR, and 10YR
+  # They will be numbered from least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
+{
+dat$DryRed <- sub("2.5YR", "4", dat$DryHue, ignore.case = FALSE)
+dat$DryRed <- sub("7.5YR", "2", dat$DryHue, ignore.case = FALSE)
+dat$DryRed <- sub("5YR", "3", dat$DryHue, ignore.case = FALSE)
+dat$DryRed <- sub("10YR", "1", dat$DryHue, ignore.case = FALSE)
+
+dat$MoistRed <- sub("2.5YR", "4", dat$MoistHue, ignore.case = FALSE)
+dat$MoistRed <- sub("7.5YR", "2", dat$MoistHue, ignore.case = FALSE)
+dat$MoistRed <- sub("5YR", "3", dat$MoistHue, ignore.case = FALSE)
+dat$MoistRed <- sub("10YR", "1", dat$MoistHue, ignore.case = FALSE)
+
+dat$EfferScale <- sub("VE", "4", dat$Effervescence, ignore.case = FALSE)
+dat$EfferScale <- sub("ST", "3", dat$Effervescence, ignore.case = FALSE)
+dat$EfferScale <- sub("SL", "2", dat$Effervescence, ignore.case = FALSE)
+dat$EfferScale <- sub("VS", "1", dat$Effervescence, ignore.case = FALSE)
+dat$EfferScale <- sub("NE", "0", dat$Effervescence, ignore.case = FALSE)
+dat$EfferScale <- sub("LS", "2", dat$Effervescence, ignore.case = FALSE)
+}
+
+PedonDepth <- ddply( dat, .(id), function(x) max(x$bottom, na.rm = T) )
+names(PedonDepth)[2] <- 'PedonDepth'
+
 # get the depth of each horizon
 dat$depth <- dat$bottom-dat$top
 udat$depth <- udat$bottom-udat$top
@@ -35,46 +72,15 @@ udat$depth <- udat$bottom-udat$top
 # AWC (cmH2O/cmSoil) * horizon depth(cmSoil)=AWC(cmH2O)
 dat$AWCcm <- (dat$AWHC*dat$depth)
 udat$AWCcm <- (udat$AWHC*udat$depth)
+dat$TotalAWCcm <- (dat$AWCcm/PedonDepth)
 
-H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
-# Pull out data that is not only for horizon 1, then take it out of H1
-Plot <- subset(H1, select = c(id,Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
-H1 <- subset(H1, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass))
-dat <- subset(dat, select = -c(Elevation,Aspect,Slope,SlopeShape,CarbonateStage,BioticCrustClass) )
-
-# Combine April and USGS soils data
-dat <- rbind(dat,udat)
-
-PedonDepth <- ddply( dat, .(id), function(x) max(x$bottom, na.rm = T) )
-names(PedonDepth)[2] <- 'PedonDepth'
 
 write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
+
+
 dat <- subset(dat, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp, HzNum,Texture,SandSize) )
 dat <- subset(dat, select = -c(AWHC,AWCcm) )
 
-# unique(c(as.character(Plot$SlopeShape)))
-
-  # Scale Hue - Redness Scale - Degree of Redness
-  # I have 4 Hue values:2.5YR, 5YR, 7.5YR, and 10YR
-  # They will be numbered from least to most red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
-{
-dat$DryHue <- sub("2.5YR", "4", dat$DryHue, ignore.case = FALSE)
-dat$DryHue <- sub("7.5YR", "2", dat$DryHue, ignore.case = FALSE)
-dat$DryHue <- sub("5YR", "3", dat$DryHue, ignore.case = FALSE)
-dat$DryHue <- sub("10YR", "1", dat$DryHue, ignore.case = FALSE)
-
-dat$MoistHue <- sub("2.5YR", "4", dat$MoistHue, ignore.case = FALSE)
-dat$MoistHue <- sub("7.5YR", "2", dat$MoistHue, ignore.case = FALSE)
-dat$MoistHue <- sub("5YR", "3", dat$MoistHue, ignore.case = FALSE)
-dat$MoistHue <- sub("10YR", "1", dat$MoistHue, ignore.case = FALSE)
-
-dat$Effervescence <- sub("VE", "4", dat$Effervescence, ignore.case = FALSE)
-dat$Effervescence <- sub("ST", "3", dat$Effervescence, ignore.case = FALSE)
-dat$Effervescence <- sub("SL", "2", dat$Effervescence, ignore.case = FALSE)
-dat$Effervescence <- sub("VS", "1", dat$Effervescence, ignore.case = FALSE)
-dat$Effervescence <- sub("NE", "0", dat$Effervescence, ignore.case = FALSE)
-dat$Effervescence <- sub("LS", "2", dat$Effervescence, ignore.case = FALSE)
-}
 
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
 H1$Depth <- H1$depth
@@ -124,14 +130,14 @@ MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
 MinSand <- ddply(H2, 'id', summarize, MinSand = min(SandPercent, na.rm = T))
 MaxpH <- ddply(H2, 'id', summarize, MaxpH = max(pH, na.rm = T))
 MinpH <- ddply(H2, 'id', summarize, MinpH = min(pH, na.rm = T))
-MaxDryHue <- ddply(H2, 'id', summarize, MaxDryHue = max(DryHue, na.rm = T))
-MinDryHue <- ddply(H2, 'id', summarize, MinDryHue = min(DryHue, na.rm = T))
+MaxDryRed <- ddply(H2, 'id', summarize, MaxDryRed = max(DryRed, na.rm = T))
+MinDryRed <- ddply(H2, 'id', summarize, MinDryRed = min(DryRed, na.rm = T))
 MaxDryValue <- ddply(H2, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
 MinDryValue <- ddply(H2, 'id', summarize, MinDryValue = min(DryValue, na.rm = T))
 MaxDryChroma <- ddply(H2, 'id', summarize, MaxDryChroma = max(DryChroma, na.rm = T))
 MinDryChroma <- ddply(H2, 'id', summarize, MinDryChroma = min(DryChroma, na.rm = T))
-MaxMoistHue <- ddply(H2, 'id', summarize, MaxMoistHue = max(MoistHue, na.rm = T))
-MinMoistHue <- ddply(H2, 'id', summarize, MinMoistHue = min(MoistHue, na.rm = T))
+MaxMoistRed <- ddply(H2, 'id', summarize, MaxMoistRed = max(MoistRed, na.rm = T))
+MinMoistRed <- ddply(H2, 'id', summarize, MinMoistRed = min(MoistRed, na.rm = T))
 MaxMoistValue <- ddply(H2, 'id', summarize, MaxMoistValue = max(MoistValue, na.rm = T))
 MinMoistValue <- ddply(H2, 'id', summarize, MinMoistValue = min(MoistValue, na.rm = T))
 MaxMoistChroma <- ddply(H2, 'id', summarize, MaxMoistChroma = max(MoistChroma, na.rm = T))
@@ -143,14 +149,14 @@ all <- join(all, MaxSand, by = 'id', type = 'inner')
 all <- join(all, MinSand, by = 'id', type = 'inner')
 all <- join(all, MaxpH, by = 'id', type = 'inner')
 all <- join(all, MinpH, by = 'id', type = 'inner')
-all <- join(all, MaxDryHue, by = 'id', type = 'inner')
-all <- join(all, MinDryHue, by = 'id', type = 'inner')
+all <- join(all, MaxDryRed, by = 'id', type = 'inner')
+all <- join(all, MinDryRed, by = 'id', type = 'inner')
 all <- join(all, MaxDryValue, by = 'id', type = 'inner')
 all <- join(all, MinDryValue, by = 'id', type = 'inner')
 all <- join(all, MaxDryChroma, by = 'id', type = 'inner')
 all <- join(all, MinDryChroma, by = 'id', type = 'inner')
-all <- join(all, MaxMoistHue, by = 'id', type = 'inner')
-all <- join(all, MinMoistHue, by = 'id', type = 'inner')
+all <- join(all, MaxMoistRed, by = 'id', type = 'inner')
+all <- join(all, MinMoistRed, by = 'id', type = 'inner')
 all <- join(all, MaxMoistValue, by = 'id', type = 'inner')
 all <- join(all, MinMoistValue, by = 'id', type = 'inner')
 all <- join(all, MaxMoistChroma, by = 'id', type = 'inner')
@@ -180,6 +186,26 @@ names(AWC50)[2] <- 'AWC50'
 AWC100 <- dcast(d100, id + top + bottom ~ variable, value.var = 'value')
 AWC100 <- AWC100[,-c(2,3)]
 names(AWC100)[2] <- 'AWC100'
+
+
+# within each profile, compute weighted means, over the intervals: 0-25,0-50,0-100, removing NA if present 
+dwaclay <- slab(data, id ~ ClayPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+dwasand <- slab(data, id ~ SandPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+dwapH <- slab(data, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+
+# reshape to wide format, remove unneeded variables and rename. 
+DWAclay <- dcast(dwaclay, id + top + bottom ~ variable, value.var = 'value')
+DWAclay <- DWAclay[,-c(2,3)]
+names(DWAclay)[2] <- 'DWAclay'
+
+DWAsand <- dcast(dwasand, id + top + bottom ~ variable, value.var = 'value')
+DWAsand <- DWAsand[,-c(2,3)]
+names(DWAsand)[2] <- 'DWAsand'
+
+DWApH <- dcast(dwapH, id + top + bottom ~ variable, value.var = 'value')
+DWApH <- DWApH[,-c(2,3)]
+names(DWApH)[2] <- 'DWApH'
+
 
 # all <- join(all, MaxAWC, by = 'id', type = 'inner')
 # all <- join(all, TotalAWC, by = 'id', type = 'inner')

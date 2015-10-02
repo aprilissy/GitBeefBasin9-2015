@@ -43,7 +43,7 @@ H1.ord # k2=0.0265 ~3%
 stressplot(H1.ord)
 fit.sage.H1 <- envfit(H1.ord, sage.A,perm=1000)
 fit.sage.H1    #Sig = Den (l&ld), prop ind, rel cov(l)
-#orditkplot(H1.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
+#orditkplot(H1.ord, display="sites",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
 # saveRDS(h1, file="F:/SageNMDSvariables/h1.Rdata")
 # h1 <- readRDS("F:/SageNMDSvariables/h1.Rdata")
 plot(h1)
@@ -149,13 +149,6 @@ plot(fit.sage.H2,col="blue", cex=0.9,font=2)
 #
 # Plot Soil Variables
 #
-Plot <- All[,c(30:42)]
-Plot.ord<-metaMDS(comm=Plot,distance="euc",trace=FALSE, k=2,
-                  autotransform = FALSE,trymax = 100, zerodist = "add")
-Plot.ord # k2=0.008 ~0.8%  
-stressplot(Plot.ord)
-fit.sage.Plot <- envfit(Plot.ord, sage.A,perm=1000)
-fit.sage.Plot    # Sig = Den (l&ld), rel cov(l&ld)
 #orditkplot(Plot.ord, display="species",choices=c(1,2), col="black", cex=0.7, pcol="gray",pch="+")
 # saveRDS(plot, file="F:/SageNMDSvariables/plot.Rdata")
 # plot <- readRDS("F:/SageNMDSvariables/plot.Rdata")
@@ -176,9 +169,10 @@ plot(fit.sage.Plot,col="blue", cex=0.9,font=2)
 
 
 
-ordiplot(All.ord, type ="n",main="NMDS 1&2", choices=c(1,2))
- text(All.ord, display="species", col="black", cex=0.7)
- plot(fit.sage.A,col="blue", cex=0.7)
+ordiplot(H2.ord, type ="n",main="NMDS 1&2", choices=c(1,2))
+ text(H2.ord, display="species", col="black", cex=0.7)
+  text(H2.ord, display="sites", col="green4", cex=0.7)
+  plot(fit.sage.H2,col="blue", cex=0.7)
 
 ordiplot(All.ord, type ="n",main="NMDS 2&3", choices=c(2,3))
  text(All.ord, display="species", col="black", cex=0.7)

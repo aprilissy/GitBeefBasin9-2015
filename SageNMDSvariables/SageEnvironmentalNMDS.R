@@ -85,13 +85,10 @@ Sage.Env.USGS$PG.RelCov <- (lpi$ACHY+lpi$ARPU9+lpi$BOGR2+lpi$BOGR2.D+lpi$ELEL+lp
 #######################################################################
 # Remove USGS, only April Data
 Sage.Env.April <- Sage.Env.USGS[-c(1:60),] # remove usgs data
-# Write USGS and April Data
+# Write April Data
 write.csv(Sage.Env.April,file="F:/SageNMDSvariables/Sage.Env.April.csv")
-write.csv(Sage.Env.USGS,file="F:/SageNMDSvariables/Sage.Env.USGS.csv")
 
-################
 # Choose only rows that have soils data
-
 VegtoKeep <- Sage.Env.USGS[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
 
 # Add April data back in 

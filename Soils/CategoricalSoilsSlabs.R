@@ -63,12 +63,13 @@ names(PedonDepth)[2] <- 'PedonDepth'
 dat$Depth <- dat$bottom-dat$top
 
 
-# Scale Hue - Redness Scale - Degree of Redness
-# I have 4 Hue values:2.5YR, 5YR, 7.5YR, and 10YR
-# They will be numbered from least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
-
+# Scale Hue - Redness Scale - Degree of Redness: least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
+# Scale Chroma - Chroma Class: 1&2=Low, 3&4=Medium, 6&8=High
 dat$DryH <- dat$DryHue
 dat$MoistH <- dat$MoistHue
+dat$DryChroma <- sub("5", "4", dat$DryChroma, ignore.case = FALSE)
+dat$DryC <- dat$DryChroma
+dat$MoistC <- dat$MoistChroma
 dat$Effer <- dat$Effervescence
 
 {
@@ -81,6 +82,18 @@ dat$Effer <- dat$Effervescence
   dat$MoistHue <- sub("7.5YR", "2", dat$MoistHue, ignore.case = FALSE)
   dat$MoistHue <- sub("5YR", "3", dat$MoistHue, ignore.case = FALSE)
   dat$MoistHue <- sub("10YR", "1", dat$MoistHue, ignore.case = FALSE)
+  
+  dat$DryChroma <- sub("2", "1", dat$DryChroma, ignore.case = FALSE)
+  dat$DryChroma <- sub("3", "2", dat$DryChroma, ignore.case = FALSE)
+  dat$DryChroma <- sub("4", "2", dat$DryChroma, ignore.case = FALSE)
+  dat$DryChroma <- sub("6", "3", dat$DryChroma, ignore.case = FALSE)
+  dat$DryChroma <- sub("8", "3", dat$DryChroma, ignore.case = FALSE)
+  
+  
+  dat$MoistChroma <- sub("2", "1", dat$MoistChroma, ignore.case = FALSE)
+  dat$MoistChroma <- sub("3", "2", dat$MoistChroma, ignore.case = FALSE)
+  dat$MoistChroma <- sub("4", "2", dat$MoistChroma, ignore.case = FALSE)
+  dat$MoistChroma <- sub("6", "3", dat$MoistChroma, ignore.case = FALSE)
   
   dat$Effervescence <- sub("VE", "4", dat$Effervescence, ignore.case = FALSE)
   dat$Effervescence <- sub("ST", "3", dat$Effervescence, ignore.case = FALSE)
@@ -108,7 +121,9 @@ dat$Effer <- dat$Effervescence
 
 }
 dat <- rename(dat, c(DryHue="DryRed",DryH="DryHue",MoistHue="MoistRed",
-             MoistH="MoistHue",Effervescence="EfferScale",Effer="Effervescence"))
+             MoistH="MoistHue",DryChroma="DryCClass",DryC="DryChroma",
+             MoistChroma="MoistCClass",MoistC="MoistChroma",
+             Effervescence="EfferScale",Effer="Effervescence"))
 
 
 # write file before removing anything for use in slabs function below
@@ -140,6 +155,11 @@ TDryValue <- count(dat, vars=c("DryValue", "id"),wt_var="Depth")
 TDryValue<-xtabs(freq~id+DryValue, TDryValue)
 TDWA$DryValue <- colnames(TDryValue)[apply(TDryValue,1,which.max)]
 
+TDryCClass <- count(dat, vars=c("DryCClass", "id"),wt_var="Depth")
+TDryCClass<-xtabs(freq~id+DryCClass, TDryCClass)
+TDWA$DryCClass <- colnames(TDryCClass)[apply(TDryCClass,1,which.max)]
+TDWA[c(52,60,63),6]=3 # fix 3 occurences where chroma 6 was class 2
+
 TDryChroma <- count(dat, vars=c("DryChroma", "id"),wt_var="Depth")
 TDryChroma<-xtabs(freq~id+DryChroma, TDryChroma)
 TDWA$DryChroma <- colnames(TDryChroma)[apply(TDryChroma,1,which.max)]
@@ -155,6 +175,11 @@ TDWA$MoistHue <- colnames(TMoistHue)[apply(TMoistHue,1,which.max)]
 TMoistValue <- count(dat, vars=c("MoistValue", "id"),wt_var="Depth")
 TMoistValue<-xtabs(freq~id+MoistValue, TMoistValue)
 TDWA$MoistValue <- colnames(TMoistValue)[apply(TMoistValue,1,which.max)]
+
+TMoistCClass <- count(dat, vars=c("MoistCClass", "id"),wt_var="Depth")
+TMoistCClass<-xtabs(freq~id+MoistCClass, TMoistCClass)
+TDWA$MoistCClass <- colnames(TMoistCClass)[apply(TMoistCClass,1,which.max)]
+TDWA[c(105,154),11]=3 # fix 1 occurence where chroma 6 was class 2
 
 TMoistChroma <- count(dat, vars=c("MoistChroma", "id"),wt_var="Depth")
 TMoistChroma<-xtabs(freq~id+MoistChroma, TMoistChroma)
@@ -179,57 +204,65 @@ TDWA$EfferScale <- colnames(TEfferScale)[apply(TEfferScale,1,which.max)]
   # Subsurface Horizon
 SDWA <- PedonDepth
 
-SDryRed <- count(H1, vars=c("DryRed", "id"),wt_var="Depth")
+SDryRed <- count(H2, vars=c("DryRed", "id"),wt_var="Depth")
 SDryRed<-xtabs(freq~id+DryRed, SDryRed)
 SDWA$DryRed <- colnames(SDryRed)[apply(SDryRed,1,which.max)]
 
-SDryHue <- count(H1, vars=c("DryHue", "id"),wt_var="Depth")
+SDryHue <- count(H2, vars=c("DryHue", "id"),wt_var="Depth")
 SDryHue<-xtabs(freq~id+DryHue, SDryHue)
 SDWA$DryHue <- colnames(SDryHue)[apply(SDryHue,1,which.max)]
 
-SDryValue <- count(H1, vars=c("DryValue", "id"),wt_var="Depth")
+SDryValue <- count(H2, vars=c("DryValue", "id"),wt_var="Depth")
 SDryValue<-xtabs(freq~id+DryValue, SDryValue)
 SDWA$DryValue <- colnames(SDryValue)[apply(SDryValue,1,which.max)]
 
-SDryChroma <- count(H1, vars=c("DryChroma", "id"),wt_var="Depth")
+SDryCClass <- count(H2, vars=c("DryCClass", "id"),wt_var="Depth")
+SDryCClass<-xtabs(freq~id+DryCClass, SDryCClass)
+SDWA$DryCClass <- colnames(SDryCClass)[apply(SDryCClass,1,which.max)]
+SDWA[c(52),6]=3 # fix 3 occurences where chroma 6 was class 2
+
+SDryChroma <- count(H2, vars=c("DryChroma", "id"),wt_var="Depth")
 SDryChroma<-xtabs(freq~id+DryChroma, SDryChroma)
 SDWA$DryChroma <- colnames(SDryChroma)[apply(SDryChroma,1,which.max)]
 
-SMoistRed <- count(H1, vars=c("MoistRed", "id"),wt_var="Depth")
+SMoistRed <- count(H2, vars=c("MoistRed", "id"),wt_var="Depth")
 SMoistRed<-xtabs(freq~id+MoistRed, SMoistRed)
 SDWA$MoistRed <- colnames(SMoistRed)[apply(SMoistRed,1,which.max)]
 
-SMoistHue <- count(H1, vars=c("MoistHue", "id"),wt_var="Depth")
+SMoistHue <- count(H2, vars=c("MoistHue", "id"),wt_var="Depth")
 SMoistHue<-xtabs(freq~id+MoistHue, SMoistHue)
 SDWA$MoistHue <- colnames(SMoistHue)[apply(SMoistHue,1,which.max)]
 
-SMoistValue <- count(H1, vars=c("MoistValue", "id"),wt_var="Depth")
+SMoistValue <- count(H2, vars=c("MoistValue", "id"),wt_var="Depth")
 SMoistValue<-xtabs(freq~id+MoistValue, SMoistValue)
 SDWA$MoistValue <- colnames(SMoistValue)[apply(SMoistValue,1,which.max)]
 
-SMoistChroma <- count(H1, vars=c("MoistChroma", "id"),wt_var="Depth")
+SMoistCClass <- count(H2, vars=c("MoistCClass", "id"),wt_var="Depth")
+SMoistCClass<-xtabs(freq~id+MoistCClass, SMoistCClass)
+SDWA$MoistCClass <- colnames(SMoistCClass)[apply(SMoistCClass,1,which.max)]
+SDWA[c(105,154),11]=3 # fix 3 occurences where chroma 6 was class 2
+
+SMoistChroma <- count(H2, vars=c("MoistChroma", "id"),wt_var="Depth")
 SMoistChroma<-xtabs(freq~id+MoistChroma, SMoistChroma)
 SDWA$MoistChroma <- colnames(SMoistChroma)[apply(SMoistChroma,1,which.max)]
 
-STexture <- count(H1, vars=c("Texture", "id"),wt_var="Depth")
+STexture <- count(H2, vars=c("Texture", "id"),wt_var="Depth")
 STexture<-xtabs(freq~id+Texture, STexture)
 SDWA$Texture <- colnames(STexture)[apply(STexture,1,which.max)]
 
-SSandSize <- count(H1, vars=c("SandSize", "id"),wt_var="Depth")
+SSandSize <- count(H2, vars=c("SandSize", "id"),wt_var="Depth")
 SSandSize<-xtabs(freq~id+SandSize, SSandSize)
 SDWA$SandSize <- colnames(SSandSize)[apply(SSandSize,1,which.max)]
 
-SEffervescence <- count(H1, vars=c("Effervescence", "id"),wt_var="Depth")
+SEffervescence <- count(H2, vars=c("Effervescence", "id"),wt_var="Depth")
 SEffervescence<-xtabs(freq~id+Effervescence, SEffervescence)
 SDWA$Effervescence <- colnames(SEffervescence)[apply(SEffervescence,1,which.max)]
 
-SEfferScale <- count(H1, vars=c("EfferScale", "id"),wt_var="Depth")
+SEfferScale <- count(H2, vars=c("EfferScale", "id"),wt_var="Depth")
 SEfferScale<-xtabs(freq~id+EfferScale, SEfferScale)
 SDWA$EfferScale <- colnames(SEfferScale)[apply(SEfferScale,1,which.max)]
 
 }
-
-
 
 #Now calculate depth weighted averages of each continuous variable, then append these to the other variables. 
 #Convert to SoilProfileCollection

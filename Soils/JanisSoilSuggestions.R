@@ -11,8 +11,8 @@
 # 9. Gini index looks at node impurity, how pure are the nodes, how well is it able to split into categories?
 
 
-# unique(c(as.character(Plot$SlopeShape)))
-
+# unique(c(as.character(Plot$SlopeShape))) # Tells you all unique values in a column
+# which(grepl("5", dat$DryChroma)) # Tells you the rows it occurs at
 
 library(splitstackshape)
 library(plyr)

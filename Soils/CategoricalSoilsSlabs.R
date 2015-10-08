@@ -67,9 +67,9 @@ dat$Depth <- dat$bottom-dat$top
 # I have 4 Hue values:2.5YR, 5YR, 7.5YR, and 10YR
 # They will be numbered from least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
 
-dat$Dry2 <- dat$DryHue
-dat$Moist2 <- dat$MoistHue
-dat$Effer2 <- dat$Effervescence
+dat$DryH <- dat$DryHue
+dat$MoistH <- dat$MoistHue
+dat$Effer <- dat$Effervescence
 
 {
   dat$DryHue <- sub("2.5YR", "4", dat$DryHue, ignore.case = FALSE)
@@ -89,13 +89,27 @@ dat$Effer2 <- dat$Effervescence
   dat$Effervescence <- sub("NE", "0", dat$Effervescence, ignore.case = FALSE)
   dat$Effervescence <- sub("LS", "2", dat$Effervescence, ignore.case = FALSE)
   
-  rename(dat, c("DryHue"="DryRed"))
-  rename(dat, c("Dry2"="DryHue"))
-  rename(dat, c("MoistHue"="MoistRed"))
-  rename(dat, c("Moist2"="MoistHue"))
-  rename(dat, c("Effervescence"="EfferScale")) 
-  rename(dat, c("Effer2"="Effervescence"))
+  dat$Texture <- sub("LVFS", "LS", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("VFLS", "LS", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("VFSL", "SL", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("FSL", "SL", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("LCS", "LS", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("LM", "L", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("FLS", "LS", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("FS", "S", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("LFS", "LS", dat$Texture, ignore.case = FALSE)
+  dat$Texture <- sub("LMS", "LS", dat$Texture, ignore.case = FALSE)
+
+  
+  dat$SandSize <- sub("MID", "MIX", dat$SandSize, ignore.case = FALSE)
+  dat$SandSize <- sub("Vf, M", "MIX", dat$SandSize, ignore.case = FALSE)
+  dat$SandSize <- sub("VFS", "VF", dat$SandSize, ignore.case = FALSE)
+  dat$SandSize <- sub("VF ", "VF", dat$SandSize, ignore.case = FALSE)
+
 }
+dat <- rename(dat, c(DryHue="DryRed",DryH="DryHue",MoistHue="MoistRed",
+             MoistH="MoistHue",Effervescence="EfferScale",Effer="Effervescence"))
+
 
 # write file before removing anything for use in slabs function below
 write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
@@ -107,6 +121,113 @@ H1 <- subset(H1, select=-c(.id))
 
 H2 <- dat[! which(dat$.id=='1'), ] # Pull out horizon #1
 H2 <- subset(H2, select=-c(.id))
+
+{
+# Categorical Depth Weighted Mode
+
+  # Total Horizon
+TDWA <- PedonDepth
+
+TDryRed <- count(dat, vars=c("DryRed", "id"),wt_var="Depth")
+TDryRed<-xtabs(freq~id+DryRed, TDryRed)
+TDWA$DryRed <- colnames(TDryRed)[apply(TDryRed,1,which.max)]
+
+TDryHue <- count(dat, vars=c("DryHue", "id"),wt_var="Depth")
+TDryHue<-xtabs(freq~id+DryHue, TDryHue)
+TDWA$DryHue <- colnames(TDryHue)[apply(TDryHue,1,which.max)]
+
+TDryValue <- count(dat, vars=c("DryValue", "id"),wt_var="Depth")
+TDryValue<-xtabs(freq~id+DryValue, TDryValue)
+TDWA$DryValue <- colnames(TDryValue)[apply(TDryValue,1,which.max)]
+
+TDryChroma <- count(dat, vars=c("DryChroma", "id"),wt_var="Depth")
+TDryChroma<-xtabs(freq~id+DryChroma, TDryChroma)
+TDWA$DryChroma <- colnames(TDryChroma)[apply(TDryChroma,1,which.max)]
+
+TMoistRed <- count(dat, vars=c("MoistRed", "id"),wt_var="Depth")
+TMoistRed<-xtabs(freq~id+MoistRed, TMoistRed)
+TDWA$MoistRed <- colnames(TMoistRed)[apply(TMoistRed,1,which.max)]
+
+TMoistHue <- count(dat, vars=c("MoistHue", "id"),wt_var="Depth")
+TMoistHue<-xtabs(freq~id+MoistHue, TMoistHue)
+TDWA$MoistHue <- colnames(TMoistHue)[apply(TMoistHue,1,which.max)]
+
+TMoistValue <- count(dat, vars=c("MoistValue", "id"),wt_var="Depth")
+TMoistValue<-xtabs(freq~id+MoistValue, TMoistValue)
+TDWA$MoistValue <- colnames(TMoistValue)[apply(TMoistValue,1,which.max)]
+
+TMoistChroma <- count(dat, vars=c("MoistChroma", "id"),wt_var="Depth")
+TMoistChroma<-xtabs(freq~id+MoistChroma, TMoistChroma)
+TDWA$MoistChroma <- colnames(TMoistChroma)[apply(TMoistChroma,1,which.max)]
+
+TTexture <- count(dat, vars=c("Texture", "id"),wt_var="Depth")
+TTexture<-xtabs(freq~id+Texture, TTexture)
+TDWA$Texture <- colnames(TTexture)[apply(TTexture,1,which.max)]
+
+TSandSize <- count(dat, vars=c("SandSize", "id"),wt_var="Depth")
+TSandSize<-xtabs(freq~id+SandSize, TSandSize)
+TDWA$SandSize <- colnames(TSandSize)[apply(TSandSize,1,which.max)]
+
+TEffervescence <- count(dat, vars=c("Effervescence", "id"),wt_var="Depth")
+TEffervescence<-xtabs(freq~id+Effervescence, TEffervescence)
+TDWA$Effervescence <- colnames(TEffervescence)[apply(TEffervescence,1,which.max)]
+
+TEfferScale <- count(dat, vars=c("EfferScale", "id"),wt_var="Depth")
+TEfferScale<-xtabs(freq~id+EfferScale, TEfferScale)
+TDWA$EfferScale <- colnames(TEfferScale)[apply(TEfferScale,1,which.max)]
+
+  # Subsurface Horizon
+SDWA <- PedonDepth
+
+SDryRed <- count(H1, vars=c("DryRed", "id"),wt_var="Depth")
+SDryRed<-xtabs(freq~id+DryRed, SDryRed)
+SDWA$DryRed <- colnames(SDryRed)[apply(SDryRed,1,which.max)]
+
+SDryHue <- count(H1, vars=c("DryHue", "id"),wt_var="Depth")
+SDryHue<-xtabs(freq~id+DryHue, SDryHue)
+SDWA$DryHue <- colnames(SDryHue)[apply(SDryHue,1,which.max)]
+
+SDryValue <- count(H1, vars=c("DryValue", "id"),wt_var="Depth")
+SDryValue<-xtabs(freq~id+DryValue, SDryValue)
+SDWA$DryValue <- colnames(SDryValue)[apply(SDryValue,1,which.max)]
+
+SDryChroma <- count(H1, vars=c("DryChroma", "id"),wt_var="Depth")
+SDryChroma<-xtabs(freq~id+DryChroma, SDryChroma)
+SDWA$DryChroma <- colnames(SDryChroma)[apply(SDryChroma,1,which.max)]
+
+SMoistRed <- count(H1, vars=c("MoistRed", "id"),wt_var="Depth")
+SMoistRed<-xtabs(freq~id+MoistRed, SMoistRed)
+SDWA$MoistRed <- colnames(SMoistRed)[apply(SMoistRed,1,which.max)]
+
+SMoistHue <- count(H1, vars=c("MoistHue", "id"),wt_var="Depth")
+SMoistHue<-xtabs(freq~id+MoistHue, SMoistHue)
+SDWA$MoistHue <- colnames(SMoistHue)[apply(SMoistHue,1,which.max)]
+
+SMoistValue <- count(H1, vars=c("MoistValue", "id"),wt_var="Depth")
+SMoistValue<-xtabs(freq~id+MoistValue, SMoistValue)
+SDWA$MoistValue <- colnames(SMoistValue)[apply(SMoistValue,1,which.max)]
+
+SMoistChroma <- count(H1, vars=c("MoistChroma", "id"),wt_var="Depth")
+SMoistChroma<-xtabs(freq~id+MoistChroma, SMoistChroma)
+SDWA$MoistChroma <- colnames(SMoistChroma)[apply(SMoistChroma,1,which.max)]
+
+STexture <- count(H1, vars=c("Texture", "id"),wt_var="Depth")
+STexture<-xtabs(freq~id+Texture, STexture)
+SDWA$Texture <- colnames(STexture)[apply(STexture,1,which.max)]
+
+SSandSize <- count(H1, vars=c("SandSize", "id"),wt_var="Depth")
+SSandSize<-xtabs(freq~id+SandSize, SSandSize)
+SDWA$SandSize <- colnames(SSandSize)[apply(SSandSize,1,which.max)]
+
+SEffervescence <- count(H1, vars=c("Effervescence", "id"),wt_var="Depth")
+SEffervescence<-xtabs(freq~id+Effervescence, SEffervescence)
+SDWA$Effervescence <- colnames(SEffervescence)[apply(SEffervescence,1,which.max)]
+
+SEfferScale <- count(H1, vars=c("EfferScale", "id"),wt_var="Depth")
+SEfferScale<-xtabs(freq~id+EfferScale, SEfferScale)
+SDWA$EfferScale <- colnames(SEfferScale)[apply(SEfferScale,1,which.max)]
+
+}
 
 
 
@@ -188,9 +309,6 @@ names(DWApH)[2] <- 'DWApH'
 #Now calculate depth weighted averages of H2
 #Convert to SoilProfileCollection
 Sub <- H2
-Sub$DryRed <- as.numeric(Sub$DryRed)
-Sub$MoistRed <- as.numeric(Sub$MoistRed)
-Sub$EfferScale <- as.numeric(Sub$EfferScale)
 depths(Sub) <- id ~ top + bottom
 
 # within each profile, compute weighted means, removing NA if present 
@@ -198,28 +316,6 @@ subdwaclay <- slab(Sub, id ~ ClayPercent, slab.structure = c(0,200), slab.fun = 
 subdwasand <- slab(Sub, id ~ SandPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 subdwapH <- slab(Sub, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 subawhc <- slab(Sub, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-subdryred <- slab(Sub, id ~ DryRed, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-
-# compute slice-wise probability so that it sums to contributing fraction, from 0-150
-# a <- slab(Sub, fm= ~ Effervescence, cpm=1, slab.structure=0:200)
-# b <- slab(Sub, id ~ Effervescence, cpm=1, slab.structure=0:200)
-# 
-# c <- slab(Sub, fm= ~ DryHue, cpm=1, slab.structure=0:200)
-# d <- slab(Sub, id ~ DryHue, cpm=1, slab.structure=0:200)
-# e <- slab(Sub, fm= ~ DryHue, cpm=2, slab.structure=0:200)
-# f <- slab(Sub, fm= id ~ DryHue, cpm=1, slab.structure=0:200)
-g <- slab(Sub, id ~ DryHue, slab.structure = c(0,200), na.rm=TRUE)
-
-
-# reshape into long format for plotting
-g.long <- melt(g, id.vars=c('id'), measure.vars=c('X10YR','X2.5YR','X5YR','X7.5YR'))
-# reshape to wide format, remove unneeded variables and rename. 
-gg.long <- dcast(g.long, id ~ variable, value.var = 'value')
-
-
-
-
-
 
 # reshape to wide format, remove unneeded variables and rename. 
 SubDWAClay <- dcast(subdwaclay, id + top + bottom ~ variable, value.var = 'value')

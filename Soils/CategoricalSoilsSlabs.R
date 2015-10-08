@@ -335,8 +335,6 @@ SubAWC <- SubAWC[,-c(2,3)]
 names(SubAWC)[2] <- 'SubAWC'
 
 
-
-
 slabs <- join(AWC.0.25, AWC.0.50, by = 'id', type = 'inner')
 slabs <- join(slabs, AWC.0.100, by = 'id', type = 'inner')
 slabs <- join(slabs, AWC.0.150, by = 'id', type = 'inner')
@@ -354,3 +352,49 @@ slabs <- join(slabs, SubDWAClay, by = 'id', type = 'inner')
 slabs <- join(slabs, SubDWASand, by = 'id', type = 'inner')
 slabs <- join(slabs, SubDWApH, by = 'id', type = 'inner')
 slabs <- join(slabs, SubAWC, by = 'id', type = 'inner')
+
+Plot <- join(Plot, PedonDepth, by = 'id', type = 'inner')
+
+# remove anything you don't want H1, H2, Plot, TDWA, SDWA, slabs
+H1 <- subset(H1, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp,AWHC, HzNum) )
+SDWA <- subset(SDWA, select = -c(PedonDepth) )
+TDWA <- subset(TDWA, select = -c(PedonDepth) )
+
+colnames(H1) = paste("H1", sep=".", colnames(H1)) # Rename variables for H1
+H1 <- rename(H1, c("H1.id"="id")) 
+
+colnames(TDWA) = paste("Tot",sep=".", colnames(TDWA)) # Rename variables for H1
+names(TDWA)[names(TDWA)=="Tot.id"]<-"id"
+colnames(SDWA) = paste("Sub",sep=".", colnames(SDWA)) # Rename variables for H1
+names(SDWA)[names(SDWA)=="Sub.id"]<-"id"
+
+# Create new soil parameter where depth is binary.
+# if the maximum depth is >50/100/150 then 1, if not then 0
+# all$Depth50 <- as.numeric(all$PedonDepth > 50)
+# all$Depth100 <- as.numeric(all$PedonDepth > 100)
+# all$Depth150 <- as.numeric(all$PedonDepth > 150)
+Plot$Depth200 <- as.numeric(Plot$PedonDepth == 200)
+
+Soils <- merge(Plot,H1,by='id')
+Soils <- merge(Soils,TDWA,by='id')
+Soils <- merge(Soils,SDWA,by='id')
+
+#####
+# Keep only Soils data that has matching veg data.
+# Add to April Soils
+SoilstoKeep <- Soils[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+April1 <- Soils[c(1:99),]
+Veg <- rbind(April1, SoilstoKeep)
+
+# Add USGS points in N and S plain to April
+USGSinNSplain <- SoilstoKeep[c("19","24","33","39","43","44","47","48","50"),]
+NSveg <- rbind(April1,USGSinNSplain)
+
+# USGS & April
+write.csv(Veg,file="F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=FALSE)
+# USGS in N&S plain & April
+write.csv(NSveg,file="F:/Soils/SoilEnvironmentaldataNSplain.csv", row.names=FALSE)
+# April
+write.csv(April1,file="F:/Soils/SoilEnvironmentaldataApril.csv", row.names=FALSE)
+
+

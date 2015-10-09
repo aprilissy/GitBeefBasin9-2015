@@ -133,6 +133,7 @@ write.csv(dat,file="F:/Soils/SoilDataAprilUSGSnotremoved.csv", row.names=FALSE)
 
 H1 <- dat[ which(dat$.id=='1'), ] # Pull out horizon #1
 H1 <- subset(H1, select=-c(.id))
+H1$DWA_AWC <- (H1$AWHC*H1$Depth)/PedonDepth$PedonDepth
 
 H2 <- dat[! which(dat$.id=='1'), ] # Pull out horizon #1
 H2 <- subset(H2, select=-c(.id))
@@ -339,6 +340,7 @@ DWApH <- dcast(dwapH, id + top + bottom ~ variable, value.var = 'value')
 DWApH <- DWApH[,-c(2,3)]
 names(DWApH)[2] <- 'DWApH'
 
+
 #Now calculate depth weighted averages of H2
 #Convert to SoilProfileCollection
 Sub <- H2
@@ -411,16 +413,15 @@ Plot$Depth200 <- as.numeric(Plot$PedonDepth == 200)
 Soils <- merge(Plot,H1,by='id')
 Soils <- merge(Soils,TDWA,by='id')
 Soils <- merge(Soils,SDWA,by='id')
+Soils <- merge(Soils,slabs,by='id')
 
 #####
 # Keep only Soils data that has matching veg data.
 # Add to April Soils
 SoilstoKeep <- Soils[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+USGSinNSplain <- Soils[c("24","38","40","42","43","80","82"),]
 April1 <- Soils[c(1:99),]
 Veg <- rbind(April1, SoilstoKeep)
-
-# Add USGS points in N and S plain to April
-USGSinNSplain <- SoilstoKeep[c("19","24","33","39","43","44","47","48","50"),]
 NSveg <- rbind(April1,USGSinNSplain)
 
 # USGS & April
@@ -429,5 +430,3 @@ write.csv(Veg,file="F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=FALS
 write.csv(NSveg,file="F:/Soils/SoilEnvironmentaldataNSplain.csv", row.names=FALSE)
 # April
 write.csv(April1,file="F:/Soils/SoilEnvironmentaldataApril.csv", row.names=FALSE)
-
-

@@ -70,6 +70,7 @@ dat$MoistH <- dat$MoistHue
 dat$DryChroma <- sub("5", "4", dat$DryChroma, ignore.case = FALSE)
 dat$DryC <- dat$DryChroma
 dat$MoistC <- dat$MoistChroma
+dat$Effervescence <- sub("LS", "SL", dat$Effervescence, ignore.case = FALSE)
 dat$Effer <- dat$Effervescence
 
 {
@@ -100,8 +101,7 @@ dat$Effer <- dat$Effervescence
   dat$Effervescence <- sub("SL", "2", dat$Effervescence, ignore.case = FALSE)
   dat$Effervescence <- sub("VS", "1", dat$Effervescence, ignore.case = FALSE)
   dat$Effervescence <- sub("NE", "0", dat$Effervescence, ignore.case = FALSE)
-  dat$Effervescence <- sub("LS", "2", dat$Effervescence, ignore.case = FALSE)
-  
+   
   dat$Texture <- sub("LVFS", "LS", dat$Texture, ignore.case = FALSE)
   dat$Texture <- sub("VFLS", "LS", dat$Texture, ignore.case = FALSE)
   dat$Texture <- sub("VFSL", "SL", dat$Texture, ignore.case = FALSE)
@@ -374,10 +374,10 @@ slabs <- join(AWC.0.25, AWC.0.50, by = 'id', type = 'inner')
 slabs <- join(slabs, AWC.0.100, by = 'id', type = 'inner')
 slabs <- join(slabs, AWC.0.150, by = 'id', type = 'inner')
 slabs <- join(slabs, AWC.0.200, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.25.50, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.50.100, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.100.150, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.150.200, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.25.50, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.50.100, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.100.150, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.150.200, by = 'id', type = 'inner')
 
 slabs <- join(slabs, DWAClay, by = 'id', type = 'inner')
 slabs <- join(slabs, DWASand, by = 'id', type = 'inner')
@@ -411,7 +411,7 @@ names(SDWA)[names(SDWA)=="Sub.id"]<-"id"
 Plot$Depth200 <- as.numeric(Plot$PedonDepth == 200)
 
 Soils <- merge(Plot,H1,by='id')
-Soils <- merge(Soils,TDWA,by='id')
+# Soils <- merge(Soils,TDWA,by='id')
 Soils <- merge(Soils,SDWA,by='id')
 Soils <- merge(Soils,slabs,by='id')
 
@@ -420,7 +420,7 @@ Soils <- merge(Soils,slabs,by='id')
 # Add to April Soils
 SoilstoKeep <- Soils[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
 USGSinNSplain <- Soils[c("24","38","40","42","43","80","82"),]
-April1 <- Soils[c(1:99),]
+April1 <- Soils[c(66:164),]
 Veg <- rbind(April1, SoilstoKeep)
 NSveg <- rbind(April1,USGSinNSplain)
 

@@ -81,6 +81,7 @@ write.csv(Keep,file="F:/SageNMDSvariables/Sage.Env.USGS.csv")
 ####
 # Choose 10 USGS plots in N&S plain
 NS <- Sage.Env.USGS[c("19","24","33","39","43","44","47","48","50"),]
+# ("24","38","40","42","43","80","82")
 NSApril <- rbind(Sage.Env.April,NS)
 write.csv(NSApril,file="F:/SageNMDSvariables/Sage.Env.NSplainApril.csv")
 

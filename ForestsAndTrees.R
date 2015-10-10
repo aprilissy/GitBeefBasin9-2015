@@ -17,32 +17,42 @@ library(plyr)
 #fancyRpartPlot(model)
 
 
-
+# read in and configure april and usgs shrub count data
 d.usgs <- read.csv("F:/ShrubDensity/PresenceAbsence/USGSplotXspp.csv", row.names=1)
 d.usgs[is.na(d.usgs)] <- 0 # replace NA with 0
 d.april <- d.usgs[-c(1:60),] # pull out april data
 d.usgs <- d.usgs[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),] # keep only veg with soils data
 d.usgs <- rbind(d.usgs,d.april) # combine april and usgs (with only those that have soils data) into one
 d.usgs <- d.usgs[ order(row.names(d.usgs)), ] # Order so row.names matches soils data
-d.usgs.l <- d.usgs[,8] # choose only ARTR2 column
-d.april.l <- d.april[,8] # choose only ARTR2 column
-d.usgs.ld <-d.usgs[,9] # choose only ARTR2.D column
-d.april.ld <- d.april[,9] # choose only ARTR2.D column
-s.usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv", row.names=1)
+
+# Pull out ARTR2 and ARTR2.D
+d.usgs.l <- d.usgs$ARTR2
+d.usgs.d <- d.usgs$ARTR2.D
+d.april.l <- d.april$ARTR2
+d.april.d <- d.april$ARTR2.D
+d.usgs.ld <- d.usgs$ARTR2 + d.usgs$ARTR2.D # add ARTR & ARTR.D into ARTR.LD
+d.april.ld <- d.april$ARTR2 + d.april$ARTR2.D # add ARTR & ARTR.D into ARTR.LD
+
+# Read in and configure april and usgs soils data
+s.usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",row.names=1)
 s.usgs[is.na(s.usgs)] <- 0 # replace NA with 0
 s.april <- s.usgs[c(1:99),] # pull our april data
 s.usgs <- s.usgs[ order(row.names(s.usgs)), ] # Order so row.names matches veg data
-l.april <- cbind(d.april.l,s.april) #combine density and soils for april ARTR
-l.usgs <- cbind(d.usgs.l,s.usgs) #combine density and soils for usgs ARTR
-ld.usgs <- d.usgs.l+d.usgs.ld # add ARTR & ARTR.D into ARTR.LD
-ld.april <-d.april.l+d.april.ld # add ARTR & ARTR.D into ARTR.LD
-ld.usgs <- cbind(ld.usgs,s.usgs) #combine density and soils for usgs ARTR.LD
-ld.april <- cbind(ld.april,s.april) #combine density and soils for april ARTR.LD
-names(l.usgs)[1] <- "ARTR2" # Rename to something meaningful
-names(l.april)[1] <- "ARTR2" # Rename to something meaningful
-names(ld.usgs)[1] <- "ARTR2LD" # Rename to something meaningful
-names(ld.april)[1] <- "ARTR2LD" # Rename to something meaningful
 
+# Combine ARTR2, ARTR2.D and ARTR2.LD to soils data
+april.l <- cbind(d.april.l,s.april) #combine density and soils for april ARTR
+usgs.l <- cbind(d.usgs.l,s.usgs) #combine density and soils for usgs ARTR
+april.d <- cbind(d.april.d,s.april) #combine density and soils for april ARTR
+usgs.d <- cbind(d.usgs.d,s.usgs) #combine density and soils for usgs ARTR
+april.ld <- cbind(d.april.ld,s.april) #combine density and soils for april ARTR.LD
+usgs.ld <- cbind(d.usgs.ld,s.usgs) #combine density and soils for usgs ARTR.LD
+
+names(usgs.l)[1] <- "ARTR2" # Rename to something meaningful
+names(april.l)[1] <- "ARTR2" # Rename to something meaningful
+names(usgs.d)[1] <- "ARTR2.D" # Rename to something meaningful
+names(april.d)[1] <- "ARTR2.D" # Rename to something meaningful
+names(usgs.ld)[1] <- "ARTR2.LD" # Rename to something meaningful
+names(april.ld)[1] <- "ARTR2.LD" # Rename to something meaningful
 
 
 # #Combine SageLive, LPI, and soils
@@ -58,28 +68,42 @@ names(ld.april)[1] <- "ARTR2LD" # Rename to something meaningful
 ################ Boruta #######################################
 ## Variable Selection
 
-# set.seed(1)
-Boruta.live <- Boruta(ARTR2~., data = l.april, doTrace = 2, ntree = 1000)
+# set.seed(668)
+Boruta.live <- Boruta(ARTR2~., data = april.l, doTrace = 2, ntree = 1000)
 Boruta.live
-plot(Boruta.live)
-TentativeRoughFix(Boruta.live)
 TentativeRoughFix(Boruta.live, averageOver = Inf)
-getImpRfGini(l.april,l.april$ARTR2, ntree = 500, num.trees = ntree)
-getSelectedAttributes(Boruta.live, withTentative = T)
+
+# ten <-TentativeRoughFix(Boruta.live)
+# plot(Boruta.live)
+# plot(ten)
+# getSelectedAttributes(ten, withTentative = T)
+# getImpRfZ(april.l,april.l$ARTR2, num.trees = 500)
+# 
+# plotImpHistory(Boruta.live, colCode = c("green", "yellow", "red", "blue"), col = NULL,
+#                type = "l", lty = 1, pch = 0, xlab = "Classifier run",
+#                ylab = "Importance")
 
 
-plotImpHistory(Boruta.live, colCode = c("green", "yellow", "red", "blue"), col = NULL,
-               type = "l", lty = 1, pch = 0, xlab = "Classifier run",
-               ylab = "Importance")
+Boruta.d <- Boruta(ARTR2LD~., data = april.d, doTrace = 2, ntree = 1000)
+Boruta.d
+TentativeRoughFix(Boruta.d)
+
+# plot(Boruta.d,main="Boruta Live&Dead")
+# TentativeRoughFix(Boruta.d)
+# TentativeRoughFix(Boruta.d, averageOver = Inf)
+# getImpRfGini(april.d,april.d$ARTR2.D, ntree = 500, num.trees = ntree)
+# getSelectedAttributes(Boruta.d, withTentative = T)
 
 
-Boruta.ld <- Boruta(ARTR2LD~., data = ld.april, doTrace = 2, ntree = 1000)
+
+Boruta.ld <- Boruta(ARTR2.LD~., data = april.ld, doTrace = 2, ntree = 1000)
 Boruta.ld
-plot(Boruta.ld,main="Boruta Live&Dead")
 TentativeRoughFix(Boruta.ld)
-TentativeRoughFix(Boruta.ld, averageOver = Inf)
-getImpRfGini(ld.april,ld.april$ARTR2LD, ntree = 500, num.trees = ntree)
-getSelectedAttributes(Boruta.ld, withTentative = T)
+
+# plot(Boruta.ld,main="Boruta Live&Dead")
+# TentativeRoughFix(Boruta.ld, averageOver = Inf)
+# getImpRfGini(april.ld,april.ld$ARTR2LD, ntree = 500, num.trees = ntree)
+# getSelectedAttributes(Boruta.ld, withTentative = T)
 
 #Kappa and Class Functions
 ## Cohen's Kappa is the percent correctly classified corrected

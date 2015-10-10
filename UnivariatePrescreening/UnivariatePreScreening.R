@@ -8,8 +8,7 @@ library(MASS)
 
 
 # Import Data Sets
-Soils <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv", header=T) # All soil environmental data
-SageClass <- read.csv("F:/ShrubDensity/PresenceAbsence/SageClasses.csv", header=T) # 1 = live sage present, 2 = dead sage present & no live, 3 = no sage live or dead present.
+Soils <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv", header=T) # All soil environmental data
 Density <- read.csv("F:/ShrubDensity/HeightClass/AprilTotalDensityM2.csv", header=T) # Total density per m2 for april's data
 
 # Clean and Combine
@@ -17,7 +16,7 @@ rownames(Soils) <- NULL
 
 Density <- Density[, colSums(Density != 0) > 0] # remove columns with only 0 values where there were no shrubs of that species found.
 Density <- cbind(Density, Soils) # combine soil and sagebrush density data
-Density <- Density[,-22]# remove column 22 which was a second column of unique id(plots)
+Density <- Density[,-20]# remove column 22 which was a second column of unique id(plots)
 rownames(Density) <- NULL
 write.csv(Density, file="F:/UnivariatePrescreening/DensitySoils.csv")
 

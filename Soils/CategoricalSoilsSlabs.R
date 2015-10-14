@@ -62,6 +62,17 @@ names(PedonDepth)[2] <- 'PedonDepth'
 # get the depth of each horizon
 dat$Depth <- dat$bottom-dat$top
 
+#  Create Soil Depth Classes
+# Very Shallow <25cm - Shallow 25-50cm - Moderately Deep 50-100cm - Deep 100-150cm - Very Deep >150cm
+DepthClass <- PedonDepth$PedonDepth
+mysize <- function(x){
+  if(x<25)return('VeryShallow')
+  if(25<= x & x <50)return('Shallow')
+  if(50<=x & x<100)return("ModeratelyDeep")
+  if(100<=x & x<150)return('Deep')
+  if(x>=150) return('VeryDeep')
+  elsereturn(NA)}
+Plot$DepthClass <- sapply(PedonDepth$PedonDepth, mysize)
 
 # Scale Hue - Redness Scale - Degree of Redness: least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
 # Scale Chroma - Chroma Class: 1&2=Low, 3&4=Medium, 6&8=High
@@ -265,67 +276,85 @@ SDWA$EfferScale <- colnames(SEfferScale)[apply(SEfferScale,1,which.max)]
 
 }
 
+MaxClay <- ddply( H2, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
+MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
+MaxpH <- ddply(H2, 'id', summarize, MaxpH = max(pH, na.rm = T))
+MaxDryValue <- ddply(H2, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
+MaxAWHC <- ddply( H2, 'id', summarize, MaxAWHC = max(AWHC, na.rm = T))
+MaxEffervescence <- ddply( H2, 'id', summarize, MaxEffervescence = max(EfferScale, na.rm = T))
+
+Max <- join(MaxClay, MaxSand, by = 'id', type = 'inner')
+Max <- join(Max, MaxpH, by = 'id', type = 'inner')
+Max <- join(Max, MaxDryValue, by = 'id', type = 'inner')
+Max <- join(Max, MaxAWHC, by = 'id', type = 'inner')
+Max <- join(Max, MaxEffervescence, by = 'id', type = 'inner')
+is.na(Max) <- sapply(Max, is.infinite) # replace inf- with NA
+
+
 #Now calculate depth weighted averages of each continuous variable, then append these to the other variables. 
 #Convert to SoilProfileCollection
 data <- read.csv("F:/Soils/SoilDataAprilUSGSnotremoved.csv", header = T)
 depths(data) <- id ~ top + bottom
 
-# within each profile, compute weighted means, over the intervals: 0-25,0-50,0-100,0-150,0-200 removing NA if present 
-d25 <- slab(data, id ~ AWHC, slab.structure = c(0,25), slab.fun = mean, na.rm=TRUE)
-d50 <- slab(data, id ~ AWHC, slab.structure = c(0,50), slab.fun = mean, na.rm=TRUE)
-d100 <- slab(data, id ~ AWHC, slab.structure = c(0,100), slab.fun = mean, na.rm=TRUE)
-d150 <- slab(data, id ~ AWHC, slab.structure = c(0,150), slab.fun = mean, na.rm=TRUE)
-d200 <- slab(data, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-
-
-s50 <- slab(data, id ~ AWHC, slab.structure = c(25,50), slab.fun = mean, na.rm=TRUE)
-s100 <- slab(data, id ~ AWHC, slab.structure = c(50,100), slab.fun = mean, na.rm=TRUE)
-s150 <- slab(data, id ~ AWHC, slab.structure = c(100,150), slab.fun = mean, na.rm=TRUE)
-s200 <- slab(data, id ~ AWHC, slab.structure = c(150,200), slab.fun = mean, na.rm=TRUE)
-
-
-# reshape to wide format, remove unneeded variables and rename. 
-AWC.0.25 <- dcast(d25, id + top + bottom ~ variable, value.var = 'value')
-AWC.0.25 <- AWC.0.25[,-c(2,3)]
-names(AWC.0.25)[2] <- 'AWC.0.25'
-
-AWC.0.50 <- dcast(d50, id + top + bottom ~ variable, value.var = 'value')
-AWC.0.50 <- AWC.0.50[,-c(2,3)]
-names(AWC.0.50)[2] <- 'AWC.0.50'
-
-AWC.0.100 <- dcast(d100, id + top + bottom ~ variable, value.var = 'value')
-AWC.0.100 <- AWC.0.100[,-c(2,3)]
-names(AWC.0.100)[2] <- 'AWC.0.100'
-
-AWC.0.150 <- dcast(d150, id + top + bottom ~ variable, value.var = 'value')
-AWC.0.150 <- AWC.0.150[,-c(2,3)]
-names(AWC.0.150)[2] <- 'AWC.0.150'
-
-AWC.0.200 <- dcast(d200, id + top + bottom ~ variable, value.var = 'value')
-AWC.0.200 <- AWC.0.200[,-c(2,3)]
-names(AWC.0.200)[2] <- 'AWC.0.200'
-
-AWC.25.50 <- dcast(s50, id + top + bottom ~ variable, value.var = 'value')
-AWC.25.50 <- AWC.25.50[,-c(2,3)]
-names(AWC.25.50)[2] <- 'AWC.25.50'
-
-AWC.50.100 <- dcast(s100, id + top + bottom ~ variable, value.var = 'value')
-AWC.50.100 <- AWC.50.100[,-c(2,3)]
-names(AWC.50.100)[2] <- 'AWC.50.100'
-
-AWC.100.150 <- dcast(s150, id + top + bottom ~ variable, value.var = 'value')
-AWC.100.150 <- AWC.100.150[,-c(2,3)]
-names(AWC.100.150)[2] <- 'AWC.100.150'
-
-AWC.150.200 <- dcast(s200, id + top + bottom ~ variable, value.var = 'value')
-AWC.150.200 <- AWC.150.200[,-c(2,3)]
-names(AWC.150.200)[2] <- 'AWC.150.200'
+# # within each profile, compute weighted means, over the intervals: 0-25,0-50,0-100,0-150,0-200 removing NA if present 
+# d25 <- slab(data, id ~ AWHC, slab.structure = c(0,25), slab.fun = mean, na.rm=TRUE)
+# d50 <- slab(data, id ~ AWHC, slab.structure = c(0,50), slab.fun = mean, na.rm=TRUE)
+# d100 <- slab(data, id ~ AWHC, slab.structure = c(0,100), slab.fun = mean, na.rm=TRUE)
+# d150 <- slab(data, id ~ AWHC, slab.structure = c(0,150), slab.fun = mean, na.rm=TRUE)
+# d200 <- slab(data, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+# 
+# 
+# s50 <- slab(data, id ~ AWHC, slab.structure = c(25,50), slab.fun = mean, na.rm=TRUE)
+# s100 <- slab(data, id ~ AWHC, slab.structure = c(50,100), slab.fun = mean, na.rm=TRUE)
+# s150 <- slab(data, id ~ AWHC, slab.structure = c(100,150), slab.fun = mean, na.rm=TRUE)
+# s200 <- slab(data, id ~ AWHC, slab.structure = c(150,200), slab.fun = mean, na.rm=TRUE)
+# 
+# 
+# # reshape to wide format, remove unneeded variables and rename. 
+# AWC.0.25 <- dcast(d25, id + top + bottom ~ variable, value.var = 'value')
+# AWC.0.25 <- AWC.0.25[,-c(2,3)]
+# names(AWC.0.25)[2] <- 'AWC.0.25'
+# 
+# AWC.0.50 <- dcast(d50, id + top + bottom ~ variable, value.var = 'value')
+# AWC.0.50 <- AWC.0.50[,-c(2,3)]
+# names(AWC.0.50)[2] <- 'AWC.0.50'
+# 
+# AWC.0.100 <- dcast(d100, id + top + bottom ~ variable, value.var = 'value')
+# AWC.0.100 <- AWC.0.100[,-c(2,3)]
+# names(AWC.0.100)[2] <- 'AWC.0.100'
+# 
+# AWC.0.150 <- dcast(d150, id + top + bottom ~ variable, value.var = 'value')
+# AWC.0.150 <- AWC.0.150[,-c(2,3)]
+# names(AWC.0.150)[2] <- 'AWC.0.150'
+# 
+# AWC.0.200 <- dcast(d200, id + top + bottom ~ variable, value.var = 'value')
+# AWC.0.200 <- AWC.0.200[,-c(2,3)]
+# names(AWC.0.200)[2] <- 'AWC.0.200'
+# 
+# AWC.25.50 <- dcast(s50, id + top + bottom ~ variable, value.var = 'value')
+# AWC.25.50 <- AWC.25.50[,-c(2,3)]
+# names(AWC.25.50)[2] <- 'AWC.25.50'
+# 
+# AWC.50.100 <- dcast(s100, id + top + bottom ~ variable, value.var = 'value')
+# AWC.50.100 <- AWC.50.100[,-c(2,3)]
+# names(AWC.50.100)[2] <- 'AWC.50.100'
+# 
+# AWC.100.150 <- dcast(s150, id + top + bottom ~ variable, value.var = 'value')
+# AWC.100.150 <- AWC.100.150[,-c(2,3)]
+# names(AWC.100.150)[2] <- 'AWC.100.150'
+# 
+# AWC.150.200 <- dcast(s200, id + top + bottom ~ variable, value.var = 'value')
+# AWC.150.200 <- AWC.150.200[,-c(2,3)]
+# names(AWC.150.200)[2] <- 'AWC.150.200'
 
 
 # within each profile, compute weighted means, removing NA if present 
 dwaclay <- slab(data, id ~ ClayPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 dwasand <- slab(data, id ~ SandPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 dwapH <- slab(data, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+dwaawhc <- slab(data, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+
+
 
 # reshape to wide format, remove unneeded variables and rename. 
 DWAClay <- dcast(dwaclay, id + top + bottom ~ variable, value.var = 'value')
@@ -340,53 +369,55 @@ DWApH <- dcast(dwapH, id + top + bottom ~ variable, value.var = 'value')
 DWApH <- DWApH[,-c(2,3)]
 names(DWApH)[2] <- 'DWApH'
 
+DWA.AWHC <- dcast(dwaawhc, id + top + bottom ~ variable, value.var = 'value')
+DWA.AWHC <- DWA.AWHC[,-c(2,3)]
+names(DWA.AWHC)[2] <- 'DWA.AWHC'
 
-#Now calculate depth weighted averages of H2
-#Convert to SoilProfileCollection
-Sub <- H2
-depths(Sub) <- id ~ top + bottom
+# #Now calculate depth weighted averages of H2
+# #Convert to SoilProfileCollection
+# Sub <- H2
+# depths(Sub) <- id ~ top + bottom
+# 
+# # within each profile, compute weighted means, removing NA if present 
+# subdwaclay <- slab(Sub, id ~ ClayPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+# subdwasand <- slab(Sub, id ~ SandPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+# subdwapH <- slab(Sub, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+# subawhc <- slab(Sub, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
+# 
+# # reshape to wide format, remove unneeded variables and rename. 
+# SubDWAClay <- dcast(subdwaclay, id + top + bottom ~ variable, value.var = 'value')
+# SubDWAClay <- SubDWAClay[,-c(2,3)]
+# names(SubDWAClay)[2] <- 'SubDWAClay'
+# 
+# SubDWASand <- dcast(subdwasand, id + top + bottom ~ variable, value.var = 'value')
+# SubDWASand <- SubDWASand[,-c(2,3)]
+# names(SubDWASand)[2] <- 'SubDWASand'
+# 
+# SubDWApH <- dcast(subdwapH, id + top + bottom ~ variable, value.var = 'value')
+# SubDWApH <- SubDWApH[,-c(2,3)]
+# names(SubDWApH)[2] <- 'SubDWApH'
+# 
+# SubAWC <- dcast(subawhc, id + top + bottom ~ variable, value.var = 'value')
+# SubAWC <- SubAWC[,-c(2,3)]
+# names(SubAWC)[2] <- 'SubAWC'
 
-# within each profile, compute weighted means, removing NA if present 
-subdwaclay <- slab(Sub, id ~ ClayPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-subdwasand <- slab(Sub, id ~ SandPercent, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-subdwapH <- slab(Sub, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
-subawhc <- slab(Sub, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 
-# reshape to wide format, remove unneeded variables and rename. 
-SubDWAClay <- dcast(subdwaclay, id + top + bottom ~ variable, value.var = 'value')
-SubDWAClay <- SubDWAClay[,-c(2,3)]
-names(SubDWAClay)[2] <- 'SubDWAClay'
-
-SubDWASand <- dcast(subdwasand, id + top + bottom ~ variable, value.var = 'value')
-SubDWASand <- SubDWASand[,-c(2,3)]
-names(SubDWASand)[2] <- 'SubDWASand'
-
-SubDWApH <- dcast(subdwapH, id + top + bottom ~ variable, value.var = 'value')
-SubDWApH <- SubDWApH[,-c(2,3)]
-names(SubDWApH)[2] <- 'SubDWApH'
-
-SubAWC <- dcast(subawhc, id + top + bottom ~ variable, value.var = 'value')
-SubAWC <- SubAWC[,-c(2,3)]
-names(SubAWC)[2] <- 'SubAWC'
-
-
-slabs <- join(AWC.0.25, AWC.0.50, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.0.100, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.0.150, by = 'id', type = 'inner')
-slabs <- join(slabs, AWC.0.200, by = 'id', type = 'inner')
+# slabs <- join(AWC.0.25, AWC.0.50, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.0.100, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.0.150, by = 'id', type = 'inner')
+# slabs <- join(slabs, AWC.0.200, by = 'id', type = 'inner')
 # slabs <- join(slabs, AWC.25.50, by = 'id', type = 'inner')
 # slabs <- join(slabs, AWC.50.100, by = 'id', type = 'inner')
 # slabs <- join(slabs, AWC.100.150, by = 'id', type = 'inner')
 # slabs <- join(slabs, AWC.150.200, by = 'id', type = 'inner')
 
-slabs <- join(slabs, DWAClay, by = 'id', type = 'inner')
-slabs <- join(slabs, DWASand, by = 'id', type = 'inner')
+slabs <- join(DWAClay, DWASand, by = 'id', type = 'inner')
 slabs <- join(slabs, DWApH, by = 'id', type = 'inner')
-
-slabs <- join(slabs, SubDWAClay, by = 'id', type = 'inner')
-slabs <- join(slabs, SubDWASand, by = 'id', type = 'inner')
-slabs <- join(slabs, SubDWApH, by = 'id', type = 'inner')
-slabs <- join(slabs, SubAWC, by = 'id', type = 'inner')
+slabs <- join(slabs, DWA.AWHC, by = 'id', type = 'inner')
+# slabs <- join(slabs, SubDWAClay, by = 'id', type = 'inner')
+# slabs <- join(slabs, SubDWASand, by = 'id', type = 'inner')
+# slabs <- join(slabs, SubDWApH, by = 'id', type = 'inner')
+# slabs <- join(slabs, SubAWC, by = 'id', type = 'inner')
 
 Plot <- join(Plot, PedonDepth, by = 'id', type = 'inner')
 
@@ -403,17 +434,23 @@ names(TDWA)[names(TDWA)=="Tot.id"]<-"id"
 colnames(SDWA) = paste("Sub",sep=".", colnames(SDWA)) # Rename variables for H1
 names(SDWA)[names(SDWA)=="Sub.id"]<-"id"
 
-# Create new soil parameter where depth is binary.
-# if the maximum depth is >50/100/150 then 1, if not then 0
+# # Create new soil parameter where depth is binary.
+# # if the maximum depth is >50/100/150 then 1, if not then 0
 # all$Depth50 <- as.numeric(all$PedonDepth > 50)
 # all$Depth100 <- as.numeric(all$PedonDepth > 100)
 # all$Depth150 <- as.numeric(all$PedonDepth > 150)
 Plot$Depth200 <- as.numeric(Plot$PedonDepth == 200)
 
+H1 <- subset(H1, select = -c(H1.DryHue,H1.MoistHue,H1.DryChroma,H1.MoistChroma,H1.Effervescence) )
+TDWA <- subset(TDWA, select = -c(Tot.DryHue,Tot.MoistHue,Tot.DryChroma,Tot.MoistChroma,Tot.Effervescence) )
+SDWA <- subset(SDWA, select = -c(Sub.DryHue,Sub.MoistHue,Sub.DryChroma,Sub.MoistChroma,Sub.Effervescence) )
+
+
 Soils <- merge(Plot,H1,by='id')
-# Soils <- merge(Soils,TDWA,by='id')
-Soils <- merge(Soils,SDWA,by='id')
+Soils <- merge(Soils,TDWA,by='id')
+# Soils <- merge(Soils,SDWA,by='id')
 Soils <- merge(Soils,slabs,by='id')
+Soils <- merge(Soils,Max,by='id')
 
 #####
 # Keep only Soils data that has matching veg data.

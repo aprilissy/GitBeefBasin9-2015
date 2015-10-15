@@ -354,8 +354,6 @@ dwasand <- slab(data, id ~ SandPercent, slab.structure = c(0,200), slab.fun = me
 dwapH <- slab(data, id ~ pH, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 dwaawhc <- slab(data, id ~ AWHC, slab.structure = c(0,200), slab.fun = mean, na.rm=TRUE)
 
-
-
 # reshape to wide format, remove unneeded variables and rename. 
 DWAClay <- dcast(dwaclay, id + top + bottom ~ variable, value.var = 'value')
 DWAClay <- DWAClay[,-c(2,3)]
@@ -372,6 +370,39 @@ names(DWApH)[2] <- 'DWApH'
 DWA.AWHC <- dcast(dwaawhc, id + top + bottom ~ variable, value.var = 'value')
 DWA.AWHC <- DWA.AWHC[,-c(2,3)]
 names(DWA.AWHC)[2] <- 'DWA.AWHC'
+
+# Pull out value at 50cm to compare to Max
+clay50 <- slab(data, id ~ ClayPercent, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+sand50 <- slab(data, id ~ SandPercent, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+pH50 <- slab(data, id ~ pH, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+awhc50 <- slab(data, id ~ AWHC, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+efferscale50 <- slab(data, id ~ EfferScale, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+dryvalue50 <- slab(data, id ~ DryValue, slab.structure = c(50,51), slab.fun = mean, na.rm=TRUE)
+
+
+Clay.50 <- dcast(clay50, id + top + bottom ~ variable, value.var = 'value')
+Clay.50 <- Clay.50[,-c(2,3)]
+names(Clay.50)[2] <- 'Clay.50'
+
+Sand.50 <- dcast(sand50, id + top + bottom ~ variable, value.var = 'value')
+Sand.50 <- Sand.50[,-c(2,3)]
+names(Sand.50)[2] <- 'Sand.50'
+
+pH.50 <- dcast(pH50, id + top + bottom ~ variable, value.var = 'value')
+pH.50 <- pH.50[,-c(2,3)]
+names(pH.50)[2] <- 'pH.50'
+
+AWHC.50 <- dcast(awhc50, id + top + bottom ~ variable, value.var = 'value')
+AWHC.50 <- AWHC.50[,-c(2,3)]
+names(AWHC.50)[2] <- 'AWHC.50'
+
+EfferScale.50 <- dcast(efferscale50, id + top + bottom ~ variable, value.var = 'value')
+EfferScale.50 <- EfferScale.50[,-c(2,3)]
+names(EfferScale.50)[2] <- 'EfferScale.50'
+
+DryValue.50 <- dcast(dryvalue50, id + top + bottom ~ variable, value.var = 'value')
+DryValue.50 <- DryValue.50[,-c(2,3)]
+names(DryValue.50)[2] <- 'DryValue.50'
 
 # #Now calculate depth weighted averages of H2
 # #Convert to SoilProfileCollection
@@ -414,10 +445,27 @@ names(DWA.AWHC)[2] <- 'DWA.AWHC'
 slabs <- join(DWAClay, DWASand, by = 'id', type = 'inner')
 slabs <- join(slabs, DWApH, by = 'id', type = 'inner')
 slabs <- join(slabs, DWA.AWHC, by = 'id', type = 'inner')
+
+slabs <- join(slabs, Clay.50, by = 'id', type = 'inner')
+slabs <- join(slabs, Sand.50, by = 'id', type = 'inner')
+slabs <- join(slabs, pH.50, by = 'id', type = 'inner')
+slabs <- join(slabs, AWHC.50, by = 'id', type = 'inner')
+slabs <- join(slabs, EfferScale.50, by = 'id', type = 'inner')
+slabs <- join(slabs, DryValue.50, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWAClay, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWASand, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWApH, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubAWC, by = 'id', type = 'inner')
+
+
+which(grepl("NaN", Clay.50$Clay.50)) # Tells you the rows it occurs at
+
+Clay.50[c(1),2]=2 # fix 37 occurences where depth was less than 50
+
+
+
+
+
 
 Plot <- join(Plot, PedonDepth, by = 'id', type = 'inner')
 

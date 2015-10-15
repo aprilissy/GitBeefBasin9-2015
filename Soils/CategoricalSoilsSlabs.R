@@ -446,28 +446,223 @@ slabs <- join(DWAClay, DWASand, by = 'id', type = 'inner')
 slabs <- join(slabs, DWApH, by = 'id', type = 'inner')
 slabs <- join(slabs, DWA.AWHC, by = 'id', type = 'inner')
 
-slabs <- join(slabs, Clay.50, by = 'id', type = 'inner')
-slabs <- join(slabs, Sand.50, by = 'id', type = 'inner')
-slabs <- join(slabs, pH.50, by = 'id', type = 'inner')
-slabs <- join(slabs, AWHC.50, by = 'id', type = 'inner')
-slabs <- join(slabs, EfferScale.50, by = 'id', type = 'inner')
-slabs <- join(slabs, DryValue.50, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWAClay, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWASand, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubDWApH, by = 'id', type = 'inner')
 # slabs <- join(slabs, SubAWC, by = 'id', type = 'inner')
 
 
-which(grepl("NaN", Clay.50$Clay.50)) # Tells you the rows it occurs at
+which(grepl("NaN", Sand.50$Sand.50)) # Tells you the rows it occurs at
+# fix 37 occurences where depth was less than 50
+Clay.50[c(1),2]=2  
+Clay.50[c(86,135),2]=3 
+Clay.50[c(32),2]=4 
+Clay.50[c(29,63,67,95,97,100,103,104,111,118,132,134),2]=5 
+Clay.50[c(7,11),2]=6 
+Clay.50[c(84,115,120,126,131),2]=7 
+Clay.50[c(9,26,35,55),2]=8 
+Clay.50[c(8,10,20,34,47,110),2]=10 
+Clay.50[c(18,62,130),2]=15 
+Clay.50[c(14),2]=18
 
-Clay.50[c(1),2]=2 # fix 37 occurences where depth was less than 50
+Sand.50[1,2]=dat$SandPercent[446] 
+Sand.50[7,2]=dat$SandPercent[501]
+Sand.50[8,2]=dat$SandPercent[506] 
+Sand.50[9,2]=dat$SandPercent[509]
+Sand.50[10,2]=dat$SandPercent[513] 
+Sand.50[11,2]=dat$SandPercent[515]
+Sand.50[14,2]=dat$SandPercent[527] 
+Sand.50[18,2]=dat$SandPercent[549]
+Sand.50[20,2]=dat$SandPercent[556] 
+Sand.50[26,2]=dat$SandPercent[575]
+Sand.50[29,2]=dat$SandPercent[587] 
+Sand.50[32,2]=dat$SandPercent[598]
+Sand.50[34,2]=dat$SandPercent[605] 
+Sand.50[35,2]=dat$SandPercent[458]
+Sand.50[47,2]=dat$SandPercent[653] 
+Sand.50[55,2]=dat$SandPercent[472]
+Sand.50[62,2]=dat$SandPercent[480]
+Sand.50[63,2]=dat$SandPercent[710] 
+Sand.50[67,2]=dat$SandPercent[52]
+Sand.50[84,2]=dat$SandPercent[92] 
+Sand.50[86,2]=dat$SandPercent[147]
+Sand.50[95,2]=dat$SandPercent[148] 
+Sand.50[97,2]=dat$SandPercent[150]
+Sand.50[100,2]=dat$SandPercent[163] 
+Sand.50[103,2]=dat$SandPercent[173]
+Sand.50[104,2]=dat$SandPercent[182] 
+Sand.50[110,2]=dat$SandPercent[205]
+Sand.50[111,2]=dat$SandPercent[210] 
+Sand.50[115,2]=dat$SandPercent[222]
+Sand.50[118,2]=dat$SandPercent[239] 
+Sand.50[120,2]=dat$SandPercent[251]
+Sand.50[126,2]=dat$SandPercent[275] 
+Sand.50[130,2]=dat$SandPercent[294]
+Sand.50[131,2]=dat$SandPercent[297]
+Sand.50[132,2]=dat$SandPercent[299] 
+Sand.50[134,2]=dat$SandPercent[305]
+Sand.50[135,2]=dat$SandPercent[309]
 
+DryValue.50[1,2]=dat$DryValue[446] 
+DryValue.50[7,2]=dat$DryValue[501]
+DryValue.50[8,2]=dat$DryValue[506] 
+DryValue.50[9,2]=dat$DryValue[509]
+DryValue.50[10,2]=dat$DryValue[513] 
+DryValue.50[11,2]=dat$DryValue[515]
+DryValue.50[14,2]=dat$DryValue[527] 
+DryValue.50[18,2]=dat$DryValue[549]
+DryValue.50[20,2]=dat$DryValue[556] 
+DryValue.50[26,2]=dat$DryValue[575]
+DryValue.50[29,2]=dat$DryValue[587] 
+DryValue.50[32,2]=dat$DryValue[598]
+DryValue.50[34,2]=dat$DryValue[605] 
+DryValue.50[35,2]=dat$DryValue[458]
+DryValue.50[47,2]=dat$DryValue[653] 
+DryValue.50[55,2]=dat$DryValue[472]
+DryValue.50[62,2]=dat$DryValue[480]
+DryValue.50[63,2]=dat$DryValue[710] 
+DryValue.50[67,2]=dat$DryValue[52]
+DryValue.50[84,2]=dat$DryValue[92] 
+DryValue.50[86,2]=dat$DryValue[147]
+DryValue.50[95,2]=dat$DryValue[148] 
+DryValue.50[97,2]=dat$DryValue[150]
+DryValue.50[100,2]=dat$DryValue[163] 
+DryValue.50[103,2]=dat$DryValue[173]
+DryValue.50[104,2]=dat$DryValue[182] 
+DryValue.50[110,2]=dat$DryValue[205]
+DryValue.50[111,2]=dat$DryValue[210] 
+DryValue.50[115,2]=dat$DryValue[222]
+DryValue.50[118,2]=dat$DryValue[239] 
+DryValue.50[120,2]=dat$DryValue[251]
+DryValue.50[126,2]=dat$DryValue[275] 
+DryValue.50[130,2]=dat$DryValue[294]
+DryValue.50[131,2]=dat$DryValue[297]
+DryValue.50[132,2]=dat$DryValue[299] 
+DryValue.50[134,2]=dat$DryValue[305]
+DryValue.50[135,2]=dat$DryValue[309]
 
+pH.50[1,2]=dat$pH[446] 
+pH.50[7,2]=dat$pH[501]
+pH.50[8,2]=dat$pH[506] 
+pH.50[9,2]=dat$pH[509]
+pH.50[10,2]=dat$pH[513] 
+pH.50[11,2]=dat$pH[515]
+pH.50[14,2]=dat$pH[527] 
+pH.50[18,2]=dat$pH[549]
+pH.50[20,2]=dat$pH[556] 
+pH.50[26,2]=dat$pH[575]
+pH.50[29,2]=dat$pH[587] 
+pH.50[32,2]=dat$pH[598]
+pH.50[34,2]=dat$pH[605] 
+pH.50[35,2]=dat$pH[458]
+pH.50[47,2]=dat$pH[653] 
+pH.50[55,2]=dat$pH[472]
+pH.50[62,2]=dat$pH[480]
+pH.50[63,2]=dat$pH[710] 
+pH.50[67,2]=dat$pH[52]
+pH.50[84,2]=dat$pH[92] 
+pH.50[86,2]=dat$pH[147]
+pH.50[95,2]=dat$pH[148] 
+pH.50[97,2]=dat$pH[150]
+pH.50[100,2]=dat$pH[163] 
+pH.50[103,2]=dat$pH[173]
+pH.50[104,2]=dat$pH[182] 
+pH.50[110,2]=dat$pH[205]
+pH.50[111,2]=dat$pH[210] 
+pH.50[115,2]=dat$pH[222]
+pH.50[118,2]=dat$pH[239] 
+pH.50[120,2]=dat$pH[251]
+pH.50[126,2]=dat$pH[275] 
+pH.50[130,2]=dat$pH[294]
+pH.50[131,2]=dat$pH[297]
+pH.50[132,2]=dat$pH[299] 
+pH.50[134,2]=dat$pH[305]
+pH.50[135,2]=dat$pH[309]
 
+EfferScale.50[1,2]=dat$EfferScale[446] 
+EfferScale.50[7,2]=dat$EfferScale[501]
+EfferScale.50[8,2]=dat$EfferScale[506] 
+EfferScale.50[9,2]=dat$EfferScale[509]
+EfferScale.50[10,2]=dat$EfferScale[513] 
+EfferScale.50[11,2]=dat$EfferScale[515]
+EfferScale.50[14,2]=dat$EfferScale[527] 
+EfferScale.50[18,2]=dat$EfferScale[549]
+EfferScale.50[20,2]=dat$EfferScale[556] 
+EfferScale.50[26,2]=dat$EfferScale[575]
+EfferScale.50[29,2]=dat$EfferScale[587] 
+EfferScale.50[32,2]=dat$EfferScale[598]
+EfferScale.50[34,2]=dat$EfferScale[605] 
+EfferScale.50[35,2]=dat$EfferScale[458]
+EfferScale.50[47,2]=dat$EfferScale[653] 
+EfferScale.50[55,2]=dat$EfferScale[472]
+EfferScale.50[62,2]=dat$EfferScale[480]
+EfferScale.50[63,2]=dat$EfferScale[710] 
+EfferScale.50[67,2]=dat$EfferScale[52]
+EfferScale.50[84,2]=dat$EfferScale[92] 
+EfferScale.50[86,2]=dat$EfferScale[147]
+EfferScale.50[95,2]=dat$EfferScale[148] 
+EfferScale.50[97,2]=dat$EfferScale[150]
+EfferScale.50[100,2]=dat$EfferScale[163] 
+EfferScale.50[103,2]=dat$EfferScale[173]
+EfferScale.50[104,2]=dat$EfferScale[182] 
+EfferScale.50[110,2]=dat$EfferScale[205]
+EfferScale.50[111,2]=dat$EfferScale[210] 
+EfferScale.50[115,2]=dat$EfferScale[222]
+EfferScale.50[118,2]=dat$EfferScale[239] 
+EfferScale.50[120,2]=dat$EfferScale[251]
+EfferScale.50[126,2]=dat$EfferScale[275] 
+EfferScale.50[130,2]=dat$EfferScale[294]
+EfferScale.50[131,2]=dat$EfferScale[297]
+EfferScale.50[132,2]=dat$EfferScale[299] 
+EfferScale.50[134,2]=dat$EfferScale[305]
+EfferScale.50[135,2]=dat$EfferScale[309]
 
+AWHC.50[1,2]=dat$AWHC[446] 
+AWHC.50[7,2]=dat$AWHC[501]
+AWHC.50[8,2]=dat$AWHC[506] 
+AWHC.50[9,2]=dat$AWHC[509]
+AWHC.50[10,2]=dat$AWHC[513] 
+AWHC.50[11,2]=dat$AWHC[515]
+AWHC.50[14,2]=dat$AWHC[527] 
+AWHC.50[18,2]=dat$AWHC[549]
+AWHC.50[20,2]=dat$AWHC[556] 
+AWHC.50[26,2]=dat$AWHC[575]
+AWHC.50[29,2]=dat$AWHC[587] 
+AWHC.50[32,2]=dat$AWHC[598]
+AWHC.50[34,2]=dat$AWHC[605] 
+AWHC.50[35,2]=dat$AWHC[458]
+AWHC.50[47,2]=dat$AWHC[653] 
+AWHC.50[55,2]=dat$AWHC[472]
+AWHC.50[62,2]=dat$AWHC[480]
+AWHC.50[63,2]=dat$AWHC[710] 
+AWHC.50[67,2]=dat$AWHC[52]
+AWHC.50[84,2]=dat$AWHC[92] 
+AWHC.50[86,2]=dat$AWHC[147]
+AWHC.50[95,2]=dat$AWHC[148] 
+AWHC.50[97,2]=dat$AWHC[150]
+AWHC.50[100,2]=dat$AWHC[163] 
+AWHC.50[103,2]=dat$AWHC[173]
+AWHC.50[104,2]=dat$AWHC[182] 
+AWHC.50[110,2]=dat$AWHC[205]
+AWHC.50[111,2]=dat$AWHC[210] 
+AWHC.50[115,2]=dat$AWHC[222]
+AWHC.50[118,2]=dat$AWHC[239] 
+AWHC.50[120,2]=dat$AWHC[251]
+AWHC.50[126,2]=dat$AWHC[275] 
+AWHC.50[130,2]=dat$AWHC[294]
+AWHC.50[131,2]=dat$AWHC[297]
+AWHC.50[132,2]=dat$AWHC[299] 
+AWHC.50[134,2]=dat$AWHC[305]
+AWHC.50[135,2]=dat$AWHC[309]
 
 
 Plot <- join(Plot, PedonDepth, by = 'id', type = 'inner')
+slabs <- join(slabs, Sand.50, by = 'id', type = 'inner')
+slabs <- join(slabs, Clay.50, by = 'id', type = 'inner')
+slabs <- join(slabs, pH.50, by = 'id', type = 'inner')
+slabs <- join(slabs, DryValue.50, by = 'id', type = 'inner')
+slabs <- join(slabs, EfferScale.50, by = 'id', type = 'inner')
+slabs <- join(slabs, AWHC.50, by = 'id', type = 'inner')
 
 # remove anything you don't want H1, H2, Plot, TDWA, SDWA, slabs
 H1 <- subset(H1, select = -c(top,bottom,Horizon,Theta_fc,Theta_pwp,AWHC, HzNum) )

@@ -1,19 +1,43 @@
 library(plyr)
+library(dplyr)
+
 # LPI file too big for DIMA, broke it up into soil types to download
-# 'T' in LPIindicatorsTBegay.csv, etc... stands for transect because it has transects 1-5
-begay<-read.csv('F:/LPI/LPIindicatorsTBEGAY.csv')
-ignacio<-read.csv('F:/LPI/LPIindicatorsTIGNACIOLEANTO.csv')
-mido<-read.csv('F:/LPI/LPIindicatorsTMIDO.csv')
+# Use the line totals tab from .xlsx file 
+begay<-read.csv('F:/LPI/Reports/LPIindicatorsBEGAY.csv')
+ignacio<-read.csv('F:/LPI/Reports/LPIindicatorsIGNACIOLEANTO.csv')
+mido<-read.csv('F:/LPI/Reports/LPIindicatorsMIDO.csv')
 
 #Combined back into one LPI file
 lpi3<-rbind(begay, ignacio, mido)
 lpi3
-write.csv(lpi3,file="F:/LPI/AprilLPIofAll3Soils.csv")
+write.csv(lpi3,file="F:/LPI/Output/AprilLPIofAll3Soils.csv")
 
 #Put into plot by species matrix
 lpiApril<-xtabs(Any.Hit.N~Plot+Indicator, lpi3)
 lpiApril
-write.csv(lpiApril,file="F:/LPI/AprilLPIplotXspp.csv")
+write.csv(lpiApril,file="F:/LPI/Output/AprilLPIplotXspp.csv",row.names=TRUE)
+lpiApril<-read.csv('F:/LPI/Output/AprilLPIplotXspp.csv',row.names=1)
+
+
+# Combine DP and live of spp,
+a <-select(lpiApril,contains(".DP"))
+ls(a)
+lpiApril$ARTR2=lpiApril$ARTR2+lpiApril$ARTR2.DP
+lpiApril$ATCA2=lpiApril$ATCA2+lpiApril$ATCA2.DP
+lpiApril$CHVI8=lpiApril$CHVI8+lpiApril$CHVI8.DP
+lpiApril$CHVI8=lpiApril$CHVI8+lpiApril$CHVI.DP
+lpiApril$HECO26=lpiApril$HECO26+lpiApril$HECO26.DP
+lpiApril$KRLA2=lpiApril$KRLA2+lpiApril$KRLA2.DP
+lpiApril$MAFR3=lpiApril$MAFR3+lpiApril$MAFR3.DP
+lpiApril$OPPO=lpiApril$OPPO+lpiApril$OPPO.DP
+lpiApril$SHRO=lpiApril$SHRO+lpiApril$SHRO.DP
+lpiApril <- subset(lpiApril, select=-c(ARTR2.DP,ATCA2.DP,CHVI8.DP,CHVI.DP,HECO26.DP,KRLA2.DP,MAFR3.DP,OPPO.DP,SHRO.DP))
+
+
+
+# Calculate density per m2
+den<-read.csv('F:/LPI/Output/AprilLPIplotXspp.csv',row.names=1)
+den <- den/150 # (5 plots)*(30 meters)=150
 
 #add all hits on a plot basis, then divide each cell by the sum of a row
 # to get how many times a spp was hit relative to how many in plot.
@@ -30,10 +54,17 @@ write.csv(relcoverApril,file="F:/LPI/AprilLPIRelativeCover.csv")
 #### AND SUMS below 0.05 (had to both be below 5 to be removed)
 #### (Occur in at least 5% of plots or have at least 5% coverage)
 
+# read in RelativeCoverCommonInExcel
+rel<-read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv",header=TRUE, row.names=1)
+
+
+# Remove uncommon spp. by comparing to rel
+den <- cbind(den[, which(colnames(den)%in% colnames(rel))])          
+write.csv(den,file="F:/LPI/AprilLPIDenM2.csv", row.names=TRUE)
 
 #################################################################
 ### Add in USGS data
-usgs<-read.csv('F:/LPI/LPIindicatorsTUSGS.csv')
+usgs<-read.csv('F:/LPI/Reports/LPIindicatorsUSGS.csv')
 # Have to convert usgs plot names into factor not numeric
  # otherwise they get replaced with NA
 usgs$Plot <- factor(usgs$Plot)
@@ -48,6 +79,12 @@ write.csv(All,file="F:/LPI/USGSLPIofAprilAndUSGS.csv")
 lpi<-xtabs(Any.Hit.N~Plot+Indicator, All)
 lpi
 write.csv(lpi,file="F:/LPI/USGSLPIplotXspp.csv")
+lpi<-read.csv('F:/LPI/USGSLPIplotXspp.csv',row.names=1)
+
+# Calculate density per m2
+denu<-read.csv('F:/LPI/USGSLPIplotXspp.csv',row.names=1)
+denu <- denu/150 # (5 plots)*(30 meters)=150
+
 
 #add all hits on a plot basis, then divide each cell by the sum of a row
 # to get how many times a spp was hit relative to how many in plot.
@@ -62,6 +99,42 @@ write.csv(relcover,file="F:/LPI/USGSLPIRelativeCover.csv")
 #### Then I manually removed those with COUNTIF below 5 
 #### AND SUMS below 0.05 (had to both be below 5 to be removed)
 #### (Occur in at least 5% of plots or have at least 5% coverage)
+
+# read in RelativeCoverCommonInExcel
+relu<-read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv",header=TRUE,row.names=1)
+
+# In denu, combine DP and live of spp,
+library(dplyr)
+b <-select(denu,contains(".DP"))
+ls(b)
+denu$AMUT=denu$AMUT+denu$AMUT.DP
+denu$ARTR2=denu$ARTR2+denu$ARTR2.DP
+denu$ATCA2=denu$ATCA2+denu$ATCA2.DP
+
+denu$BOGR2=denu$BOGR2+denu$BOGR
+denu$BOGR2.D=denu$BOGR2.D+denu$BOGR.D
+
+denu$CHVI8=denu$CHVI8+denu$CHVI8.DP
+denu$CHVI8.D=denu$CHVI8.D+denu$CHVI.D
+denu$CHVI8=denu$CHVI8+denu$CHVI.DP
+
+denu$GUSA=denu$GUSA+denu$GUSA.DP
+denu$GUSA=denu$GUSA+denu$GUSA.DP
+
+denu$HECO26=denu$HECO26+denu$HECO26.DP
+denu$JUOS=denu$JUOS+denu$JUOS.DP
+denu$KRLA2=denu$KRLA2+denu$KRLA2.DP
+denu$MAFR3=denu$MAFR3+denu$MAFR3.DP
+denu$OPPO=denu$OPPO+denu$OPPO.DP
+denu$PIED=denu$PIED+denu$PIED.DP
+denu$SHRO=denu$SHRO+denu$SHRO.DP
+denu$YUBA=denu$YUBA+denu$YUBA.DP
+denu <- subset(denu, select=-c(AMUT.DP,ARTR2.DP,ATCA2.DP,CHVI8.DP,CHVI,CHVI.D,CHVI.DP,GUSA.DP,HECO26.DP,JUOS.DP,KRLA2.DP,MAFR3.DP,OPPO.DP,PIED.DP,SHRO.DP,YUBA.DP))
+
+# Then remove uncommon spp. by comparing to relu
+denu <- cbind(denu[, which(colnames(denu)%in% colnames(relu))])          
+write.csv(denu,file="F:/LPI/USGSLPIDenM2.csv", row.names=TRUE)
+
 
 #################################################################
 

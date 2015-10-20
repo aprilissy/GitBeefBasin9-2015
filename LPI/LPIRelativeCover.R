@@ -31,38 +31,35 @@ lpiApril$MAFR3=lpiApril$MAFR3+lpiApril$MAFR3.DP
 lpiApril$OPPO=lpiApril$OPPO+lpiApril$OPPO.DP
 lpiApril$SHRO=lpiApril$SHRO+lpiApril$SHRO.DP
 lpiApril <- subset(lpiApril, select=-c(ARTR2.DP,ATCA2.DP,CHVI8.DP,HECO26.DP,KRLA2.DP,MAFR3.DP,OPPO.DP,SHRO.DP))
-
 write.csv(lpiApril,file="F:/LPI/Output/AprilLPIplotXspp.csv",row.names=TRUE)
+
+# Calculate % cover: (spp#hits/total possible hits)*100
+pctcover <- (lpiApril/300)*100
+pctcover[100,] <- colSums(pctcover != 0)
+pctcover[101,] <- colSums(pctcover[c(1:99),])
+sum <- (pctcover[c(100:101),])
+pctcover <- (pctcover[-c(100:101),])
+
+# Find the Common and Uncommon spp: Common occur in at least 5% of plots or have at least 5% coverage
+Common <- pctcover[,(sum[1,] >= 5) | (sum[2,] > 5) ]
+Uncommon <- pctcover[,(sum[1,] < 5) & (sum[2,] < 5) ]
+
+# Remove uncommon spp. in by comparing to Common
+lpiApril <- cbind(lpiApril[, which(colnames(lpiApril)%in% colnames(Common))])          
 
 # Calculate density per m2
 den<-lpiApril
-den <- den/150 # (5 plots)*(30 meters)=150
-den <- subset(den, select=-c(Bare.Soil,Total.Foliar,Total.Litter))
+den <- den/150 # (5 plots)*(30 meters)=150m
+den <- subset(den, select=-c(Bare.Soil,Total.Foliar))
+write.csv(den,file="F:/LPI/Output/AprilLPIDensityM2.csv", row.names=TRUE)
 
-
-#add all hits on a plot basis, then divide each cell by the sum of a row
+# Calculate Relative Cover:
+# add all hits on a plot basis, then divide each cell by the sum of a row
 # to get how many times a spp was hit relative to how many in plot.
-lpiApril <- subset(lpiApril, select=-c(Bare.Soil,Total.Foliar,Total.Litter))
+lpiApril <- subset(lpiApril, select=-c(Bare.Soil,Total.Foliar))
 relcoverApril<-lpiApril/rowSums(lpiApril)
 write.csv(relcoverApril,file="F:/LPI/Output/AprilLPIRelativeCover.csv")
-relcoverApril[100,] <- colSums(relcoverApril != 0)
-relcoverApril[101,] <- colSums(relcoverApril)
-
-#### In Excel I used SUM to find the colum sums giving me the 
-#### total number of times each species was hit across all plots.
-#### Then I used COUNTIF giving me the total number of 
-#### sites each species was found at.
-#### Then I manually removed those with COUNTIF below 5 
-#### AND SUMS below 0.05 (had to both be below 5 to be removed)
-#### (Occur in at least 5% of plots or have at least 5% coverage)
-
-# read in RelativeCoverCommonInExcel
-rel<-read.csv("F:/LPI/Output/AprilLPIRelativeCoverCommonInExcel.csv",header=TRUE, row.names=1)
-
-
-# Remove uncommon spp. in den by comparing to rel
-den <- cbind(den[, which(colnames(den)%in% colnames(rel))])          
-write.csv(den,file="F:/LPI/Output/AprilLPIDenM2.csv", row.names=TRUE)
+write.csv(lpiApril,file="F:/LPI/Output/AprilLPICommon.csv", row.names=TRUE)
 
 #################################################################
 ### Add in USGS data
@@ -72,14 +69,8 @@ usgs<-read.csv('F:/LPI/Reports/LPIindicatorsUSGS.csv')
 usgs$Plot <- factor(usgs$Plot)
 is.factor(usgs$Plot)
 
-#Combined into one LPI file
-All<-rbind(lpi3, usgs)
-All
-write.csv(All,file="F:/LPI/Output/USGSLPIofAprilAndUSGS.csv")
-
 #Put into plot by species matrix
-lpi<-xtabs(Any.Hit.N~Plot+Indicator, All)
-lpi
+lpi<-xtabs(Any.Hit.N~Plot+Indicator, usgs)
 write.csv(lpi,file="F:/LPI/Output/USGSLPIplotXspp.csv")
 lpi<-read.csv('F:/LPI/Output/USGSLPIplotXspp.csv',row.names=1)
 
@@ -93,14 +84,6 @@ denu <- denu/90 # (3 plots)*(30 meters)=90
 relcover<-lpi/rowSums(lpi)
 relcover
 write.csv(relcover,file="F:/LPI/Output/USGSLPIRelativeCover.csv")
-
-#### In Excel I used SUM to find the colum sums giving me the 
-#### total number of times each species was hit across all plots.
-#### Then I used COUNTIF giving me the total number of 
-#### sites each species was found at.
-#### Then I manually removed those with COUNTIF below 5 
-#### AND SUMS below 0.05 (had to both be below 5 to be removed)
-#### (Occur in at least 5% of plots or have at least 5% coverage)
 
 # read in RelativeCoverCommonInExcel
 relu<-read.csv("F:/LPI/Output/USGSLPIRelativeCoverCommonInExcel.csv",header=TRUE,row.names=1)

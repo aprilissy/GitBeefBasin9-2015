@@ -1,0 +1,20 @@
+PRISM Time Series Data,,,,,,,,,,,
+Location:  Lat: 37.9575   Lon: -109.9232   Elev: 1901m,,,,,,,,,,,
+Climate variable: ppt,,,,,,,,,,,
+Monthly 1981-2010 Normals,,,,,,,,,,,
+Grid Cell Interpolation: Off,,,,,,,,,,,
+Time series generated: 2015-Oct-09,,,,,,,,,,,
+Date,ppt (mm),,,Winter,Summer,,Date,tmin (degrees C),,Date,tmax (degrees C)
+January,21.23,,precip,20.46666667,28.35333333,,January,-8.3,,January,4.6
+February,18.92,,tmax,5.433333333,30.16666667,,February,-5.8,,February,7.1
+March,29.93,,tmin,-7.266666667,13.2,,March,-2.2,,March,12
+April,25.67,,,,,,April,1.1,,April,16.7
+May,18.64,,,,,,May,6,,May,22.6
+June,13.39,,,,,,June,10.9,,June,28.5
+July,30.38,,,,,,July,14.7,,July,31.8
+August,41.29,,,,,,August,14,,August,30.2
+September,36.82,,,,,,September,9.3,,September,25.6
+October,37.33,,,,,,October,2.8,,October,18.3
+November,25.06,,,,,,November,-3,,November,10.3
+December,21.25,,,,,,December,-7.7,,December,4.6
+Annual,319.91,,,,,,Annual,2.6,,Annual,17.7

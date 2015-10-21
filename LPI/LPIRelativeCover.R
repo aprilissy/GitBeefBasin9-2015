@@ -188,9 +188,10 @@ relcover<-combined/rowSums(combined)
 relcover
 write.csv(relcover,file="F:/LPI/Output/NSLPIRelativeCover.csv")
 
-#################################################################
 
+#################################################################
 # Look only at ARTR,ATCA,KRLA,BOGR,SPCR,
+
 Acommon <- read.csv('F:/LPI/Output/AprilLPICommon.csv',row.names=1)
 Ucommon <- read.csv('F:/LPI/Output/USGSLPICommon.csv',row.names=1)
 NScommon <- read.csv('F:/LPI/Output/NSLPICommon.csv',row.names=1)

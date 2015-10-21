@@ -3,7 +3,8 @@
 library(plyr)
 
 #read in shrub density detail data
-class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 8-21.csv')
+class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 10-21.csv')
+class <- subset(class,select=c("Plot","Line","SpeciesCode","ClassAtotal","ClassBtotal","ClassCtotal","ClassDtotal","ClassEtotal"))
 colnames(class) <- c("Plot", "Line","SpeciesCode","A","B","C","D","E")
 #################################################################
 ## April's And USGS Data
@@ -23,33 +24,78 @@ Sage.d <- class.order[c(1072:1543),]
 # then /180 to get density per m2
 # This is for use as environmental factor in NMDS
 
-sage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on plot
-sage.l <- sage.l[,-2] # remove transect total column
-sage.l <- sage.l[-c(1:59),] # remove usgs data
-write.csv(sage.l,file="F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv", row.names=FALSE)
-rownames(sage.l) <- sage.l[,1]
-sage.l <- sage.l[,-1]
-den.sage.l <- sage.l/180
-write.csv(den.sage.l,file="F:/ShrubDensity/HeightClass/LiveDensityM2Class.csv")
+USGSsage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on plot
+USGSsage.l <- USGSsage.l[,-2] # remove transect total column
+rownames(USGSsage.l) <- USGSsage.l[,1]
+USGSsage.l <- USGSsage.l[,-1]
+write.csv(USGSsage.l,file="F:/ShrubDensity/HeightClass/Output/USGSLivePlotbySizeClass.csv", row.names=TRUE)
 
-sage.d <- ddply(Sage.d, "Plot", numcolwise(sum)) # Sum all columns based on plot
-sage.d <- sage.d[,-2]# remove transect total column
-sage.d <- sage.d[-c(1:59),] # remove usgs data
-write.csv(sage.d,file="F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv", row.names=FALSE)
-rownames(sage.d) <- sage.d[,1]
-sage.d <- sage.d[,-1]
-den.sage.d <- sage.d/180
-write.csv(den.sage.d,file="F:/ShrubDensity/HeightClass/DeadDensityM2Class.csv")
+Aprilsage.l <- USGSsage.l[-c(1:59),] # remove usgs data
+write.csv(Aprilsage.l,file="F:/ShrubDensity/HeightClass/Output/AprilLivePlotbySizeClass.csv", row.names=TRUE)
 
-den.sage.l.d <- (sage.l+sage.d)/180
-write.csv(den.sage.l.d,file="F:/ShrubDensity/HeightClass/LiveDeadDensityM2Class.csv")
+NSPlainsage.l <-  USGSsage.l[c("24","38","40","42","43","80","82"),]
+NSPlainsage.l <- rbind(Aprilsage.l,NSPlainsage.l)
+write.csv(NSPlainsage.l,file="F:/ShrubDensity/HeightClass/Output/NSPlainLivePlotbySizeClass.csv", row.names=TRUE)
+
+
+USGSden.sage.l <- USGSsage.l/180
+write.csv(USGSden.sage.l,file="F:/ShrubDensity/HeightClass/Output/USGSSizeClassLiveDensityM2.csv")
+
+Aprilden.sage.l <- Aprilsage.l/180
+write.csv(Aprilden.sage.l,file="F:/ShrubDensity/HeightClass/Output/AprilSizeClassLiveDensityM2.csv")
+
+NSPlainden.sage.l <- NSPlainsage.l/180
+write.csv(NSPlainden.sage.l,file="F:/ShrubDensity/HeightClass/Output/NSPlainSizeClassLiveDensityM2.csv")
+
+
+# DEAD SAGEBRUSH
+
+USGSsage.d <- ddply(Sage.d, "Plot", numcolwise(sum)) # Sum all columns based on plot
+USGSsage.d <- USGSsage.d[,-2] # remove transect total column
+rownames(USGSsage.d) <- USGSsage.d[,1]
+USGSsage.d <- USGSsage.d[,-1]
+write.csv(USGSsage.d,file="F:/ShrubDensity/HeightClass/Output/USGSDeadPlotbySizeClass.csv", row.names=TRUE)
+
+Aprilsage.d <- USGSsage.d[-c(1:59),] # remove usgs data
+write.csv(Aprilsage.d,file="F:/ShrubDensity/HeightClass/Output/AprilDeadPlotbySizeClass.csv", row.names=TRUE)
+
+NSPlainsage.d <-  USGSsage.d[c("24","38","40","42","43","80","82"),]
+NSPlainsage.d <- rbind(Aprilsage.d,NSPlainsage.d)
+write.csv(NSPlainsage.d,file="F:/ShrubDensity/HeightClass/Output/NSPlainDeadPlotbySizeClass.csv", row.names=TRUE)
+
+
+USGSden.sage.d <- USGSsage.d/180
+write.csv(USGSden.sage.d,file="F:/ShrubDensity/HeightClass/Output/USGSSizeClassDeadDensityM2.csv")
+
+Aprilden.sage.d <- Aprilsage.d/180
+write.csv(Aprilden.sage.d,file="F:/ShrubDensity/HeightClass/Output/AprilSizeClassDeadDensityM2.csv")
+
+NSPlainden.sage.d <- NSPlainsage.d/180
+write.csv(NSPlainden.sage.d,file="F:/ShrubDensity/HeightClass/Output/NSPlainSizeClassDeadDensityM2.csv")
+
+
+# LIVE/DEAD SAGEBRUSH TOTALS
+USGSsage.l.d <- (USGSsage.l+USGSsage.d)
+write.csv(USGSsage.l.d,file="F:/ShrubDensity/HeightClass/Output/USGSLiveDeadPlotbySizeClass.csv")
+USGSden.sage.l.d <- (USGSsage.l+USGSsage.d)/180
+write.csv(USGSden.sage.l.d,file="F:/ShrubDensity/HeightClass/Output/USGSSizeClassLiveDeadDensityM2.csv")
+
+Aprilsage.l.d <- (Aprilsage.l+Aprilsage.d)
+write.csv(Aprilsage.l.d,file="F:/ShrubDensity/HeightClass/Output/AprilLiveDeadPlotbySizeClass.csv")
+Aprilden.sage.l.d <- (Aprilsage.l+Aprilsage.d)/180
+write.csv(Aprilden.sage.l.d,file="F:/ShrubDensity/HeightClass/Output/AprilSizeClassLiveDeadDensityM2.csv")
+
+NSPlainsage.l.d <- (NSPlainsage.l+NSPlainsage.d)
+write.csv(NSPlainsage.l.d,file="F:/ShrubDensity/HeightClass/Output/NSPlainLiveDeadPlotbySizeClass.csv")
+NSPlainden.sage.l.d <- (NSPlainsage.l+NSPlainsage.d)/180
+write.csv(NSPlainden.sage.l.d,file="F:/ShrubDensity/HeightClass/Output/NSPlainSizeClassLiveDeadDensityM2.csv")
 
 
 ############## Binary Size Classes #############################
 ##  this just means using relative cover (points hit/total points)
 ##  use this for NMDS instead
-l <- read.csv('F:/ShrubDensity/HeightClass/LivePlotbySizeClass.csv',row.names=1)
-d <- read.csv('F:/ShrubDensity/HeightClass/DeadPlotbySizeClass.csv',row.names=1)
+l <- read.csv('F:/ShrubDensity/HeightClass/Output/LivePlotbySizeClass.csv',row.names=1)
+d <- read.csv('F:/ShrubDensity/HeightClass/Output/DeadPlotbySizeClass.csv',row.names=1)
 l.d <- (l+d)
 write.csv(l.d,file="F:/ShrubDensity/HeightClass/LiveDeadPlotbySizeClass.csv")
 

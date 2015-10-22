@@ -695,6 +695,11 @@ Soils <- merge(Soils,TDWA,by='id')
 Soils <- merge(Soils,slabs,by='id')
 Soils <- merge(Soils,Max,by='id')
 
+Cat <- subset(Soils, select = c(id,SlopeShape,DepthClass,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize) )
+Soils <- subset(Soils, select = -c(SlopeShape,DepthClass,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize) )
+Soils <- merge(Soils,Cat,by='id')
+
+
 #####
 # Keep only Soils data that has matching veg data.
 # Add to April Soils

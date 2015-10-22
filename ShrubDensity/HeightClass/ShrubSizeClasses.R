@@ -14,7 +14,7 @@ total <- class[, c(1,2,3,9)] # Just total, size class removed
 class <- class[,c (1:8)] # Just size class, total removed, for use in A-E below
 
 
-#Plot by Size Class based on Speceis Code
+# Pull out ARTR2 and ARTR2.D
 class.order <- class[order(class$SpeciesCode),]  #sort a dataframe by the order of the elements in SpeciesCode
 Sage.l <- class.order[c(573:1071),]
 Sage.d <- class.order[c(1072:1543),]
@@ -28,10 +28,14 @@ USGSsage.l <- ddply(Sage.l, "Plot", numcolwise(sum)) # Sum all columns based on 
 USGSsage.l <- USGSsage.l[,-2] # remove transect total column
 rownames(USGSsage.l) <- USGSsage.l[,1]
 USGSsage.l <- USGSsage.l[,-1]
-write.csv(USGSsage.l,file="F:/ShrubDensity/HeightClass/Output/USGSLivePlotbySizeClass.csv", row.names=TRUE)
 
 Aprilsage.l <- USGSsage.l[-c(1:59),] # remove usgs data
 write.csv(Aprilsage.l,file="F:/ShrubDensity/HeightClass/Output/AprilLivePlotbySizeClass.csv", row.names=TRUE)
+
+USGSsage.l <- USGSsage.l[c("2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+USGSsage.l <- rbind(c(0,0,0,0,0), USGSsage.l) # add in row 1
+USGSsage.l <- rbind(Aprilsage.l,USGSsage.l)
+write.csv(USGSsage.l,file="F:/ShrubDensity/HeightClass/Output/USGSLivePlotbySizeClass.csv", row.names=TRUE)
 
 NSPlainsage.l <-  USGSsage.l[c("24","38","40","42","43","80","82"),]
 NSPlainsage.l <- rbind(Aprilsage.l,NSPlainsage.l)
@@ -54,10 +58,14 @@ USGSsage.d <- ddply(Sage.d, "Plot", numcolwise(sum)) # Sum all columns based on 
 USGSsage.d <- USGSsage.d[,-2] # remove transect total column
 rownames(USGSsage.d) <- USGSsage.d[,1]
 USGSsage.d <- USGSsage.d[,-1]
-write.csv(USGSsage.d,file="F:/ShrubDensity/HeightClass/Output/USGSDeadPlotbySizeClass.csv", row.names=TRUE)
 
 Aprilsage.d <- USGSsage.d[-c(1:59),] # remove usgs data
 write.csv(Aprilsage.d,file="F:/ShrubDensity/HeightClass/Output/AprilDeadPlotbySizeClass.csv", row.names=TRUE)
+
+USGSsage.d <- USGSsage.d[c("2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+USGSsage.d <- rbind(c(0,0,0,0,0), USGSsage.d) # add in row 1
+USGSsage.d <- rbind(Aprilsage.d,USGSsage.d)
+write.csv(USGSsage.d,file="F:/ShrubDensity/HeightClass/Output/USGSDeadPlotbySizeClass.csv", row.names=TRUE)
 
 NSPlainsage.d <-  USGSsage.d[c("24","38","40","42","43","80","82"),]
 NSPlainsage.d <- rbind(Aprilsage.d,NSPlainsage.d)
@@ -91,7 +99,7 @@ NSPlainden.sage.l.d <- (NSPlainsage.l+NSPlainsage.d)/180
 write.csv(NSPlainden.sage.l.d,file="F:/ShrubDensity/HeightClass/Output/NSPlainSizeClassLiveDeadDensityM2.csv")
 
 
-############## Binary Size Classes #############################
+############## Binomial Size Classes #############################
 ##  this just means using relative cover (points hit/total points)
 ##  use this for NMDS instead
 l <- read.csv('F:/ShrubDensity/HeightClass/Output/LivePlotbySizeClass.csv',row.names=1)

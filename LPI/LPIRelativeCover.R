@@ -18,6 +18,8 @@ lpi3$Any.Hit.N[is.na(lpi3$Any.Hit.N)] <- lpi3$X1st.Hit.N[is.na(lpi3$Any.Hit.N)];
 lpiApril<-xtabs(Any.Hit.N~Plot+Indicator, lpi3)
 write.csv(lpiApril,file="F:/LPI/Output/AprilLPIplotXspp.csv",row.names=TRUE)
 lpiApril<-read.csv('F:/LPI/Output/AprilLPIplotXspp.csv',row.names=1)
+lpiApril <- subset(lpiApril, select=-c(Total.Foliar,Total.Litter))
+write.csv(lpiApril,file="F:/LPI/Output/AprilLPIplotXspp.csv",row.names=TRUE)
 
 
 # Combine DP and live of spp,
@@ -44,6 +46,7 @@ pctcover <- (pctcover[-c(100:101),])
 # Find the Common and Uncommon spp: Common occur in at least 5% of plots or have at least 5% coverage
 Common <- pctcover[,(sum[1,] >= 5) | (sum[2,] > 5) ]
 Uncommon <- pctcover[,(sum[1,] < 5) & (sum[2,] < 5) ]
+write.csv(Common,file="F:/LPI/Output/AprilLPIPercentCover.csv", row.names=TRUE)
 
 # Remove uncommon spp. in by comparing to Common
 lpiApril <- cbind(lpiApril[, which(colnames(lpiApril)%in% colnames(Common))])          
@@ -52,15 +55,14 @@ write.csv(lpiApril,file="F:/LPI/Output/AprilLPICommon.csv", row.names=TRUE)
 # Calculate density per m2
 den<-lpiApril
 den <- den/150 # (5 plots)*(30 meters)=150m
-den <- subset(den, select=-c(Bare.Soil,Total.Foliar))
 write.csv(den,file="F:/LPI/Output/AprilLPIDensityM2.csv", row.names=TRUE)
 
-# Calculate Relative Cover:
-# add all hits on a plot basis, then divide each cell by the sum of a row
-# to get how many times a spp was hit relative to how many in plot.
-lpiApril <- subset(lpiApril, select=-c(Bare.Soil,Total.Foliar))
-relcoverApril<-lpiApril/rowSums(lpiApril)
-write.csv(relcoverApril,file="F:/LPI/Output/AprilLPIRelativeCover.csv")
+# # Calculate Relative Cover:
+# # add all hits on a plot basis, then divide each cell by the sum of a row
+# # to get how many times a spp was hit relative to how many in plot.
+# lpiApril <- subset(lpiApril, select=-c(Bare.Soil,Total.Foliar))
+# relcoverApril<-lpiApril/rowSums(lpiApril)
+# write.csv(relcoverApril,file="F:/LPI/Output/AprilLPIRelativeCover.csv")
 
 #################################################################
 ### Add in USGS data
@@ -77,6 +79,8 @@ usgs$Any.Hit.N[is.na(usgs$Any.Hit.N)] <- usgs$X1st.Hit.N[is.na(usgs$Any.Hit.N)];
 lpi<-xtabs(Any.Hit.N~Plot+Indicator, usgs)
 write.csv(lpi,file="F:/LPI/Output/USGSLPIplotXspp.csv")
 lpi<-read.csv('F:/LPI/Output/USGSLPIplotXspp.csv',row.names=1)
+lpi <- subset(lpi, select=-c(Total.Foliar,Total.Litter))
+write.csv(lpi,file="F:/LPI/Output/USGSLPIplotXspp.csv")
 
 # Keep only usgs sites that have both soil and veg data.
 lpi <- lpi[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
@@ -124,6 +128,7 @@ usgspctcover <- (usgspctcover[-c(137:138),])
 # Find the Common and Uncommon spp: Common occur in at least 5% of plots or have at least 5% coverage
 usgsCommon <- usgspctcover[,(usgssum[1,] >= 5) | (usgssum[2,] >= 5) ]
 usgsUncommon <- usgspctcover[,(usgssum[1,] < 5) & (usgssum[2,] < 5) ]
+write.csv(usgsCommon,file="F:/LPI/Output/USGSLPIPercentCover.csv", row.names=TRUE)
 
 # Remove uncommon spp. in by comparing to Common
 combined <- cbind(combined[, which(colnames(combined)%in% colnames(usgsCommon))])          
@@ -133,16 +138,15 @@ write.csv(combined,file="F:/LPI/Output/USGSLPICommon.csv")
 denu <- (combined[c(1:60),])/90 # (3 plots)*(30 meters)=90
 dena <- (combined[c(61:159),])/180 # (5 plots)*(30 meters)=180
 denu <- rbind(denu,dena)
-denu <- subset(denu, select=-c(Bare.Soil,Total.Foliar))
 write.csv(denu,file="F:/LPI/Output/USGSLPIDensityM2.csv")
 
 
-#add all hits on a plot basis, then divide each cell by the sum of a row
-# to get how many times a spp was hit relative to how many in plot.
-combined <- subset(combined, select=-c(Bare.Soil,Total.Foliar))
-relcover<-combined/rowSums(combined)
-relcover
-write.csv(relcover,file="F:/LPI/Output/USGSLPIRelativeCover.csv")
+# #add all hits on a plot basis, then divide each cell by the sum of a row
+# # to get how many times a spp was hit relative to how many in plot.
+# combined <- subset(combined, select=-c(Bare.Soil,Total.Foliar))
+# relcover<-combined/rowSums(combined)
+# relcover
+# write.csv(relcover,file="F:/LPI/Output/USGSLPIRelativeCover.csv")
 
 
 #################################################################
@@ -168,6 +172,7 @@ nsupctcover <- (nsupctcover[-c(107:108),])
 # Find the Common and Uncommon spp: Common occur in at least 5% of plots or have at least 5% coverage
 nsCommon <- nsupctcover[,(nssum[1,] >= 5) | (nssum[2,] >= 5) ]
 nsUncommon <- nsupctcover[,(nssum[1,] < 5) & (nssum[2,] < 5) ]
+write.csv(nsCommon,file="F:/LPI/Output/NSLPIPercentCover.csv", row.names=TRUE)
 
 # Remove uncommon spp. in by comparing to Common
 USGSinNSplain <- cbind(USGSinNSplain[, which(colnames(USGSinNSplain)%in% colnames(nsCommon))])          
@@ -178,15 +183,14 @@ write.csv(USGSinNSplain,file="F:/LPI/Output/NSLPICommon.csv")
 dennsu <- (combined[c(100:106),])/90 # (3 plots)*(30 meters)=90
 dennsa <- (combined[c(1:99),])/180 # (5 plots)*(30 meters)=180
 dennsu <- rbind(denu,dena)
-dennsu <- subset(dennsu, select=-c(Bare.Soil,Total.Foliar))
 write.csv(dennsu,file="F:/LPI/Output/NSLPIDensityM2.csv")
 
-#add all hits on a plot basis, then divide each cell by the sum of a row
-# to get how many times a spp was hit relative to how many in plot.
-combined <- subset(combined, select=-c(Bare.Soil,Total.Foliar))
-relcover<-combined/rowSums(combined)
-relcover
-write.csv(relcover,file="F:/LPI/Output/NSLPIRelativeCover.csv")
+# #add all hits on a plot basis, then divide each cell by the sum of a row
+# # to get how many times a spp was hit relative to how many in plot.
+# combined <- subset(combined, select=-c(Bare.Soil,Total.Foliar))
+# relcover<-combined/rowSums(combined)
+# relcover
+# write.csv(relcover,file="F:/LPI/Output/NSLPIRelativeCover.csv")
 
 
 #################################################################
@@ -196,14 +200,19 @@ Acommon <- read.csv('F:/LPI/Output/AprilLPICommon.csv',row.names=1)
 Ucommon <- read.csv('F:/LPI/Output/USGSLPICommon.csv',row.names=1)
 NScommon <- read.csv('F:/LPI/Output/NSLPICommon.csv',row.names=1)
 
-Acommon <- subset(Acommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,BOGR2,BOGR2.D,KRLA2,SPCR,SPCR.D,Bare.Soil,Total.Foliar))
-Ucommon <- subset(Ucommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,BOGR2,BOGR2.D,KRLA2,SPCR,SPCR.D,Bare.Soil,Total.Foliar))
-NScommon <- subset(NScommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,BOGR2,BOGR2.D,KRLA2,SPCR,SPCR.D,Bare.Soil,Total.Foliar))
 
-Acommon$PG <- Acommon$BOGR2+Acommon$BOGR2.D+Acommon$SPCR+Acommon$SPCR.D
-Ucommon$PG <- Ucommon$BOGR2+Ucommon$BOGR2.D+Ucommon$SPCR+Ucommon$SPCR.D
-NScommon$PG <- NScommon$BOGR2+NScommon$BOGR2.D+NScommon$SPCR+NScommon$SPCR.D
+# What are the two veg in USGS not in April? SPCO and HIJA
+difference <- cbind(Ucommon[, -which(colnames(Acommon)%in% colnames(Ucommon))])          
 
-APG <- subset(Acommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D))
-UPG <- subset(Ucommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D))
-NSPG <- subset(NScommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D))
+
+Acommon <- subset(Acommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,KRLA2,BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D,Bare.Soil))
+Ucommon <- subset(Ucommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,KRLA2,BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D,Bare.Soil))
+NScommon <- subset(NScommon, select=c(ARTR2,ARTR2.D,ATCA2,ATCA2.D,KRLA2,BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D,Bare.Soil))
+
+APG <- subset(Acommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D))
+UPG <- subset(Ucommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D))
+NSPG <- subset(NScommon, select=-c(BOGR2,BOGR2.D,SPCR,SPCR.D,HECO26,HECO26.D))
+
+APG$PG <- Acommon$BOGR2+Acommon$BOGR2.D+Acommon$SPCR+Acommon$SPCR.D+Acommon$HECO26+Acommon$HECO26.D
+UPG$PG <- Ucommon$BOGR2+Ucommon$BOGR2.D+Ucommon$SPCR+Ucommon$SPCR.D+Ucommon$HECO26+Ucommon$HECO26.D
+NSPG$PG <- NScommon$BOGR2+NScommon$BOGR2.D+NScommon$SPCR+NScommon$SPCR.D+NScommon$HECO26+NScommon$HECO26.D

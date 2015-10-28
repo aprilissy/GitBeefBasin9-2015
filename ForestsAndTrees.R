@@ -18,7 +18,7 @@ library(plyr)
 
 
 # read in and configure april and usgs shrub count data
-d.usgs <- read.csv("F:/ShrubDensity/PresenceAbsence/USGSplotXspp.csv", row.names=1)
+d.usgs <- read.csv("F:/ShrubDensity/PresenceAbsence/Output/USGSplotXspp.csv", row.names=1)
 d.usgs[is.na(d.usgs)] <- 0 # replace NA with 0
 d.april <- d.usgs[-c(1:60),] # pull out april data
 d.usgs <- d.usgs[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),] # keep only veg with soils data
@@ -151,23 +151,12 @@ class.sum=function(truth,predicted){
 #   Elevation + H1_Effervescence
 
 live.rf = randomForest(as.factor(ARTR2) ~ 
-                         Aspect + AWC100 + AWC25 + H1_MoistChroma +
-                         AWC50 + BioticCrustClass + H1_pH +
-                       CarbonateStage + Depth100 + Depth150 +
-                         Depth200 + Depth50 + H2_MaxClay +
-                       Elevation + H1_ClayPercent + H1_Depth +
-                         H1_DryChroma + H1_DryHue + H2_MaxpH +
-                       H1_DryValue + H1_Effervescence + H2_MinpH +
-                         H1_MoistHue + H1_MoistValue + H2_MinSand +
-                         H1_SandPercent + H2_MaxDryChroma +
-                         H2_MaxDryHue + H2_MaxMoistChroma +
-                         H2_MaxMoistValue + TotalDepth +
-                         H2_MaxMoistHue + H2_MaxDryValue +
-                         H2_MaxSand + H2_MinClay + H2_MinDryChroma +
-                         H2_MinDryHue + H2_MinDryValue + Slope +
-                         H2_MinMoistChroma + H2_MinMoistHue +
-                         H2_MinMoistValue + SlopeShape
-                       , data = l.april,proximity=TRUE,
+                         Aspect   +
+                         BioticCrustClass + Elevation +
+                       CarbonateStage +
+                         Depth200  +
+                       Elevation + SlopeShape
+                       , data = april.l,proximity=TRUE,
                        importance=TRUE,keep.forest=TRUE,
                        na.action = na.omit, mtry = 2, 
                        ntree = 1000)
@@ -177,7 +166,7 @@ live.rf
 # class.sum(l.april$ARTR2,predict(live.rf,type="prob")[,2])
 
 varImpPlot(live.rf, main = 'Live Sagebrush')
-     
+   
 
 ####
 ## Crossvalidation
@@ -185,41 +174,31 @@ varImpPlot(live.rf, main = 'Live Sagebrush')
  # remove factors that are below 0 on variable importance plot
  #   looking at the Mean Decrease in Accuracy.
 
-live.rf.xval.prob=rep(0,nrow(l.april))
-xvs=rep(1:10,length=nrow(l.april))
+live.rf.xval.prob=rep(0,nrow(april.l))
+xvs=rep(1:10,length=nrow(april.l))
 xvs=sample(xvs)
 for(i in 1:10){
-  train=l.april[xvs!=i,]
-  test=l.april[xvs==i,]
+  train=april.l[xvs!=i,]
+  test=april.l[xvs==i,]
   rf=randomForest(as.factor(ARTR2) ~ 
-                    Aspect + AWC100 + AWC25 + H1_MoistChroma +
-                    AWC50 + BioticCrustClass + H1_pH +
-                    CarbonateStage + Depth100 + Depth150 +
-                    Depth200 + Depth50 + H2_MaxClay +
-                    Elevation + H1_ClayPercent + H1_Depth +
-                    H1_DryChroma + H1_DryHue + H2_MaxpH +
-                    H1_DryValue + H1_Effervescence + H2_MinpH +
-                    H1_MoistHue + H1_MoistValue + H2_MinSand +
-                    H1_SandPercent + H2_MaxDryChroma +
-                    H2_MaxDryHue + H2_MaxMoistChroma +
-                    H2_MaxMoistValue + TotalDepth +
-                    H2_MaxMoistHue + H2_MaxDryValue +
-                    H2_MaxSand + H2_MinClay + H2_MinDryChroma +
-                    H2_MinDryHue + H2_MinDryValue + Slope +
-                    H2_MinMoistChroma + H2_MinMoistHue +
-                    H2_MinMoistValue + SlopeShape
+                    Aspect   +
+                    BioticCrustClass + Elevation +
+                    CarbonateStage +
+                    Depth200  +
+                    Elevation + SlopeShape
                     ,data=train)
   live.rf.xval.prob[xvs==i]=predict(rf,test,type="prob")[,2]
 }
 
-live.rf.confuse.xval=table(l.april$ARTR2,live.rf.xval.prob)
-100-100*sum(diag(live.rf.xval.prob))/nrow(l.april)
+live.rf.confuse.xval=table(april.l$ARTR2,live.rf.xval.prob)
+100-100*sum(diag(live.rf.xval.prob))/nrow(april.l)
 
-table(l.april$ARTR2,round(live.rf.xval.prob+ 0.0000001))
-class.sum(l.april$ARTR2,live.rf.xval.prob)
+table(april.l$ARTR2,round(live.rf.xval.prob+ 0.0000001))
+class.sum(april.l$ARTR2,live.rf.xval.prob)
 
 rf
 varImpPlot(rf, main = 'Live Sagebrush')
+
 
 ###
 # Variable Importance and Partial Dependence Plots

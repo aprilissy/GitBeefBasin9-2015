@@ -10,27 +10,28 @@
 
 library(plyr)
 
-# Read in Shrub data
-class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 8-21.csv')
+#read in shrub density detail data
+class <- read.csv('F:/ShrubDensity/HeightClass/PlantDenDetail 10-21.csv')
+class <- subset(class,select=c("Plot","Line","SpeciesCode","ClassAtotal","ClassBtotal","ClassCtotal","ClassDtotal","ClassEtotal"))
+colnames(class) <- c("Plot", "Line","SpeciesCode","A","B","C","D","E")
+
 class$total <- rowSums(class[,4:8]) #Sum all size classes for total density
 total <- class[, c(1,2,3,9)] # Just total, size class removed
+class <- class[,c (1:8)] # Just size class, total removed, for use in A-E below
 
     # Shrub Totals (plot by species)
     TotalplotXspp<-xtabs(total~Plot+SpeciesCode, total) # put in plot by spp matrix
-    write.csv(TotalplotXspp,file="F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv")
-    Total <- read.csv("F:/ShrubDensity/HeightClass/USGSTotalplotXspp.csv",row.names=1)
+    write.csv(TotalplotXspp,file="F:/SageNMDSvariables/Output/USGSTotalplotXspp.csv")
+    Total <- read.csv("F:/SageNMDSvariables/Output/USGSTotalplotXspp.csv",row.names=1)
     
     # Shrub Density (plot by species)
     TotaldensityM2 <- TotalplotXspp/180 # density per M2
-    write.csv(TotaldensityM2,file="F:/ShrubDensity/HeightClass/USGSTotalDensityM2.csv")
-    TotalDen <- read.csv("F:/ShrubDensity/HeightClass/USGSTotalDensityM2.csv",row.names=1)
+    write.csv(TotaldensityM2,file="F:/SageNMDSvariables/Output/USGSTotalDensityM2.csv")
+    TotalDen <- read.csv("F:/SageNMDSvariables/Output/USGSTotalDensityM2.csv",row.names=1)
     TotalDen <- TotalDen[,c(8:9)]
 
 # Read in LPI data
-lpi <- read.csv("F:/LPI/USGSLPIRelativeCoverCommonInExcel.csv")
-lpi <- lpi[-c(160:162),] # remove SUMS and COUNTIF rows at the bottom
-row.names(lpi)<-lpi$X
-lpi <- lpi[,-1] # remove extra plot id column
+lpi <- read.csv("F:/LPI/Output/USGSLPIRelativeCover.csv",row.names=1)
 
 
 # Sage density
@@ -69,19 +70,19 @@ Sage.Env.USGS$PG.RelCov.LPI <- (lpi$ACHY+lpi$ARPU9+lpi$BOGR2+lpi$BOGR2.D+lpi$ELE
 # Remove USGS, only April Data
 Sage.Env.April <- Sage.Env.USGS[-c(1:60),] # remove usgs data
 # Write April Data
-write.csv(Sage.Env.April,file="F:/SageNMDSvariables/Sage.Env.April.csv")
+write.csv(Sage.Env.April,file="F:/SageNMDSvariables/Output/Sage.Env.April.csv")
 
 # Choose only rows that have soils data
 VegtoKeep <- Sage.Env.USGS[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
 
 # Add April data back in 
 Keep <- rbind(Sage.Env.April, VegtoKeep)
-write.csv(Keep,file="F:/SageNMDSvariables/Sage.Env.USGS.csv")
+write.csv(Keep,file="F:/SageNMDSvariables/Output/Sage.Env.USGS.csv")
 
 ####
 # Choose 10 USGS plots in N&S plain
 NS <- Sage.Env.USGS[c("19","24","33","39","43","44","47","48","50"),]
 # ("24","38","40","42","43","80","82")
 NSApril <- rbind(Sage.Env.April,NS)
-write.csv(NSApril,file="F:/SageNMDSvariables/Sage.Env.NSplainApril.csv")
+write.csv(NSApril,file="F:/SageNMDSvariables/Output/Sage.Env.NSplainApril.csv")
 

@@ -29,21 +29,21 @@ res<-rcorr(as.matrix(z[,1:42]), type=c("spearman"))
 corPval <- flattenCorrMatrix(res$r, res$P)
 q <- symnum(spearman)
 
-Pinsig <- corPval[ which(corPval$p > 0.05), ]
-Psig <- corPval[ which(corPval$p < 0.05),]
-
-CorSpos <- corPval[ which((corPval$cor >= 0.00)&(corPval$cor <= 0.29999)),]
-CorSneg <- corPval[ which((corPval$cor < 0.00)&(corPval$cor >= -0.29999)),]
-CorS <- rbind(CorSpos,CorSneg)
-
-CorMpos <- corPval[ which((corPval$cor > 0.29999)&(corPval$cor <= 0.49999)),]
-CorMneg <- corPval[ which((corPval$cor < -0.29999)&(corPval$cor >= -0.49999)),]
-CorM <- rbind(CorMpos,CorMneg)
-
-CorLpos <- corPval[ which(corPval$cor > .49999),]
-CorLneg <- corPval[ which(corPval$cor < -0.49999),]
-CorL <- rbind(CorLpos,CorLneg)
-
+# Pinsig <- corPval[ which(corPval$p > 0.05), ]
+# Psig <- corPval[ which(corPval$p < 0.05),]
+# 
+# CorSpos <- corPval[ which((corPval$cor >= 0.00)&(corPval$cor <= 0.29999)),]
+# CorSneg <- corPval[ which((corPval$cor < 0.00)&(corPval$cor >= -0.29999)),]
+# CorS <- rbind(CorSpos,CorSneg)
+# 
+# CorMpos <- corPval[ which((corPval$cor > 0.29999)&(corPval$cor <= 0.49999)),]
+# CorMneg <- corPval[ which((corPval$cor < -0.29999)&(corPval$cor >= -0.49999)),]
+# CorM <- rbind(CorMpos,CorMneg)
+# 
+# CorLpos <- corPval[ which(corPval$cor > .49999),]
+# CorLneg <- corPval[ which(corPval$cor < -0.49999),]
+# CorL <- rbind(CorLpos,CorLneg)
+# 
 Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
 Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
 

@@ -135,8 +135,8 @@ combined <- cbind(combined[, which(colnames(combined)%in% colnames(usgsCommon))]
 write.csv(combined,file="F:/LPI/Output/USGSLPICommon.csv")
 
 # Calculate density per m2
-denu <- (combined[c(1:60),])/90 # (3 plots)*(30 meters)=90
-dena <- (combined[c(61:159),])/180 # (5 plots)*(30 meters)=180
+denu <- (combined[c(1:37),])/90 # (3 plots)*(30 meters)=90
+dena <- (combined[c(38:136),])/180 # (5 plots)*(30 meters)=180
 denu <- rbind(denu,dena)
 write.csv(denu,file="F:/LPI/Output/USGSLPIDensityM2.csv")
 

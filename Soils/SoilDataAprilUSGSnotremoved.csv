@@ -1,4 +1,4 @@
-"id","top","bottom","Horizon","DryHue","DryValue","DryChroma","MoistHue","MoistValue","MoistChroma","Texture","SandPercent","SandSize","ClayPercent","pH","Effervescence","Theta_fc","Theta_pwp","AWHC","HzNum",".id","Depth","DryH","MoistH","DryC","MoistC","Effer"
+"id","top","bottom","Horizon","DryRed","DryValue","DryCClass","MoistRed","MoistValue","MoistCClass","Texture","SandPercent","SandSize","ClayPercent","pH","EfferScale","Theta_fc","Theta_pwp","AWHC","HzNum",".id","Depth","DryHue","MoistHue","DryChroma","MoistChroma","Effervescence"
 "B1_1",0,5,"A1","2",6,"2","2",4,"2","SiL",40,"VF",5,7.8,"3",0.253328306,0.058631164,19.46971424,NA,1,5,"7.5YR","7.5YR","4",4,"ST"
 "B1_1",5,20,"A2","2",6,"2","2",3,"2","SiL",40,"VF",5,8,"4",0.253328306,0.058631164,19.46971424,NA,2,15,"7.5YR","7.5YR","4",4,"VE"
 "B1_1",20,25,"BA","3",7,"3","2",4,"2","LS",85,"MIX",5,8,"4",0.070626535,0.045199005,2.542753,NA,3,5,"5YR","7.5YR","6",4,"VE"

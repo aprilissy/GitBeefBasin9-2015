@@ -64,16 +64,15 @@ dat$Depth <- dat$bottom-dat$top
 
 #  Create Soil Depth Classes
 # Very Shallow <25cm - Shallow 25-50cm - Moderately Deep 50-100cm - Deep 100-150cm - Very Deep >150cm
-DepthClass <- PedonDepth$PedonDepth
 mysize <- function(x){
   if(x<25)return('VeryShallow')
-  if(25<= x & x <50)return('Shallow')
-  if(50<=x & x<100)return("ModeratelyDeep")
-  if(100<=x & x<150)return('Deep')
+  if(x>=25 & x<50)return('Shallow')
+  if(x>=50 & x<100)return("ModeratelyDeep")
+  if(x>=100 & x<150)return('Deep')
   if(x>=150) return('VeryDeep')
   elsereturn(NA)}
 Plot$DepthClass <- sapply(PedonDepth$PedonDepth, mysize)
-
+Plot$PedonDepth <- PedonDepth$PedonDepth
 # Scale Hue - Redness Scale - Degree of Redness: least(1) to most(4) red. 2.5YR=4, 5YR=3, 7.5YR=2, 10YR=1.
 # Scale Chroma - Chroma Class: 1&2=Low, 3&4=Medium, 6&8=High
 dat$DryH <- dat$DryHue
@@ -656,7 +655,6 @@ AWHC.50[134,2]=dat$AWHC[305]
 AWHC.50[135,2]=dat$AWHC[309]
 
 
-Plot <- join(Plot, PedonDepth, by = 'id', type = 'inner')
 slabs <- join(slabs, Sand.50, by = 'id', type = 'inner')
 slabs <- join(slabs, Clay.50, by = 'id', type = 'inner')
 slabs <- join(slabs, pH.50, by = 'id', type = 'inner')

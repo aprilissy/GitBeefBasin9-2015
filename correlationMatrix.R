@@ -1,52 +1,42 @@
-den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
+Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
+Soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
 
-ARTR2 <- den$ARTR2
+ARTR2 <- Den$ARTR2
+artr <- cbind(Soil,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)]
+
+# ARTR2 + Half of Min Non-Zero
+trfHalf <- ARTR2+((min(ARTR2[ARTR2 > 0]))*0.5)
+trfHalf <- cbind(Soil,trfHalf); trfHalf <- trfHalf[, !sapply(trfHalf, is.factor)]
+
+# Log ARTR2 + Half of Min Non-Zero
+logHalf <- log(ARTR2+((min(ARTR2[ARTR2 > 0]))*0.5))
+logHalf <- cbind(Soil,logHalf); logHalf <- logHalf[, !sapply(logHalf, is.factor)]
 
 # log transform 
 log <- log(ARTR2)
 log[mapply(is.infinite, log)] <- 0
+log <- cbind(Soil,log); log <- log[, !sapply(log, is.factor)]
 
 # log10 transform 
 log10 <- log10(ARTR2)
 log10[mapply(is.infinite, log10)] <- 0
+log10 <- cbind(Soil,log10); log10 <- log10[, !sapply(log10, is.factor)]
 
 # log(x+1) transform 
 log1 <- log(ARTR2+1)
+log1 <- cbind(Soil,log1); log1 <- log1[, !sapply(log1, is.factor)]
 
 # Square Root transform 
 sqrt <- sqrt(ARTR2)
+sqrt <- cbind(Soil,sqrt);sqrt <- sqrt[, !sapply(sqrt, is.factor)]
 
 # Cube Root transform 
 cube <- (ARTR2)^(1/3)
+cube <- cbind(Soil,cube); cube <- cube[, !sapply(cube, is.factor)]
 
 # log(x+c) transform 
 logc <- log(ARTR2+.000000001)
-
-dpois(ARTR2, lambda=1, lower.tail=F)
-
-
-soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
-
-a <- cbind(soil,ARTR2)
-a <- a[, !sapply(a, is.factor)]
-
-b <- cbind(soil,log)
-b <- b[, !sapply(b, is.factor)]
-
-c <- cbind(soil,log10)
-c <- c[, !sapply(c, is.factor)]
-
-d <- cbind(soil,log1)
-d <- d[, !sapply(d, is.factor)]
-
-e <- cbind(soil,sqrt)
-e <- e[, !sapply(e, is.factor)]
-
-f <- cbind(soil,cube)
-f <- f[, !sapply(f, is.factor)]
-
-g <- cbind(soil,logc)
-g <- g[, !sapply(g, is.factor)]
+logc <- cbind(Soil,logc); logc <- logc[, !sapply(logc, is.factor)]
 
 
 # panel.smooth function is built in.
@@ -65,84 +55,111 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
 
 
 # Clay
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+ARTR2,data=a, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Clay Variables")
+# ARTR2 + Half of smallest NonZero value
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+ARTR2,data=trfHalf, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Half NonZero Clay Variables")
+# Log of ARTR2 + Half of smallest NonZero value
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+ARTR2,data=logHalf, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="logHalf NonZero Clay Variables")
 # LogClay
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log,data=b, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log,data=log, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Log Clay Variables")
 # Log10Clay
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log10,data=c, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log10,data=log10, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Log 10 Clay Variables")
 # Log(x+1)Clay
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log1,data=d, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+log1,data=log1, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Log(x+1)Clay Variables")
 # Square Root
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+sqrt,data=e, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+sqrt,data=sqrt, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Square Root Clay Variables")
 # Cube Root
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+cube,data=f, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+cube,data=cube, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Cube Root Clay Variables")
 # Log(x+c)Clay
-pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+logc,data=g, 
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+logc,data=logc, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Log(x+c)Clay Variables")
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Sand
-pairs(~MaxSand+DWASand+H1.SandPercent+Sand.50+ARTR2,data=a, 
+pairs(~MaxSand+DWASand+H1.SandPercent+Sand.50+ARTR2,data=logHalf, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Sand Variables")
 
 
 # pH
-pairs(~MaxpH+DWApH+H1.pH+pH.50+ARTR2,data=a, 
+pairs(~MaxpH+DWApH+H1.pH+pH.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="pH Variables")
 
 
 # AWHC
-pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+ARTR2,data=a, 
+pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="AWHC Variables")
 
 
 # Effervescence
-pairs(~MaxEffervescence+Tot.EfferScale+H1.EfferScale+EfferScale.50+ARTR2,data=a, 
+pairs(~MaxEffervescence+Tot.EfferScale+H1.EfferScale+EfferScale.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Effervescence Variables")
 
 
 # DryValue
-pairs(~MaxDryValue+Tot.DryValue+H1.DryValue+DryValue.50+ARTR2,data=a, 
+pairs(~MaxDryValue+Tot.DryValue+H1.DryValue+DryValue.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="DryValue Variables")
 
 
 # Depth
-pairs(~PedonDepth+Depth200+H1.Depth+DepthClass+ARTR2,data=a, 
+pairs(~PedonDepth+Depth200+H1.Depth+DepthClass+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Depth Variables")
 
 
 
 # 
-pairs(~H1.SandPercent+DWASand+DWA.AWHC+MaxAWHC+ARTR2,data=a, 
+pairs(~H1.SandPercent+DWASand+DWA.AWHC+MaxAWHC+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main=" Variables")
 
 # 
-pairs(~H1.SandPercent+H1.ClayPercent+H1.Depth+H1.DWA_AWC+H1.pH+ARTR2,data=a, 
+pairs(~H1.SandPercent+H1.ClayPercent+H1.Depth+H1.DWA_AWC+H1.pH+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main=" Variables")
 
 # 
-pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+Sand.50,data=a, 
+pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+Sand.50,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main=" Variables")
+
+# 
+pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main=" Variables")
 

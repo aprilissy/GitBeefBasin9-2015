@@ -29,6 +29,9 @@ res<-rcorr(as.matrix(z[,1:42]), type=c("spearman"))
 corPval <- flattenCorrMatrix(res$r, res$P)
 q <- symnum(spearman)
 
+Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
+Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
+
 # Pinsig <- corPval[ which(corPval$p > 0.05), ]
 # Psig <- corPval[ which(corPval$p < 0.05),]
 # 
@@ -44,8 +47,6 @@ q <- symnum(spearman)
 # CorLneg <- corPval[ which(corPval$cor < -0.49999),]
 # CorL <- rbind(CorLpos,CorLneg)
 # 
-Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
-Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
 
 
 # install.packages("corrplot")

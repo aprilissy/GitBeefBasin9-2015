@@ -1,20 +1,14 @@
 # April Darger
 # STAT 5600
 # Final Project
-library(rpart)
-library(verification)
+# library(rpart)
+# library(verification)
 library(randomForest)
-library(rpart.plot)
-library(RColorBrewer)
+# library(rpart.plot)
+# library(RColorBrewer)
 library(Boruta)
-library(plyr)
+# library(plyr)
 #library(rattle)
-
-#The prp() has a lot of different options to check out
-#prp(model)
-
-#This one has the best default
-#fancyRpartPlot(model)
 
 
 # read in and configure april and usgs shrub count data
@@ -36,7 +30,7 @@ d.april.ld <- d.april$ARTR2 + d.april$ARTR2.D # add ARTR & ARTR.D into ARTR.LD
 # Read in and configure april and usgs soils data
 s.usgs <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",row.names=1)
 s.usgs[is.na(s.usgs)] <- 0 # replace NA with 0
-s.april <- s.usgs[c(1:99),] # pull our april data
+s.april <- s.usgs[c(1:99),] # pull out april data
 s.usgs <- s.usgs[ order(row.names(s.usgs)), ] # Order so row.names matches veg data
 
 # Combine ARTR2, ARTR2.D and ARTR2.LD to soils data

@@ -32,6 +32,8 @@ q <- symnum(spearman)
 Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
 Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
 
+write.csv(Susan7,file="F:/Soil.7SpearmansCorrelation.csv", row.names=TRUE)
+
 # Pinsig <- corPval[ which(corPval$p > 0.05), ]
 # Psig <- corPval[ which(corPval$p < 0.05),]
 # 

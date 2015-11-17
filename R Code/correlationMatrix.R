@@ -93,6 +93,42 @@ pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+logc,data=logc,
 
 
 
+# Boruta
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Boruta Variables")
+# ARTR2 + Half of smallest NonZero value
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+ARTR2,data=trfHalf, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Half NonZero Boruta Variables")
+# Log of ARTR2 + Half of smallest NonZero value
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+ARTR2,data=logHalf, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="logHalf NonZero Boruta Variables")
+# LogBoruta
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+log,data=log, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Log Boruta Variables")
+# Log10Boruta
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+log10,data=log10, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Log 10 Boruta Variables")
+# Log(x+1)Boruta
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+log1,data=log1, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Log(x+1)Boruta Variables")
+# Square Root
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+sqrt,data=sqrt, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Square Root Boruta Variables")
+# Cube Root
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+cube,data=cube, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Cube Root Boruta Variables")
+# Log(x+c)Boruta
+pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+logc,data=logc, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Log(x+c)Boruta Variables")
 
 
 

@@ -34,6 +34,39 @@ Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
 
 write.csv(Susan7,file="F:/Soil.7SpearmansCorrelation.csv", row.names=TRUE)
 
+
+
+
+
+
+
+
+
+
+
+
+Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
+ARTR2 <- Den$ARTR2
+artr <- cbind(a,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)] # Combine ARTR with Soils, remove the factor variables
+
+pearson <- cor(artr, method = c("pearson"),use = "complete.obs")
+kendall <- cor(artr, method = c("kendall"),use = "complete.obs")
+spearman <- cor(artr, method = c("spearman"),use = "complete.obs")
+
+res<-rcorr(as.matrix(artr), type=c("spearman"))
+corPval <- flattenCorrMatrix(res$r, res$P)
+q <- symnum(spearman)
+
+Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
+Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
+ARTR2 <- spearman[43,]
+ARTR2 <- ARTR2[order(-abs(ARTR2))]
+ARTR2 <-t(ARTR2)
+ARTR2<-t(ARTR2)
+write.csv(ARTR2,file="F:/SoilARTR2SpearmansCorrelation.csv", row.names=TRUE)
+
+
+
 # Pinsig <- corPval[ which(corPval$p > 0.05), ]
 # Psig <- corPval[ which(corPval$p < 0.05),]
 # 

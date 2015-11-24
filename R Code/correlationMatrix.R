@@ -216,9 +216,37 @@ pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+ARTR2,
 # 
 pairs(~H1.DryRed+Tot.DryRed+H1.MoistRed+Tot.MoistRed+H1.EfferScale+Tot.EfferScale+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
-      pch=20, na.action = na.exclude, main=" Variables")
+      pch=20, na.action = na.exclude, main=" Hue Variables")
 
+# 
+pairs(~H1.DryCClass+Tot.DryCClass+H1.MoistCClass+Tot.MoistCClass+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main=" Chroma Variables")
 
+# 
+pairs(~H1.DryValue+Tot.DryValue+H1.MoistValue+Tot.MoistValue+MaxDryValue+DryValue.50+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main=" Value Variables")
+
+# 
+pairs(~H1.DryValue+H1.EfferScale+Tot.DryValue+H1.pH+DWApH+Tot.DryCClass+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="  Variables")
+
+# 
+pairs(~MaxEffervescence+Tot.DryValue+H1.MoistValue+Tot.MoistValue+MaxDryValue+DryValue.50+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="  Variables")
+
+# 
+pairs(~MaxEffervescence+H1.EfferScale+Tot.DryValue+H1.pH+DWApH+Tot.DryCClass+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="  Variables")
+
+# 
+pairs(~BioticCrustClass+DryValue.50+Tot.MoistRed+H1.DryValue+Tot.DryRed+Elevation+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="  Variables")
 
 MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50
 MaxSand+DWASand+H1.SandPercent+Sand.50

@@ -274,13 +274,21 @@ SEfferScale<-xtabs(freq~id+EfferScale, SEfferScale)
 SDWA$EfferScale <- colnames(SEfferScale)[apply(SEfferScale,1,which.max)]
 
 }
+## Using just H2, not H1
+# MaxClay <- ddply( H2, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
+# MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
+# MaxpH <- ddply(H2, 'id', summarize, MaxpH = max(pH, na.rm = T))
+# MaxDryValue <- ddply(H2, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
+# MaxAWHC <- ddply( H2, 'id', summarize, MaxAWHC = max(AWHC, na.rm = T))
+# MaxEffervescence <- ddply( H2, 'id', summarize, MaxEffervescence = max(EfferScale, na.rm = T))
 
-MaxClay <- ddply( H2, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
-MaxSand <- ddply(H2, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
-MaxpH <- ddply(H2, 'id', summarize, MaxpH = max(pH, na.rm = T))
-MaxDryValue <- ddply(H2, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
-MaxAWHC <- ddply( H2, 'id', summarize, MaxAWHC = max(AWHC, na.rm = T))
-MaxEffervescence <- ddply( H2, 'id', summarize, MaxEffervescence = max(EfferScale, na.rm = T))
+# Janis thinks we should look at whole pedon not remove H1 (11/23/15)
+MaxClay <- ddply( dat, 'id', summarize, MaxClay = max(ClayPercent, na.rm = T))
+MaxSand <- ddply(dat, 'id', summarize, MaxSand = max(SandPercent, na.rm = T))
+MaxpH <- ddply(dat, 'id', summarize, MaxpH = max(pH, na.rm = T))
+MaxDryValue <- ddply(dat, 'id', summarize, MaxDryValue = max(DryValue, na.rm = T))
+MaxAWHC <- ddply( dat, 'id', summarize, MaxAWHC = max(AWHC, na.rm = T))
+MaxEffervescence <- ddply( dat, 'id', summarize, MaxEffervescence = max(EfferScale, na.rm = T))
 
 Max <- join(MaxClay, MaxSand, by = 'id', type = 'inner')
 Max <- join(Max, MaxpH, by = 'id', type = 'inner')

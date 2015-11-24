@@ -1,18 +1,21 @@
-u<-read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+library(Boruta)
+library(randomForest)
+
+u<-read.csv("F:/Soils/SoilSubset.csv",header=TRUE, row.names=1)
 u.den <- read.csv("F:/LPI/Output/USGSLPIDensityM2.csv",header=TRUE, row.names=1)
 u$ARTR2 <- u.den$ARTR2
-u1 <- subset(u, select = -c(Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,SlopeShape,DepthClass,H1.Texture,H1.SandSize))
-u2 <- subset(u, select = -c(DWAClay,DWASand,DWApH,DWA.AWHC,AWHC.50,Sand.50,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize,PedonDepth,Depth200,SlopeShape))
 
-u1[is.na(u1)] <- 0 # replace NA with 0
+rownames(u)[rowSums(is.na(u)) > 0]
+u[is.na(u)] <- 0 # replace NA with 0
 
-Boruta.live <- Boruta(ARTR2~., data = u1, doTrace = 2, ntree = 1000)
+
+Boruta.live <- Boruta(ARTR2~., data = u, doTrace = 2, ntree = 1000)
 Boruta.live
 TentativeRoughFix(Boruta.live, averageOver = Inf)
-
+Boruta.live$finalDecision
 
 live.rf = randomForest(as.numeric(ARTR2) ~ .
-                       , data = u1,proximity=TRUE,
+                       , data = u,proximity=TRUE,
                        importance=TRUE,keep.forest=TRUE,
                        na.action = na.omit, mtry = 2, 
                        ntree = 1000)

@@ -60,6 +60,10 @@ pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+H1.MoistRed+Tot.MoistRed+H1.DryRed
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Clay Variables")
 
+# Clay & Sand
+pairs(~DWAClay+H1.ClayPercent+DWASand+H1.SandPercent+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Clay Variables")
 
 
 
@@ -152,7 +156,7 @@ pairs(~MaxClay+H1.ClayPercent+MaxAWHC+PedonDepth+logc,data=logc,
 
 
 # Sand
-pairs(~MaxSand+DWASand+H1.SandPercent+Sand.50+ARTR2,data=logHalf, 
+pairs(~MaxSand+DWASand+H1.SandPercent+Sand.50+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Sand Variables")
 

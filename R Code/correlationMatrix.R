@@ -2,7 +2,7 @@ Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
 Soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
 
 ARTR2 <- Den$ARTR2
-artr <- cbind(Soil,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)]
+artr <- cbind(Soil,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)] # Combine ARTR with Soils, remove the factor variables
 
 # ARTR2 + Half of Min Non-Zero
 trfHalf <- ARTR2+((min(ARTR2[ARTR2 > 0]))*0.5)
@@ -51,6 +51,15 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
   if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
   text(0.5, 0.5, txt, cex = cex.cor * r)
 }
+
+
+
+
+# Clay
+pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+H1.MoistRed+Tot.MoistRed+H1.DryRed+Tot.DryRed+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Clay Variables")
+
 
 
 
@@ -172,11 +181,16 @@ pairs(~MaxDryValue+Tot.DryValue+H1.DryValue+DryValue.50+ARTR2,data=artr,
       pch=20, na.action = na.exclude, main="DryValue Variables")
 
 
+art <- cbind(Soil,ARTR2)
 # Depth
-pairs(~PedonDepth+Depth200+H1.Depth+DepthClass+ARTR2,data=artr, 
+pairs(~PedonDepth+Depth200+H1.Depth+DepthClass+ARTR2,data=art, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main="Depth Variables")
 
+# Factors
+pairs(~SlopeShape+Tot.Texture+Tot.SandSize+H1.Texture+H1.SandSize+ARTR2,data=art, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="Factor Variables")
 
 
 # 
@@ -198,6 +212,13 @@ pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+Sand.5
 pairs(~MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50+MaxSand+DWASand+H1.SandPercent+ARTR2,data=artr, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
       pch=20, na.action = na.exclude, main=" Variables")
+
+# 
+pairs(~H1.DryRed+Tot.DryRed+H1.MoistRed+Tot.MoistRed+H1.EfferScale+Tot.EfferScale+ARTR2,data=artr, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main=" Variables")
+
+
 
 MaxAWHC+DWA.AWHC+H1.DWA_AWC+AWHC.50
 MaxSand+DWASand+H1.SandPercent+Sand.50

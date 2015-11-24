@@ -59,4 +59,5 @@ lm.a1 <- lm(ARTR2 ~ ., data = ARTR2)
 lm.a2 <- lm(cbind(ARTR2+ATCA2+KRLA2) ~ ., data = u)
 
 summary(lm.a1)
-summary(lm.a2$run1)$r.squared
+summary(lm.a1$run1)$r.squared
+summary(lm.a2)

@@ -11,8 +11,8 @@ u <- subset(u, select = -c(Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.
 
 
 
-fit <- lm(as.formula(paste(colnames(u)[49], "~",
-              paste(colnames(u)[c(1:48)], collapse = "+"),
+fit <- lm(as.formula(paste(colnames(u)[36], "~",
+              paste(colnames(u)[c(1:35)], collapse = "+"),
               sep = "")),data=u)
 
 # Assessing Outliers

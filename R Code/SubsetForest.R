@@ -24,14 +24,29 @@ live.rf = randomForest(as.numeric(ARTR2) ~ .
 varImpPlot(live.rf, main = 'Live Sagebrush')
 
 
-x <- u1[,c(1:34)]
-y <- u1[,35]
-rf.cv <- rfcv(x, y, cv.fold=10)
 
-with(rf.cv, plot(n.var, error.cv))
 
-library(rfUtilities)
-multi.collinear(x, p = 0.05)
+# op <- par(mar=c(5.1, 4.1, 4.1, 2.1))
+# par(mar=c(2,2,2,2))
+# 
+# importanceOrder=order(-live.rf$importance)
+# names=rownames(live.rf$importance)[importanceOrder][1:15]
+# par(mfrow=c(5, 3), xpd=NA)
+# for (name in names)
+#     partialPlot(live.rf, u,x.var=ARTR2, eval(name), main=name, xlab=name,ylim=c(-.2,.9))
+# 
+# par(op)
+
+
+
+# x <- u[,c(1:24)]
+# y <- u[,25]
+# rf.cv <- rfcv(x, y, cv.fold=10)
+# 
+# with(rf.cv, plot(n.var, error.cv))
+# 
+# library(rfUtilities)
+# multi.collinear(x, p = 0.05)
 
 
 
@@ -40,16 +55,19 @@ multi.collinear(x, p = 0.05)
 # Partial Dependence Plots
 ###
 
-partialPlot(live.rf,u1, H1.ClayPercent, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, H1.ClayPercent, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, PedonDepth, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, PedonDepth, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, MaxAWHC, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, H1.DWA_AWC, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, Slope, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, H1.Texture, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, Tot.SandSize, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, H1.MoistRed, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, H1.MoistRed, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, DepthClass, main = 'Live Sagebrush Partial Dependence on ...')
 
-partialPlot(live.rf,u1, H1.DryRed, main = 'Live Sagebrush Partial Dependence on ...')
+partialPlot(live.rf,u, H1.SandSize, main = 'Live Sagebrush Partial Dependence on ...')
+
+partialPlot(live.rf,u, SlopeShape, main = 'Live Sagebrush Partial Dependence on ...')
+

@@ -144,12 +144,7 @@ class.sum=function(truth,predicted){
 # H2_MinDryHue + Depth150 + TotalDepth +
 #   Elevation + H1_Effervescence
 
-live.rf = randomForest(as.factor(ARTR2) ~ 
-                         Aspect   +
-                         BioticCrustClass + Elevation +
-                       CarbonateStage +
-                         Depth200  +
-                       Elevation + SlopeShape
+live.rf = randomForest(as.factor(ARTR2) ~ .
                        , data = april.l,proximity=TRUE,
                        importance=TRUE,keep.forest=TRUE,
                        na.action = na.omit, mtry = 2, 

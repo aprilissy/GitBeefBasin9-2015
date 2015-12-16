@@ -1,6 +1,20 @@
 library(Boruta)
 library(randomForest)
 
+# usgs<-read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+# usgs.den <- read.csv("F:/LPI/Output/USGSLPIDensityM2.csv",header=TRUE, row.names=1)
+# 
+# usgs.count <- usgs.den[c(1:37),]*90
+# april.count <- usgs.den[c(38:136),]*150
+# count <- rbind(usgs.count,april.count)
+# 
+# usgs$ARTR2 <- count$ARTR2
+# usgs1 <- subset(usgs, select = -c(DepthClass,Aspect,Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,H1.Texture,SlopeShape,Tot.SandSize,H1.SandSize,H1.DryRed,H1.DryValue,H1.DryCClass,Tot.DryRed,Tot.DryValue,Tot.DryCClass,MaxSand,MaxpH,MaxDryValue,MaxAWHC))
+# 
+# c <- cbind(b[, which(colnames(b)%in% colnames(a))],
+#            a[, which(colnames(a)%in% colnames(b))])
+
+
 u<-read.csv("F:/Soils/SoilSubset.csv",header=TRUE, row.names=1)
 u.den <- read.csv("F:/LPI/Output/USGSLPIDensityM2.csv",header=TRUE, row.names=1)
 u$ARTR2 <- u.den$ARTR2

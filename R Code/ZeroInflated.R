@@ -8,13 +8,17 @@ a.count <- u.den[c(38:136),]*150
 count <- rbind(u.count,a.count)
 
 u$ARTR2 <- count$ARTR2
-u1 <- subset(u, select = -c(Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,SlopeShape,DepthClass,H1.Texture,H1.SandSize))
-u2 <- subset(u, select = -c(DWAClay,DWASand,DWApH,DWA.AWHC,AWHC.50,Sand.50,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize,PedonDepth,Depth200,SlopeShape))
+u1 <- subset(u, select = -c(DepthClass,Aspect,Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,H1.Texture,SlopeShape,Tot.SandSize,H1.SandSize,H1.DryRed,H1.DryValue,H1.DryCClass,Tot.DryRed,Tot.DryValue,Tot.DryCClass,MaxSand,MaxpH,MaxDryValue,MaxAWHC))
 
 
+fit <- lm(as.formula(paste(colnames(u1)[23], "~",
+                           paste(colnames(u1)[c(1:22)], collapse = "+"),
+                           sep = "")),data=u1)
+vif(fit)
 
 model.pois = glm(ARTR2 ~ ., data = u1, family = poisson,offset=u.den$ARTR2)
 summary(model.pois)
+vif(model.pois) # variance inflation factors 
 
 
 pchisq(summary(model.pois)$deviance,

@@ -49,10 +49,10 @@ PGfit <- lm(as.formula(paste(colnames(PG)[49], "~",
 #                                 sep = "")),data=u)
 # 
 
-(fit <- lm(cbind(ARTR2, ATCA2, KRLA2) ~ PedonDepth + MaxClay + MaxSand + Sand.50 + BioticCrustClass + CarbonateStage + Clay.50 +pH.50, data=u))
+(fit <- lm(cbind(ARTR2, ATCA2, KRLA2) ~ PedonDepth + H1.ClayPercent + H1.Texture + H1.MoistRed + DepthClass + H1.DWA_AWC + SlopeShape +H1.SandSize, data=u))
 
 #(fit <- lm(cbind(ARTR2, ATCA2, KRLA2) ~as.formula(paste(colnames(u)[c(1:48)], collapse = "+", sep = "")),data=u))
-
+summary(fit)
 
 lm.a1 <- lm(ARTR2 ~ ., data = ARTR2)
 

@@ -40,11 +40,6 @@ write.csv(Susan7,file="F:/Soil.7SpearmansCorrelation.csv", row.names=TRUE)
 
 
 
-
-
-
-
-
 Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
 ARTR2 <- Den$ARTR2
 KRLA2 <- Den$KRLA2

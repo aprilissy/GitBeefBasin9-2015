@@ -31,11 +31,37 @@ Boruta.live$finalDecision
 live.rf = randomForest(as.numeric(ARTR2) ~ .
                        , data = u,proximity=TRUE,
                        importance=TRUE,keep.forest=TRUE,
-                       na.action = na.omit, mtry = 2, 
+                       na.action = na.omit,
                        ntree = 1000)
 
 
-varImpPlot(live.rf, main = 'Live Sagebrush')
+varImpPlot(live.rf, sort=TRUE, main = 'Live Sagebrush')
+
+round(importance(live.rf,type=1), 2)
+
+importance(live.rf, type=1)
+
+plot(live.rf, type="l", main=deparse(substitute(live.rf)))
+
+
+predict(live.rf, type="response",norm.votes=TRUE, predict.all=FALSE, proximity=FALSE, nodes=FALSE)
+
+
+
+imp <- importance(live.rf)
+impvar <- rownames(imp)[order(imp[, 1], decreasing=TRUE)]
+
+op <- par(mfrow=c(2, 3))
+for (i in seq_along(impvar)) {
+  partialPlot(live.rf, u, impvar[i], xlab=impvar[i],
+              main=paste("Partial Dependence on", impvar[i]),
+              ylim=c(30, 70))
+}
+par(op)
+
+
+
+
 
 
 

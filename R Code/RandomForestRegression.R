@@ -9,9 +9,11 @@ belt <- read.csv("F:/ShrubDensity/PresenceAbsence/Output/USGSplotXspp.csv",heade
 # Remove Predetermined Variables (Covariance and VIF)
 soil <- subset(soil, select = -c(DepthClass,Aspect,Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,H1.Texture,SlopeShape,Tot.SandSize,H1.SandSize,H1.DryRed,H1.DryValue,H1.DryCClass,Tot.DryRed,Tot.DryValue,Tot.DryCClass,MaxSand,MaxpH,MaxDryValue,MaxAWHC))
 
-# Combine Shrub Data and Soils Data
-soil$ARTR2 <- lpi$ARTR2
-soil$ATCA2 <- lpi$ATCA2
+# Combine Plant Data and Soils Data
+soilplant <- soil
+#soilplant$ARTR2 <- lpi$ARTR2
+soilplant$ATCA2 <- lpi$ATCA2
+
 
 # Which rows have NA present somewhere
 rownames(soil)[rowSums(is.na(soil)) > 0]
@@ -23,29 +25,38 @@ soil[is.na(soil)] <- 0 # replace NA with 0
 
 # Run Random Forest
 live.rf = randomForest(as.numeric(ATCA2) ~ .
-                       , data = soil,proximity=TRUE,
+                       , data = soilplant,proximity=TRUE,
                        importance=TRUE,keep.forest=TRUE,
                        na.action = na.omit,mtry=2,
                        ntree = 500)
 
-(rf <- randomForest(x=soil,y=lpi$ARTR2,proximity=TRUE,
+(rf <- randomForest(x=soil,y=lpi$ATCA2,proximity=TRUE,
                     importance=TRUE,keep.forest=TRUE,
                     na.action = na.omit,mtry=2,
                     ntree = 501))
 
 
 plot(live.rf)
-
+plot(rf)
 
 varImpPlot(live.rf, sort=TRUE, main = 'Live Sagebrush')
+varImpPlot(rf, sort=TRUE, main = 'Live Sagebrush')
 
-plot( predict(live.rf), y)
+
+plot( predict(live.rf), y=live.rf$y)
+abline(c(0,1),col=2)
+
+plot( predict(rf), y=lpi$ARTR2)
 abline(c(0,1),col=2)
 
 
 # Shows values of varImpPlot. Type = MSE or Node Purity, , 2)=#of decimal places
-a<-round(importance(live.rf,type=1), 2)
-a[order(a[,1],decreasing=TRUE),]
+a <- round(importance(live.rf,type=1), 2)
+
+SoilVariables <- rownames(a)
+rownames(a) <- NULL
+a <- cbind(SoilVariables,a)
+a <- a[order(a[,2],decreasing=TRUE),]
 
 
 # Look at how ntree changes Error

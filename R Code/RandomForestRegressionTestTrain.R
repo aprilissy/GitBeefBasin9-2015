@@ -3,7 +3,7 @@ lpi <- read.csv("F:/LPI/Output/USGSLPIplotXspp.csv",header=TRUE, row.names=1)
 soil <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
   # Remove Predetermined Variables (Covariance and VIF)
   soil <- subset(soil, select = -c(DepthClass,Aspect,Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,H1.Texture,SlopeShape,Tot.SandSize,H1.SandSize,H1.DryRed,H1.DryValue,H1.DryCClass,Tot.DryRed,Tot.DryValue,Tot.DryCClass,MaxSand,MaxpH,MaxDryValue,MaxAWHC))
- # soil <- subset(soil, select = -c(Tot.EfferScale,Tot.MoistCClass,Tot.MoistRed,Tot.MoistValue,Slope,BioticCrustClass,MaxEffervescence,H1.MoistCClass,H1.MoistRed,H1.MoistValue))
+  soil <- subset(soil, select = -c(Tot.MoistValue,DWAClay,H1.SandPercent,BioticCrustClass,H1.MoistCClass,H1.MoistCClass,CarbonateStage,Depth200, Tot.MoistCClass,H1.Depth,Slope,Elevation))
   # Which rows have NA present somewhere
   rownames(soil)[rowSums(is.na(soil)) > 0]
   # Replace NA with 0 (necesary for Boruta but not Random Forest)

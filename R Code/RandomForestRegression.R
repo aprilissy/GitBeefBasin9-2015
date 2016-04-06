@@ -33,7 +33,11 @@ live.rf = randomForest(as.numeric(ATCA2) ~ .
                        na.action = na.omit,mtry=2,
                        ntree = 500)
 
-(rf <- randomForest(x=soil,y=lpi$ATCA2,proximity=TRUE,
+#var explained printed
+print(live.rf)
+
+
+(rf <- randomForest(x=soil,y=as.numeric(lpi$ATCA2),proximity=TRUE,
                     importance=TRUE,keep.forest=TRUE,
                     na.action = na.omit,mtry=2,
                     ntree = 501))

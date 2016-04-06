@@ -78,7 +78,7 @@ TentativeRoughFix(Boruta.live, averageOver = Inf)
 #                ylab = "Importance")
 
 
-Boruta.d <- Boruta(ARTR2LD~., data = april.d, doTrace = 2, ntree = 1000)
+Boruta.d <- Boruta(ARTR2.D~., data = april.d, doTrace = 2, ntree = 1000)
 Boruta.d
 TentativeRoughFix(Boruta.d)
 
@@ -151,6 +151,7 @@ live.rf = randomForest(as.factor(ARTR2) ~ .
                        ntree = 1000)
 
 live.rf
+
 # live.rf$confusion
 # class.sum(l.april$ARTR2,predict(live.rf,type="prob")[,2])
 

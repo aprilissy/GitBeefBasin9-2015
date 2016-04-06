@@ -4,7 +4,10 @@ library(randomForest)
 soil <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
 lpi <- read.csv("F:/LPI/Output/USGSLPIplotXspp.csv",header=TRUE, row.names=1)
 belt <- read.csv("F:/ShrubDensity/PresenceAbsence/Output/USGSplotXspp.csv",header=TRUE, row.names=1)
-
+# Keep only usgs sites that have both soil and veg data.
+beltApril <- belt[c(61:159),]
+beltUSGS <- belt[c("1","2","10","11","12","14","15","16","17","18","19","20","21","23","24","32","33","38","39","40","42","43","44","47","48","50","57","59","60","61","67","68","73","77","80","82","90"),]
+belt <- rbind(beltApril, beltUSGS)
 
 # Remove Predetermined Variables (Covariance and VIF)
 soil <- subset(soil, select = -c(DepthClass,Aspect,Sand.50,Clay.50,pH.50,DryValue.50,EfferScale.50,AWHC.50,MaxClay,DWASand,DWA.AWHC,Tot.Texture,H1.Texture,SlopeShape,Tot.SandSize,H1.SandSize,H1.DryRed,H1.DryValue,H1.DryCClass,Tot.DryRed,Tot.DryValue,Tot.DryCClass,MaxSand,MaxpH,MaxDryValue,MaxAWHC))

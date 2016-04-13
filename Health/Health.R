@@ -14,47 +14,88 @@ library(plyr)
 # look at other peoples SLA
 # typical (Bruce Bugbee) is 100 to 600
 
-la<-read.csv("F:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
-la <- la[ which(!la$Wet.Dry<0.000000), ] # Remove negative weights.
-la <- la[,c(1,14:15)]
+LA<-read.csv("F:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
+LA <- LA[ which(!LA$Wet.Dry<0.000000), ] # Remove negative weights.
+LA <- LA[,c(1,14:15)]
 
 NP<-read.csv("F:/Health/April Sagebrush N and Protein.csv",header=TRUE)
 NP <- NP[,c(2,5:6)]
 
-
-pdw <- ddply( la, 'Plot', summarize, pdw = mean(PctDryWeight, na.rm = T))
-sla <- ddply( la, 'Plot', summarize, sla = mean(SLAcm, na.rm = T))
+# find means from LA
+pdw <- ddply( LA, 'Plot', summarize, pdw = mean(PctDryWeight, na.rm = T))
+sla <- ddply( LA, 'Plot', summarize, sla = mean(SLAcm, na.rm = T))
 LA <- join(pdw, sla, by = 'Plot', type = 'inner')
 
+# What plots do LA and NP have in common?
+LA.NP <- merge(NP, LA, by=c("Plot")) 
 
-both <- merge(NP, LA, by=c("Plot")) 
-
-
+# Look for data normality. Not found in these 4 variables
 hist(LA$pdw)
 hist(LA$sla)
 hist(NP$NitrogePct)
 hist(NP$ProteinPct)
  
-# LA <-LA[-c(14),]
-# hist(LA$sla)
-
-qqPlot(LA$pdw, main="QQ Plot")
-qqPlot(LA$sla, main="QQ Plot")
-qqPlot(NP$NitrogePct, main="QQ Plot")
-qqPlot(NP$ProteinPct, main="QQ Plot")
+qqnorm(LA$pdw); qqline(LA$pdw)
+qqnorm(LA$sla); qqline(LA$sla)
+qqnorm(NP$NitrogePct); qqline(NP$NitrogePct)
+qqnorm(NP$ProteinPct); qqline(NP$ProteinPct)
 
 
-
-
-Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE, row.names=1)
+# Read in Density and Soils Data
+Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE)
+Den <- rename(Den, c("X"="Plot"))
 Soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
 Soil <- cbind(Plot = rownames(Soil), Soil)
 
+# Pull out ARTR2 and combine with soils, LA, NP
 ARTR2 <- Den$ARTR2
 artr <- cbind(Soil,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)] # Combine ARTR with Soils, remove the factor variables
 ALA <- merge(LA, Soil, by=c("Plot")) 
 ANP <- merge(NP, Soil, by=c("Plot")) 
 
+
+# Look at LA or NP with ARTR2
+art <- Den[,c(1,5)]
+LAhealth <- merge(LA, art, by=c("Plot")) 
+NPhealth <- merge(NP, art, by=c("Plot")) 
+
+# Look at LA or NP with ARTR2 and soils
+ALAhealth <- merge(ALA, art, by=c("Plot")) 
+ANPhealth <- merge(ANP, art, by=c("Plot")) 
+
+
+library(randomForest)
+# Look at LA and NP in random forests
+  #Without Soils
+
+live.rf = randomForest(as.numeric(ARTR2) ~ pdw+sla
+                       , data = LAhealth,proximity=TRUE,
+                       importance=TRUE,keep.forest=TRUE,
+                       na.action = na.omit,mtry=2,
+                       ntree = 500)
+  #With Soils
+live.rf = randomForest(as.numeric(ARTR2) ~ pdw+sla+Elevation+DepthClass
+                       , data = ALAhealth,proximity=TRUE,
+                       importance=TRUE,keep.forest=TRUE,
+                       na.action = na.omit,mtry=2,
+                       ntree = 500)
+
+#var explained printed
+print(live.rf)
+varImpPlot(live.rf)
+
+live.rf = randomForest(as.numeric(ARTR2) ~ NitrogePct+ProteinPct
+                       , data = ANPhealth,proximity=TRUE,
+                       importance=TRUE,keep.forest=TRUE,
+                       na.action = na.omit,mtry=2,
+                       ntree = 500)
+
+#var explained printed
+print(live.rf)
+
+
+
+# Look at correlations between Health and Soil variables
 
 # panel.smooth function is built in.
 # panel.cor puts correlation in upper panels, size proportional to correlation
@@ -70,6 +111,16 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
 }
 
 
+# ARTR2
+pairs(~pdw+sla+ARTR2,data=LAhealth, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="LA Variables")
+# ARTR2
+pairs(~NitrogePct+ProteinPct+ARTR2,data=NPhealth, 
+      lower.panel=panel.smooth, upper.panel=panel.cor, 
+      pch=20, na.action = na.exclude, main="NP Variables")
+
+plot(LAhealth)
 
 # Clay
 pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+sla+pdw,data=ALA, 

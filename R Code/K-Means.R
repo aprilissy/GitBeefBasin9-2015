@@ -27,3 +27,7 @@ par(mar = rep(2, 4))
 # Plot results
 plot(data, col =(km2$cluster +1) , main="K-Means result with 6 clusters", pch=20, cex=2)
 par(op)
+
+
+plot(data[c("ARTR2", "ATCA2")], col=km2$cluster)
+  points(km2$centers[,c("ARTR2", "ATCA2")], col=1:3, pch=8, cex=2)

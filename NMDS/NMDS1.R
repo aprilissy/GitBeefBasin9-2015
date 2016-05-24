@@ -12,7 +12,8 @@ library(colorspace)
 #### removed those with COUNTIF below 5 AND SUMS below .05 (had to both be below to be removed)
 #### Also cleaned up the data (combined SALS0 and SALSO, etc...)
 
-data<-read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv",header=TRUE, row.names=1)
+data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
+#data<-read.csv("F:/LPI/AprilLPIRelativeCoverCommonInExcel.csv",header=TRUE, row.names=1)
 ###data<-data[,2:ncol(data)] 
 
 # # calculate dissimilarities, use function "vegdist"in VEGAN package
@@ -42,7 +43,9 @@ stressplot(e.data.mds)
 ###########################  ENVIRONMENTAL DATA  ###########################################
 
 # read in Soil environmental data
-data.env <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv",header=TRUE, row.names=1)
+#data.env <- read.csv("F:/Soils/SoilEnvironmentalDataModWithColbyAWS.csv",header=TRUE, row.names=1)
+data.env <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+data.env[is.na(data.env)] <- 0 # replace NA with 0
 
 # read in SageEnvironmentalNMDS data
 data.sage <- read.csv("F:/SageNMDSvariables/Sage.Env.April.csv",header=TRUE,row.names=1)
@@ -102,13 +105,13 @@ fit.den.l
 fit.den.l.d
 
 ### Choose only the significant environmental data
-sig.data.env<-data.env[,c(8,9,12,16:18,24)]
+sig.data.env<-data.env[,c(4,11,14,15,41)]
 sig.fit.env<-envfit(e.data.mds,sig.data.env,perm=1000)
 sig.fit.env # Check that you pulled up the right factors.
 
 
 #plotMDS
-orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.7,0.7),ylim=c(-0.7,0.4))
+orditkplot(e.data.mds, display="species", col="black", cex=0.7, pcol="gray",pch="+",xlim=c(-0.4,0.25),ylim=c(-0.2,0.25))
 saveRDS(Plot, file="F:/SageNMDSvariables/Plot.Rdata")
 Plot <- readRDS("F:/SageNMDSvariables/Plot.Rdata")
 

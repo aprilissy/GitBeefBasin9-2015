@@ -24,7 +24,7 @@ plot(pc, type='l')
 summary(pc) # 3 components is 'elbow' but does not explain >85% variance(would need 23 components)(only explains about 7%)
 
 
-# First four principal components
+# First few principal components
 comp <- data.frame(pc$scores[,1:3])
 
 # Plot

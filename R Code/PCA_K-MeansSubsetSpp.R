@@ -3,7 +3,7 @@
 # LPI Data
 data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
 data.i <- subset(data, select = c(SPCR,PIED,LAOC3,OPPO,KRLA2,JUOS,HECO26,GUSA2,GUSA2.D,CHVI8,BRTE,BOGR2.D,BOGR2,Bare.Soil,ATCA2.D,ATCA2,ARTR2,ARTR2.D,AMID,ACHY) )
-data.g <- subset(data, select = c(SPCR,HECO26,GUSA2,GUSA2.D,CHVI8,BRTE,BOGR2.D,BOGR2,Bare.Soil,ACHY) )
+data.g <- subset(data, select = c(SPCR,HECO26,BRTE,BOGR2.D,BOGR2,Bare.Soil,ACHY) )
 data.s <- subset(data, select = c(PIED,KRLA2,JUOS,CHVI8,Bare.Soil,ATCA2.D,ATCA2,ARTR2,ARTR2.D) )
 data.f <- subset(data, select = c(LAOC3,OPPO,Bare.Soil,AMID) )
 
@@ -11,12 +11,12 @@ data.f <- subset(data, select = c(LAOC3,OPPO,Bare.Soil,AMID) )
 # plot variance of columns
 mar <- par()$mar
 par(mar=mar+c(0,5,0,0))
-barplot(sapply(data.f, var), horiz=T, las=1, cex.names=0.5)
-barplot(sapply(data.f, var), horiz=T, las=1, cex.names=0.5, log='x')
+barplot(sapply(data.s, var), horiz=T, las=1, cex.names=0.5)
+barplot(sapply(data.s, var), horiz=T, las=1, cex.names=0.5, log='x')
 par(mar=mar)
 
 # Scale
-data2 <- data.frame(scale(data.f))
+data2 <- data.frame(scale(data.s))
 # Verify variance is uniform
 plot(sapply(data2, var))
 
@@ -87,8 +87,8 @@ row.names(data[k$clust==clust[6],])
 
 
 # Compare accommodation by cluster in boxplot
-boxplot(data$LAOC3 ~ k$cluster,
-        xlab='Cluster', ylab='LAOC3',
-        main='LAOC3 by Cluster')
+boxplot(data$Bare.Soil ~ k$cluster,
+        xlab='Cluster', ylab='Bare.Soil',
+        main='Bare.Soil by Cluster')
 
 

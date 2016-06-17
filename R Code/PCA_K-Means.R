@@ -84,8 +84,28 @@ row.names(data[k$clust==clust[6],])
 
 # Compare accommodation by cluster in boxplot
 boxplot(data$ARTR2 ~ k$cluster,
-        xlab='Cluster', ylab='KRLA',
-        main='KRLA by Cluster')
+        xlab='Cluster', ylab='ARTR2',
+        main='ARTR2 by Cluster')
 
+
+boxplot(data$ARTR2.D ~ k$cluster,
+        xlab='Cluster', ylab='ARTR2.D',
+        main='ARTR2.D by Cluster')
+
+boxplot(data$KRLA2 ~ k$cluster,
+        xlab='Cluster', ylab='KRLA2',
+        main='KRLA2 by Cluster')
+
+boxplot(data$KRLA2.D ~ k$cluster,
+        xlab='Cluster', ylab='KRLA2.D',
+        main='KRLA2.D by Cluster')
+
+boxplot(data$ATCA2 ~ k$cluster,
+        xlab='Cluster', ylab='ATCA2',
+        main='ATCA2 by Cluster')
+
+boxplot(data$ATCA2.D ~ k$cluster,
+        xlab='Cluster', ylab='ATCA2.D',
+        main='ATCA2.D by Cluster')
 
 

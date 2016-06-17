@@ -87,8 +87,11 @@ row.names(data[k$clust==clust[6],])
 
 
 # Compare accommodation by cluster in boxplot
-boxplot(data$Bare.Soil ~ k$cluster,
-        xlab='Cluster', ylab='Bare.Soil',
-        main='Bare.Soil by Cluster')
+boxplot(data$ATCA2 ~ k$cluster,
+        xlab='Cluster', ylab='ATCA2',
+        main='ATCA2 by Cluster')
+
+
+
 
 

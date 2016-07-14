@@ -2,11 +2,15 @@
 
 # LPI Data
 data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
+#All
 data.i <- subset(data, select = c(SPCR,PIED,LAOC3,OPPO,KRLA2,JUOS,HECO26,GUSA2,GUSA2.D,CHVI8,BRTE,BOGR2.D,BOGR2,Bare.Soil,ATCA2.D,ATCA2,ARTR2,ARTR2.D,AMID,ACHY) )
+#Important
 data.g <- subset(data, select = c(SPCR,HECO26,BRTE,BOGR2.D,BOGR2,Bare.Soil,ACHY) )
+#Grass
 data.s <- subset(data, select = c(PIED,KRLA2,JUOS,CHVI8,Bare.Soil,ATCA2.D,ATCA2,ARTR2,ARTR2.D) )
+#Shrub
 data.f <- subset(data, select = c(LAOC3,OPPO,Bare.Soil,AMID) )
-
+#Forb(& Succulent)
 
 # plot variance of columns
 mar <- par()$mar
@@ -16,7 +20,7 @@ barplot(sapply(data.s, var), horiz=T, las=1, cex.names=0.5, log='x')
 par(mar=mar)
 
 # Scale
-data2 <- data.frame(scale(data.s))
+data2 <- data.frame(scale(data))
 # Verify variance is uniform
 plot(sapply(data2, var))
 
@@ -52,7 +56,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 # From scree plot elbow occurs at k = 4 (or 6?)
 # Apply k-means with k=4 (then try 6)
-k <- kmeans(comp, 6, nstart=25, iter.max=1000)
+k <- kmeans(comp, 5, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
@@ -92,6 +96,19 @@ boxplot(data$ATCA2 ~ k$cluster,
         main='ATCA2 by Cluster')
 
 
+# Compare accommodation by cluster in boxplot
+boxplot(data$ARTR2 ~ k$cluster,
+        xlab='Cluster', ylab='ARTR2',
+        main='ARTR2 by Cluster')
 
 
+# Compare accommodation by cluster in boxplot
+boxplot(data$ARTR2.D ~ k$cluster,
+        xlab='Cluster', ylab='ARTR2 DEAD',
+        main='ARTR2 DEAD by Cluster')
+
+# Compare accommodation by cluster in boxplot
+boxplot(data$SPCR ~ k$cluster,
+        xlab='Cluster', ylab='SPCR',
+        main='SPCR by Cluster')
 

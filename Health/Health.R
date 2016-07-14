@@ -44,12 +44,41 @@ qqnorm(NP$ProteinPct); qqline(NP$ProteinPct)
 # Read in Density and Soils Data
 Den <- read.csv("F:/LPI/Output/AprilLPIDensityM2.csv",header=TRUE)
 Den <- rename(Den, c("X"="Plot"))
-Soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
-Soil <- cbind(Plot = rownames(Soil), Soil)
+Soil <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE)
+Soil <- rename(Soil, c("id"="Plot"))
+Height1 <- read.csv("F:/ShrubDensity/HeightClass/Output/AprilLiveDeadPlotbySizeClass.csv",header=TRUE,row.names=1)
+Height2 <- read.csv("F:/ShrubDensity/HeightClass/Output/AprilSizeClassLiveDeadDensityM2.csv",header=TRUE,row.names=1)
+
+
+# # Simple Bar Plot 
+# counts <- table(Height1$E)
+# barplot(counts, main=">100cm Sagebrush", 
+#         xlab="Number of Sagebrush")
+# 
+# Height3<-data.matrix(Height1)
+# # Stacked Bar Plot with Colors and Legend
+# sums <- colSums (Height1, na.rm = FALSE, dims = 1)
+# counts <- table(Height3[,1],Height3[,2],Height3[,3],Height3[,4],Height3[,5])
+# barplot(sums, main="Car Distribution by Gears and VS",
+#         xlab="Number of Gears", col=c("darkblue","red"),
+#         legend = rownames(counts))
+# 
+# # Grouped Bar Plot
+# colours <- c("red", "orange", "blue", "yellow", "green")
+# bplt <- barplot(as.matrix(sums), main="Sagebrush Counts by Height Class",xlab="Height Class", ylab = "Counts", cex.lab = 1.5, cex.main = 1.4, beside=TRUE, col=colours,names.arg = c("A", "B", "C","D","E"))
+# text(x= counts+0.3, y= bplt, labels=as.character(counts), xpd=TRUE)
+# 
+# counts <- table(Height3[,1],Height3[,2],Height3[,3],Height3[,4],Height3[,5])
+# barplot(counts, main="Car Distribution by Gears and VS",
+#         xlab="Number of Gears", col=c("darkblue","red"),
+#         legend = rownames(counts), beside=TRUE)
 
 # Pull out ARTR2 and combine with soils, LA, NP
 ARTR2 <- Den$ARTR2
-artr <- cbind(Soil,ARTR2) ; artr <- artr[, !sapply(artr, is.factor)] # Combine ARTR with Soils, remove the factor variables
+artr <- cbind(Soil,ARTR2); rownames(artr) <- artr[,1]
+artr <- artr[, !sapply(artr, is.factor)] # Combine ARTR with Soils, remove the factor variables
+artr$Plot<-rownames(artr)
+
 ALA <- merge(LA, Soil, by=c("Plot")) 
 ANP <- merge(NP, Soil, by=c("Plot")) 
 
@@ -73,6 +102,10 @@ live.rf = randomForest(as.numeric(ARTR2) ~ pdw+sla
                        importance=TRUE,keep.forest=TRUE,
                        na.action = na.omit,mtry=2,
                        ntree = 500)
+#var explained printed
+print(live.rf)
+varImpPlot(live.rf)
+
   #With Soils
 live.rf = randomForest(as.numeric(ARTR2) ~ pdw+sla+Elevation+DepthClass
                        , data = ALAhealth,proximity=TRUE,
@@ -111,6 +144,19 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
 }
 
 
+# Correlations with significance levels
+library(Hmisc)
+rcorr((data.matrix(LAhealth,rownames.force=T)), type="pearson") # type can be pearson or spearman
+plot(LAhealth$pdw,LAhealth$ARTR2)
+abline(lm(LAhealth$pdw~LAhealth$ARTR2), col="red") # regression line (y~x) 
+lines(lowess(LAhealth$pdw,LAhealth$ARTR2), col="blue") # lowess line (x,y)
+
+p<-a$P
+r<-a$r
+a<-rcorr((data.matrix(ALAhealth,rownames.force=T)), type="pearson") # type can be pearson or spearman
+
+df <- data.frame(matrix(unlist(a), nrow=52, byrow=T),stringsAsFactors=FALSE)
+
 # ARTR2
 pairs(~pdw+sla+ARTR2,data=LAhealth, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 
@@ -121,6 +167,7 @@ pairs(~NitrogePct+ProteinPct+ARTR2,data=NPhealth,
       pch=20, na.action = na.exclude, main="NP Variables")
 
 plot(LAhealth)
+plot(NPhealth)
 
 # Clay
 pairs(~MaxClay+DWAClay+H1.ClayPercent+Clay.50+sla+pdw,data=ALA, 

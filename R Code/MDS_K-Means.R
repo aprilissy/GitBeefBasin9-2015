@@ -1,4 +1,4 @@
-# PCA before K-Means 05/11/2016
+# MDS before K-Means 05/11/2016
 
 # LPI Data
 data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
@@ -7,62 +7,47 @@ data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=
 # plot variance of columns
 mar <- par()$mar
 par(mar=mar+c(0,5,0,0))
-par(mfrow=c(1,2))
+# par(mfrow=c(1,2))
 barplot(sapply(data, var), horiz=T, las=1, cex.names=0.5)
 barplot(sapply(data, var), horiz=T, las=1, cex.names=0.5, log='x')
 par(mar=mar)
 
+######## NMDS #########
 
+library(vegan)
+library(MASS)
+library(colorspace)
 
-
-# Scale
-data2 <- data.frame(scale(data))
-
-# Verify variance is uniform
-plot(sapply(data2, var))
-
-
-
-# Proceed with principal components
-pc <- princomp(data2)
-plot(pc)
-plot(pc, type='l')
-summary(pc) # 3 components is 'elbow' but does not explain >85% variance(would need 23 components)(only explains about 7%)
-
-
-# First few principal components
-comp <- data.frame(pc$scores[,1:3])
-
-# Plot
-plot(comp, pch=16, col=rgb(0,0,0,0.5))
-
-
-library(rgl)
-# Multi 3D plot
-plot3d(comp$Comp.1, comp$Comp.2, comp$Comp.3)
+ord<-metaMDS(comm=data,distance="bray",trace=FALSE)
+ord #.17
+plot.sc = scores(ord)
+# Stress <0.10 indicates that the ordination is good "with no real 
+# risk of drawing false inferences" (Clarke 1993, p. 26). 
+# linear fit is the fit between ordination values and distances
+stressplot(ord) 
 
 
 ### K-Means ###
 
 # Determine number of clusters
-wss <- (nrow(comp)-1)*sum(apply(comp,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(comp,
+wss <- (nrow(ord$points)-1)*sum(apply(ord$points,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(ord$points,
                                      centers=i)$withinss)
 plot(1:15, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 
-# From scree plot elbow occurs at k = 4 (or 6?)
-# Apply k-means with k=4 (then try 6)
-k <- kmeans(comp, 5, nstart=25, iter.max=1000)
+
+
+# From scree plot elbow occurs at k = 3 (or 8?)
+# Apply k-means with k=3 (then try 8)
+k <- kmeans(ord$points, 3, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
-plot(comp, col=k$clust, pch=16)
-
-
-# 3D plot
-plot3d(comp$Comp.1, comp$Comp.2, comp$Comp.3, col=k$clust)
+plot(ord$points, col=k$clust, pch=16)
+legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
+       ,pch=16, col=k$cluster)
 
 
 
@@ -77,14 +62,6 @@ row.names(data[k$clust==clust[1],])
 row.names(data[k$clust==clust[2],])
 # Third Cluster
 row.names(data[k$clust==clust[3],])
-# Fourth Cluster
-row.names(data[k$clust==clust[4],])
-# Fifth Cluster
-row.names(data[k$clust==clust[5],])
-# Sixth Cluster
-row.names(data[k$clust==clust[6],])
-
-
 
 
 
@@ -153,3 +130,26 @@ boxplot(data$PIED.D ~ k$cluster,
 boxplot(data$JUOS ~ k$cluster,
         xlab='Cluster', ylab='JUOS',
         main='JUOS by Cluster')
+
+
+
+### Add in Soils Varibles ###
+data.env <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+data.env[is.na(data.env)] <- 0 # replace NA with 0
+
+fit.env <- envfit(ord,data.env,perm=1000)
+fit.env
+
+### Choose only the significant environmental data
+sig.data.env<-data.env[,c(4,11,14,24,27)]
+sig.fit.env<-envfit(ord,sig.data.env,perm=1000)
+sig.fit.env # Check that you pulled up the right factors.
+
+
+### Plot Soils and Ordihull ###
+plot(ord$points, col=k$clust, pch=16)
+legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
+       ,pch=16, col=k$cluster)
+plot(sig.fit.env,col="blue", cex=0.7,font=2)
+ordihull(ord, groups = k$clust, display = "sites")
+

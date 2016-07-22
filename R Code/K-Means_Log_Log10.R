@@ -1,7 +1,9 @@
 # PCA before K-Means 05/11/2016
+# Log10
 
 # LPI Data
-data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
+#data <- read.csv("F:/LPI/Output/USGSLPIPercentCover.csv",header=TRUE, row.names=1)
+data <- read.csv("F:/LPI/Output/USGSLPICommon.csv",header=TRUE, row.names=1)
 
 
 # plot variance of columns
@@ -21,44 +23,38 @@ data2 <- data.frame(scale(data))
 # Verify variance is uniform
 plot(sapply(data2, var))
 
+# Log10
+data3 <- log10(data)
+# -Inf: what to do?
+# ???
+plot(sapply(data3, var))
+data4 <- data.frame(scale(data3))
+data5 <- log10(data2)
 
-
-# Proceed with principal components
-pc <- princomp(data2)
-plot(pc)
-plot(pc, type='l')
-summary(pc) # 3 components is 'elbow' but does not explain >85% variance(would need 23 components)(only explains about 7%)
-
-
-# First few principal components
-comp <- data.frame(pc$scores[,1:3])
-
-# Plot
-plot(comp, pch=16, col=rgb(0,0,0,0.5))
-
-
-library(rgl)
-# Multi 3D plot
-plot3d(comp$Comp.1, comp$Comp.2, comp$Comp.3)
+# Log (natural log)
+data6 <- log(data)
+data7 <- log(data2)
+data8 <- data.frame(scale(data6))
 
 
 ### K-Means ###
 
 # Determine number of clusters
-wss <- (nrow(comp)-1)*sum(apply(comp,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(comp,
+wss <- (nrow(data2)-1)*sum(apply(data2,2,var))
+for (i in 2:100) wss[i] <- sum(kmeans(data2,
                                      centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
+plot(1:100, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 
 # From scree plot elbow occurs at k = 4 (or 6?)
 # Apply k-means with k=4 (then try 6)
-k <- kmeans(comp, 5, nstart=25, iter.max=1000)
+set.seed(78)
+k <- kmeans(data2, 5, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
-plot(comp, col=k$clust, pch=16)
+plot(data2, col=k$clust, pch=16)
 
 
 # 3D plot

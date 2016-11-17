@@ -157,6 +157,72 @@ a<-rcorr((data.matrix(ALAhealth,rownames.force=T)), type="pearson") # type can b
 
 df <- data.frame(matrix(unlist(a), nrow=52, byrow=T),stringsAsFactors=FALSE)
 
+
+
+z <- subset(ALAhealth, select = -c(SlopeShape,DepthClass,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize) )
+z <- data.frame(z[,-1], row.names=z[,1])
+
+x <- subset(ANPhealth, select = -c(SlopeShape,DepthClass,H1.Texture,H1.SandSize,Tot.Texture,Tot.SandSize) )
+x <- data.frame(x[,-1], row.names=x[,1])
+spearmanx <- cor(x, method = c("spearman"),use = "complete.obs")
+
+
+pearson <- cor(z, method = c("pearson"),use = "complete.obs")
+kendall <- cor(z, method = c("kendall"),use = "complete.obs")
+spearman <- cor(z, method = c("spearman"),use = "complete.obs")
+# write.csv(spearman,file="F:/SpearmanSoilCorrelation.csv", row.names=TRUE)
+
+# install.packages("Hmisc")
+library(Hmisc)
+library(graphics)
+# ++++++++++++++++++++++++++++
+# flattenCorrMatrix
+# ++++++++++++++++++++++++++++
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+  )
+}
+res<-rcorr(as.matrix(z[,1:45]), type=c("spearman"))
+resx<-rcorr(as.matrix(x[,1:45]), type=c("spearman"))
+
+corPval <- flattenCorrMatrix(res$r, res$P)
+corPvalx <- flattenCorrMatrix(resx$r, resx$P)
+q <- symnum(spearman)
+
+Susan7 <- corPval[ which((corPval$cor >= 0.7)|(corPval$cor < -0.7)),]
+Susan8 <- corPval[ which((corPval$cor >= 0.8)|(corPval$cor < -0.8)),]
+
+
+
+newdata <- corPval[ which(corPval$row=='sla' |corPval$column=='sla'
+                         | corPval$row =='pdw'|corPval$column =='pdw'), ]
+
+newdata2 <- newdata[with(newdata, order(cor)), ]
+
+
+write.csv(newdata2,file="F:/WriteAndPoster/SlaPdwSpearman.csv", row.names=TRUE)
+
+
+
+
+newdatax <- corPvalx[ which(corPvalx$row=='NitrogePct' |corPvalx$column=='NitrogePct'
+                          | corPvalx$row =='ProteinPct'|corPvalx$column =='ProteinPct'), ]
+
+newdata2x <- newdatax[with(newdatax, order(cor)), ]
+
+
+write.csv(newdata2x,file="F:/WriteAndPoster/NPSpearman.csv", row.names=TRUE)
+
+
+
+
 # ARTR2
 pairs(~pdw+sla+ARTR2,data=LAhealth, 
       lower.panel=panel.smooth, upper.panel=panel.cor, 

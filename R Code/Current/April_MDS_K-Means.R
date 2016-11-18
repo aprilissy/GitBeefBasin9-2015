@@ -156,6 +156,9 @@ v.sig.fit.env <- envfit(ord,v.sig.fit.env,perm=1000)
 v.sig.fit.env$vectors <- NULL
 v.sig.fit.env # Check that you pulled up the right factors.
 
+Tot <- v.sig.fit.env
+Tot <- v.sig.fit.env$factors$r[1]=NULL
+
 
 
 # ### Choose only the significant environmental data
@@ -179,6 +182,7 @@ ordihull(ord, groups = k$clust, display = "sites"
 plot(sig.fit.env,col="blue", cex=0.7,font=2)
 plot(v.sig.fit.env,col="green4", cex=0.7,font=2)
 
+plot(v.sig.fit.env,col="green4", cex=0.7,font=2)
 
 
 

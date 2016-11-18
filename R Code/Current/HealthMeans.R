@@ -115,7 +115,7 @@ Mean <- rbind(MeanC1,MeanC2,MeanC3)
 ### Plot Soils and Ordihull ###
 par(mfrow=c(1,1))
 plot(ord$points, col=k$clust, pch=16,
-     xlim=c(-0.25,0.3),ylim=c(-0.2,0.35))
+     xlim=c(-0.25,0.3),ylim=c(-0.2,0.35), main="Percent Dry Weight")
 
 legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
        ,pch=16, col=unique(k$cluster),x.intersp=0.6
@@ -124,12 +124,25 @@ legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
 ordihull(ord, groups = k$clust, display = "sites"
          ,draw="polygon")
 
-text(0.045,0.08, "pdw=0.43",pch=3,cex=1.25)
-text(0.01,-0.07, "pdw=0.55",pch=3,cex=1.25)
-text(-0.12,0.01, "pdw=0.57",pch=3,cex=1.25)
+# Percent Dry Weight
+text(0.045,0.08, "0.55",pch=3,cex=1.25)
+text(0.01,-0.07, "0.43",pch=3,cex=1.25)
+text(-0.12,0.01, "0.57",pch=3,cex=1.25)
 
-plot(Mean[,1], col="black", cex=0.7, font=2)
+# Specific Leaf Area
+text(0.045,0.08, "640",pch=3,cex=1.25)
+text(0.01,-0.07, "768",pch=3,cex=1.25)
+text(-0.12,0.01, "718",pch=3,cex=1.25)
 
+# Nitrogen Percent
+text(0.045,0.08, "1.93",pch=3,cex=1.25)
+text(0.01,-0.07, "2.04",pch=3,cex=1.25)
+text(-0.12,0.01, "1.99",pch=3,cex=1.25)
+
+# Protein Percent
+text(0.045,0.08, "12.06",pch=3,cex=1.25)
+text(0.01,-0.07, "12.78",pch=3,cex=1.25)
+text(-0.12,0.01, "12.43",pch=3,cex=1.25)
 
 
 plot(sig.fit.env,col="blue", cex=0.7,font=2)

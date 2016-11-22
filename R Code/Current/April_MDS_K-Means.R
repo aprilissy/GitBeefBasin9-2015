@@ -41,32 +41,67 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 # From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
-k <- kmeans(ord$points, 3, nstart=25, iter.max=1000)
+k <- kmeans(ord$points, 8, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
 plot(ord$points, col=k$clust, pch=16)
-legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
+legend("topright",c("Cluster 1", "Cluster 2","Cluster 3","Cluster 4","Cluster 5","Cluster 6","Cluster 7","Cluster 8")
        ,pch=16, col=unique(k$cluster))
+text(ord, display="sites", col="black", cex=0.5, pos=3)
 
+
+
+
+
+# Determine number of clusters
+wss <- (nrow(ord$species)-1)*sum(apply(ord$species,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(ord$species,
+                                     centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+
+
+
+
+# From scree plot elbow occurs at k = 3 (or 8?)
+# Apply k-means with k=3 (then try 8)
+k <- kmeans(ord$species, 8, nstart=25, iter.max=1000)
+library(RColorBrewer)
+library(scales)
+palette(alpha(brewer.pal(9,'Set1'), 0.5))
+plot(ord$species, col=k$clust, pch=16)
+legend("topright",c("Cluster 1", "Cluster 2","Cluster 3","Cluster 4","Cluster 5","Cluster 6","Cluster 7","Cluster 8")
+       ,pch=16, col=unique(k$cluster))
+text(ord, display="species", col="black", cex=0.5, pos=3)
 
 
 
 
 # Cluster sizes
-sort(table(k$clust))
-clust <- names(sort(table(k$clust)))
+
+table(k$clust)
+clust <- names(table(k$clust))
 
 # First cluster
-row.names(data[k$clust==clust[2],])# clust[2] is #1 because sort() did it 2,1,3
+row.names(data[k$clust==clust[1],])
 # Second Cluster
-row.names(data[k$clust==clust[1],])# clust[1] is #2 because sort() did it 2,1,3
+row.names(data[k$clust==clust[2],])
 # Third Cluster
 row.names(data[k$clust==clust[3],])
 # Fourth Cluster
 row.names(data[k$clust==clust[4],])
 # Fifth Cluster
 row.names(data[k$clust==clust[5],])
+# Sixth Cluster
+row.names(data[k$clust==clust[6],])
+# Seventh Cluster
+row.names(data[k$clust==clust[7],])
+# Eighth Cluster
+row.names(data[k$clust==clust[8],])
+
+
+
 
 # Compare accommodation by cluster in boxplot
 boxplot(data$KRLA2 ~ k$cluster,

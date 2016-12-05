@@ -17,6 +17,7 @@ data <- read.csv("F:/LPI/Output/AprilLPIPercentCover.csv",header=TRUE, row.names
 library(vegan)
 library(MASS)
 library(colorspace)
+library(plyr)
 
 ord<-metaMDS(comm=data,distance="euc",trace=FALSE)
 ord #.195
@@ -44,36 +45,22 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 k <- kmeans(ord$points, 8, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
+
+# Correct Legend names 
+val <- sort(unique(k$cluster))
+val2 <- c()
+for(clust in val){
+  val2 <- c(val2, paste("Cluster", as.character(clust), sep=" "))
+}
+
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
 plot(ord$points, col=k$clust, pch=16)
-legend("topright",c("Cluster 1", "Cluster 2","Cluster 3","Cluster 4","Cluster 5","Cluster 6","Cluster 7","Cluster 8")
-       ,pch=16, col=unique(k$cluster))
+legend("topright", c(val2)
+       ,pch=16, col=val,x.intersp=0.6
+       ,y.intersp=0.6,bty="n")
 text(ord, display="sites", col="black", cex=0.5, pos=3)
 
 
-
-
-
-# Determine number of clusters
-wss <- (nrow(ord$species)-1)*sum(apply(ord$species,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(ord$species,
-                                     centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
-     ylab="Within groups sum of squares")
-
-
-
-
-# From scree plot elbow occurs at k = 3 (or 8?)
-# Apply k-means with k=3 (then try 8)
-k <- kmeans(ord$species, 8, nstart=25, iter.max=1000)
-library(RColorBrewer)
-library(scales)
-palette(alpha(brewer.pal(9,'Set1'), 0.5))
-plot(ord$species, col=k$clust, pch=16)
-legend("topright",c("Cluster 1", "Cluster 2","Cluster 3","Cluster 4","Cluster 5","Cluster 6","Cluster 7","Cluster 8")
-       ,pch=16, col=unique(k$cluster))
-text(ord, display="species", col="black", cex=0.5, pos=3)
 
 
 
@@ -179,6 +166,8 @@ data.env[is.na(data.env)] <- 0 # replace NA with 0
 fit.env <- envfit(ord,data.env,perm=1000)
 fit.env
 
+
+
 sig.fit.env <- data.env[ which(fit.env$vectors$pvals<.05), ]
 sig.fit.env <- data.env[fit.env$vectors$pvals<.05]
 sig.fit.env <- envfit(ord,sig.fit.env,perm=1000)
@@ -190,9 +179,6 @@ v.sig.fit.env <- data.env[fit.env$factors$pvals<.05]
 v.sig.fit.env <- envfit(ord,v.sig.fit.env,perm=1000)
 v.sig.fit.env$vectors <- NULL
 v.sig.fit.env # Check that you pulled up the right factors.
-
-Tot <- v.sig.fit.env
-Tot <- v.sig.fit.env$factors$r[1]=NULL
 
 
 
@@ -207,9 +193,10 @@ par(mfrow=c(1,1))
 plot(ord$points, col=k$clust, pch=16,
      xlim=c(-0.25,0.3),ylim=c(-0.2,0.35))
 
-legend("topright",c("Cluster 1", "Cluster 2","Cluster 3")
-       ,pch=16, col=unique(k$cluster),x.intersp=0.6
-       , y.intersp=0.6,bty="n")
+
+legend("topright", c(val2)
+       ,pch=16, col=val,x.intersp=0.6
+       ,y.intersp=0.6,bty="n")
 
 ordihull(ord, groups = k$clust, display = "sites"
          ,draw="polygon")
@@ -217,8 +204,12 @@ ordihull(ord, groups = k$clust, display = "sites"
 plot(sig.fit.env,col="blue", cex=0.7,font=2)
 plot(v.sig.fit.env,col="green4", cex=0.7,font=2)
 
-plot(v.sig.fit.env,col="green4", cex=0.7,font=2)
+#myData <- v.sig.fit.env$factors$centroids
+#myDataNames <- dimnames(myData)[1]
+names1 <- names(sig.fit.env$vectors$r)
+names2 <- names(v.sig.fit.env$factors$r)
 
+#plot(myData,col="green4", cex=0.7,font=2)
 
 
 

@@ -33,7 +33,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 # From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
-k <- kmeans(ord$points, 8, nstart=25, iter.max=1000)
+k <- kmeans(ord$points, 7, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 

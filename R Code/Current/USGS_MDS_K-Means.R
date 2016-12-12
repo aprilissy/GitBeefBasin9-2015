@@ -1,9 +1,9 @@
 # MDS before K-Means 05/11/2016
 
-set.seed(32)
+set.seed(52)
 
 # LPI Data
-data <- read.csv("F:/LPI/Output/AprilLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
+data <- read.csv("F:/LPI/Output/USGSLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
 
 
 # # plot variance of columns
@@ -22,7 +22,7 @@ library(colorspace)
 library(plyr)
 
 ord<-metaMDS(comm=data,distance="euc",trace=FALSE)
-ord #.195
+ord #.179
 plot.sc = scores(ord)
 # Stress <0.10 indicates that the ordination is good "with no real 
 # risk of drawing false inferences" (Clarke 1993, p. 26). 
@@ -40,9 +40,9 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 
- # From scree plot elbow occurs at k = 3 (or 8?)
+# From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
-k <- kmeans(ord$points, 7, nstart=25, iter.max=1000)
+k <- kmeans(ord$points, 12, nstart=25, iter.max=1000)
 library(RColorBrewer)
 library(scales)
 
@@ -186,7 +186,7 @@ fit.env
 
 
 # Pull out statistically significant data 
-  # Seperate factors vs vectors
+# Seperate factors vs vectors
 sig.fit.env <- data.env[ which(fit.env$vectors$pvals<.05), ]
 sig.fit.env <- data.env[fit.env$vectors$pvals<.05]
 sig.fit.env <- envfit(ord,sig.fit.env,perm=1000)
@@ -302,5 +302,3 @@ boxplot(data$HECO26 ~ k$cluster,
 boxplot(data$OPPO ~ k$cluster,
         xlab='Cluster', ylab='Opuntia polyacantha ',
         main='Opuntia polyacantha  by Cluster')
-
-

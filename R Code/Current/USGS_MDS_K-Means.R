@@ -20,7 +20,10 @@ library(vegan)
 library(MASS)
 library(colorspace)
 library(plyr)
+library(RColorBrewer)
+library(scales)
 
+set.seed(52)
 ord<-metaMDS(comm=data,distance="euc",trace=FALSE)
 ord #.179
 plot.sc = scores(ord)
@@ -31,7 +34,7 @@ stressplot(ord)
 gof <- goodness(ord)
 
 ### K-Means ###
-
+set.seed(52)
 # Determine number of clusters
 wss <- (nrow(ord$points)-1)*sum(apply(ord$points,2,var))
 for (i in 2:15) wss[i] <- sum(kmeans(ord$points,
@@ -42,9 +45,9 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 # From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
-k <- kmeans(ord$points, 12, nstart=25, iter.max=1000)
-library(RColorBrewer)
-library(scales)
+set.seed(52)
+k <- kmeans(ord$points, 5, nstart=25, iter.max=1000)
+
 
 # Correct Legend names 
 val <- sort(unique(k$cluster))
@@ -55,7 +58,7 @@ for(clust in val){
 
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
 plot(ord$points, col=k$clust, pch=16)
-legend('bottomleft', c(val2)
+legend('topright', c(val2)
        ,pch=16, col=val,x.intersp=0.6
        ,y.intersp=0.3,bty="n")
 text(ord, display="sites", col="black", cex=0.5, pos=3)
@@ -96,6 +99,16 @@ Clust6 <- row.names(data[k$clust==clust[6],])
 Clust7 <- row.names(data[k$clust==clust[7],])
 Clust8 <- row.names(data[k$clust==clust[8],])
 
+# Look at species in each cluster
+LPI <- data;LPI$Plot<-rownames(data)
+
+C1LPI <- LPI[LPI$Plot %in% Clust1,]
+C2LPI <- LPI[LPI$Plot %in% Clust2,]
+C3LPI <- LPI[LPI$Plot %in% Clust3,]
+C4LPI <- LPI[LPI$Plot %in% Clust4,]
+C5LPI <- LPI[LPI$Plot %in% Clust5,]
+C6LPI <- LPI[LPI$Plot %in% Clust6,]
+C7LPI <- LPI[LPI$Plot %in% Clust7,]
 
 
 ### Health Data ###
@@ -172,13 +185,13 @@ MeanC8 <- c(MeanLAC8,MeanNPC8)
 
 
 # Combine into cluster mean table
-Mean <- rbind(MeanC1,MeanC2,MeanC3,MeanC4,MeanC5,MeanC6,MeanC7)
+Mean <- rbind(MeanC1,MeanC2,MeanC3,MeanC4,MeanC5)
 
 
 
 
 ### Add in Soils Varibles ###
-data.env <- read.csv("F:/Soils/SoilEnvironmentaldataApril.csv",header=TRUE, row.names=1)
+data.env <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
 data.env[is.na(data.env)] <- 0 # replace NA with 0
 
 fit.env <- envfit(ord,data.env,perm=1000)
@@ -193,11 +206,11 @@ sig.fit.env <- envfit(ord,sig.fit.env,perm=1000)
 sig.fit.env$factors <- NULL
 sig.fit.env # Check that you pulled up the right factors.
 
-v.sig.fit.env <- data.env[ which(fit.env$factors$pvals<.05), ]
-v.sig.fit.env <- data.env[fit.env$factors$pvals<.05]
-v.sig.fit.env <- envfit(ord,v.sig.fit.env,perm=1000)
-v.sig.fit.env$vectors <- NULL
-v.sig.fit.env # Check that you pulled up the right factors.
+# v.sig.fit.env <- data.env[ which(fit.env$factors$pvals<.05), ]
+# v.sig.fit.env <- data.env[fit.env$factors$pvals<.05]
+# v.sig.fit.env <- envfit(ord,v.sig.fit.env,perm=1000)
+# v.sig.fit.env$vectors <- NULL
+# v.sig.fit.env # Check that you pulled up the right factors.
 
 # v.sig.fit.env.DC <- data.env[ which(fit.env$factors$var.id=="DepthClass"), ]
 # v.sig.fit.env.DC <- data.env[fit.env$factors$var.id=="DepthClass"]
@@ -220,8 +233,8 @@ ordihull(ord, groups = k$clust, display = "sites"
 plot(sig.fit.env,col="blue", cex=0.7,font=2)
 title(main = "Soil Variables")
 
-plot(v.sig.fit.env,col="blue", cex=0.7,font=2)
-title(main = "Soil Variables")
+# plot(v.sig.fit.env,col="blue", cex=0.7,font=2)
+# title(main = "Soil Variables")
 
 ### Add Health Data to Ordination plot ###
 

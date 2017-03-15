@@ -1,6 +1,6 @@
 # MDS before K-Means 05/11/2016
 
-set.seed(32)
+
 
 # LPI Data
 data <- read.csv("F:/LPI/Output/AprilLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
@@ -20,7 +20,10 @@ library(vegan)
 library(MASS)
 library(colorspace)
 library(plyr)
+library(RColorBrewer)
+library(scales)
 
+set.seed(32)
 ord<-metaMDS(comm=data,distance="euc",trace=FALSE)
 ord #.195
 plot.sc = scores(ord)
@@ -31,7 +34,7 @@ stressplot(ord)
 gof <- goodness(ord)
 
 ### K-Means ###
-
+set.seed(32)
 # Determine number of clusters
 wss <- (nrow(ord$points)-1)*sum(apply(ord$points,2,var))
 for (i in 2:15) wss[i] <- sum(kmeans(ord$points,
@@ -40,11 +43,11 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 
- # From scree plot elbow occurs at k = 3 (or 8?)
+# From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
+set.seed(32)
 k <- kmeans(ord$points, 7, nstart=25, iter.max=1000)
-library(RColorBrewer)
-library(scales)
+
 
 # Correct Legend names 
 val <- sort(unique(k$cluster))

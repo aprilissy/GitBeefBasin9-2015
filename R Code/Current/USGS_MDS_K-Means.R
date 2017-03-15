@@ -1,9 +1,9 @@
 # MDS before K-Means 05/11/2016
 
-set.seed(52)
+
 
 # LPI Data
-data <- read.csv("F:/LPI/Output/USGSLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
+data <- read.csv("D:/LPI/Output/USGSLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
 
 
 # # plot variance of columns
@@ -46,7 +46,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 # From scree plot elbow occurs at k = 3 (or 8?)
 # Apply k-means with k=3 (then try 8)
 set.seed(52)
-k <- kmeans(ord$points, 5, nstart=25, iter.max=1000)
+k <- kmeans(ord$points, 8, nstart=25, iter.max=1000)
 
 
 # Correct Legend names 
@@ -109,15 +109,15 @@ C4LPI <- LPI[LPI$Plot %in% Clust4,]
 C5LPI <- LPI[LPI$Plot %in% Clust5,]
 C6LPI <- LPI[LPI$Plot %in% Clust6,]
 C7LPI <- LPI[LPI$Plot %in% Clust7,]
-
+C8LPI <- LPI[LPI$Plot %in% Clust8,]
 
 ### Health Data ###
 
-LA<-read.csv("F:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
+LA<-read.csv("D:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
 LA <- LA[ which(!LA$Wet.Dry<0.000000), ] # Remove negative weights.
 LA <- LA[,c(1,14:15)]
 
-NP<-read.csv("F:/Health/April Sagebrush N and Protein.csv",header=TRUE)
+NP<-read.csv("D:/Health/April Sagebrush N and Protein.csv",header=TRUE)
 NP <- NP[,c(2,5:6)]
 
 # find means from LA
@@ -185,13 +185,13 @@ MeanC8 <- c(MeanLAC8,MeanNPC8)
 
 
 # Combine into cluster mean table
-Mean <- rbind(MeanC1,MeanC2,MeanC3,MeanC4,MeanC5)
+Mean <- rbind(MeanC1,MeanC2,MeanC3,MeanC4,MeanC5,MeanC6)
 
 
 
 
 ### Add in Soils Varibles ###
-data.env <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+data.env <- read.csv("D:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
 data.env[is.na(data.env)] <- 0 # replace NA with 0
 
 fit.env <- envfit(ord,data.env,perm=1000)
@@ -270,7 +270,7 @@ title(main = "Protein Percent")
 
 
 ### Boxplots ###
-
+par(mfrow=c(4,3))
 # Compare accommodation by cluster in boxplot 
 boxplot(data$KRLA2 ~ k$cluster,
         xlab='Cluster', ylab='Krascheninnikovia lanata ',
@@ -315,3 +315,56 @@ boxplot(data$HECO26 ~ k$cluster,
 boxplot(data$OPPO ~ k$cluster,
         xlab='Cluster', ylab='Opuntia polyacantha ',
         main='Opuntia polyacantha  by Cluster')
+
+ 
+
+
+
+
+
+
+par(mar=c(1,1,1,1))
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+par(mfrow=c(2,2)) # number of plots on a page
+
+Cluster <- 0
+
+
+for (i in 1:6){
+  Cluster[i] <- data[k$clust==clust[i],]
+  print(Cluster[i])
+}
+
+# Pulls out each cluster
+Cluter1 <- data[k$clust==clust[1],]
+
+(data[k$clust==clust[i],], i)
+
+
+
+# Bar plot of SUM of species in cluster
+barplot(as.matrix(Cluter1)
+        , main="Cluster 1"
+        , sub="Sum"
+        , xlab="")
+
+# Bar plot of SUM of species in cluster
+# Removed most abundant to see less abundant
+barplot(as.matrix(Cluter1[,-c(8,9,19,31)])
+        , main="Cluster 1"
+        , sub="Sum, abundant removed"
+        , xlab="")
+
+# Bar plot of AVERAGE of each species in each cluster
+barplot(sapply(Cluter1, function(x) mean(as.numeric(x)) )
+        , main="Cluster 1"
+        , sub="Average"
+        , xlab="")
+
+# Bar plot of AVERAGE of each species in each cluster
+# Removed most abundant to see less abundant
+barplot(sapply(Cluter1[,-c(8,9,19,31)], function(x) mean(as.numeric(x)) )
+        , main="Cluster 1"
+        , sub="Average, abundant removed"
+        , xlab="")

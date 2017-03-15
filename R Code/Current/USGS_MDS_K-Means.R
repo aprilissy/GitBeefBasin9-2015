@@ -330,7 +330,7 @@ par(mfrow=c(2,2)) # number of plots on a page
 
 Cluster <- 0
 
-# Do what I want you to do!!!!
+# Do what I want you to do!!!! Now!
 for (i in 1:6){
   Cluster[i] <- data[k$clust==clust[i],]
   print(Cluster[i])

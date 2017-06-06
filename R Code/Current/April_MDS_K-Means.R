@@ -190,13 +190,13 @@ fit.env
 
 # Pull out statistically significant data 
   # Seperate factors vs vectors
-sig.fit.env <- data.env[ which(fit.env$vectors$pvals<.05), ]
+#sig.fit.env <- data.env[ which(fit.env$vectors$pvals<.05), ]
 sig.fit.env <- data.env[fit.env$vectors$pvals<.05]
 sig.fit.env <- envfit(ord,sig.fit.env,perm=1000)
 sig.fit.env$factors <- NULL
-sig.fit.env # Check that you pulled up the right factors.
+sig.fit.env # Check that you pulled up the right vectors.
 
-v.sig.fit.env <- data.env[ which(fit.env$factors$pvals<.05), ]
+#v.sig.fit.env <- data.env[ which(fit.env$factors$pvals<.05), ]
 v.sig.fit.env <- data.env[fit.env$factors$pvals<.05]
 v.sig.fit.env <- envfit(ord,v.sig.fit.env,perm=1000)
 v.sig.fit.env$vectors <- NULL
@@ -307,3 +307,23 @@ boxplot(data$OPPO ~ k$cluster,
         main='Opuntia polyacantha  by Cluster')
 
 
+
+# Bar graph each cluster by species
+for (i in 1:7){
+  cluster <- data[k$cluster==i,]
+  par(mar=c(1,1,1,1))
+  par(las=2) # make label text perpendicular to axis
+  par(mar=c(5,8,4,2)) # increase y-axis margin.
+  par(mfrow=c(1,1)) # number of plots on a page
+  
+  # barplot(as.matrix(cluster)
+  #         , main=paste("Cluster ",toString(i))
+  #         , sub="Sum"
+  #         , xlab="")
+  # 
+  barplot(sapply(cluster, function(x) mean(as.numeric(x)) )
+          , main=paste("Cluster ",toString(i))
+          , sub="Average"
+          , xlab="")
+  
+}

@@ -3,7 +3,7 @@
 
 
 # LPI Data
-data <- read.csv("D:/LPI/Output/USGSLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
+data <- read.csv("F:/LPI/Output/USGSLPIPercentCover_CombineSome.csv",header=TRUE, row.names=1)
 
 
 # # plot variance of columns
@@ -113,11 +113,11 @@ C8LPI <- LPI[LPI$Plot %in% Clust8,]
 
 ### Health Data ###
 
-LA<-read.csv("D:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
+LA<-read.csv("F:/Health/LeafAreaEpidermalConductance.csv",header=TRUE)
 LA <- LA[ which(!LA$Wet.Dry<0.000000), ] # Remove negative weights.
 LA <- LA[,c(1,14:15)]
 
-NP<-read.csv("D:/Health/April Sagebrush N and Protein.csv",header=TRUE)
+NP<-read.csv("F:/Health/April Sagebrush N and Protein.csv",header=TRUE)
 NP <- NP[,c(2,5:6)]
 
 # find means from LA
@@ -191,7 +191,7 @@ Mean <- rbind(MeanC1,MeanC2,MeanC3,MeanC4,MeanC5,MeanC6)
 
 
 ### Add in Soils Varibles ###
-data.env <- read.csv("D:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
+data.env <- read.csv("F:/Soils/SoilEnvironmentaldataUSGSApril.csv",header=TRUE, row.names=1)
 data.env[is.na(data.env)] <- 0 # replace NA with 0
 
 fit.env <- envfit(ord,data.env,perm=1000)
@@ -221,7 +221,7 @@ sig.fit.env # Check that you pulled up the right factors.
 ### Plot Soils and Ordihull ###
 par(mfrow=c(1,1))
 plot(ord$points, col=k$clust, pch=16,
-     xlim=c(-0.4,0.25),ylim=c(-0.2,0.35))
+     xlim=c(-0.4,0.3),ylim=c(-0.2,0.35))
 
 legend('topright', c(val2),xjust=1,yjust=0
        ,pch=16, col=val,x.intersp=0.5
@@ -323,27 +323,57 @@ boxplot(data$OPPO ~ k$cluster,
 
 
 
-par(mar=c(1,1,1,1))
-par(las=2) # make label text perpendicular to axis
-par(mar=c(5,8,4,2)) # increase y-axis margin.
-par(mfrow=c(2,2)) # number of plots on a page
 
-Cluster <- 0
 
-# Do what I want you to do!!!! Now!
-for (i in 1:6){
-  Cluster[i] <- data[k$clust==clust[i],]
-  print(Cluster[i])
+# Bar graph each cluster by species
+for (i in 1:8){
+  cluster <- data[k$cluster==i,]
+  par(mar=c(1,1,1,1))
+  par(las=2) # make label text perpendicular to axis
+  par(mar=c(5,8,4,2)) # increase y-axis margin.
+  par(mfrow=c(1,1)) # number of plots on a page
+  
+  # barplot(as.matrix(cluster)
+  #         , main=paste("Cluster ",toString(i))
+  #         , sub="Sum"
+  #         , xlab="")
+  # 
+  barplot(sapply(cluster, function(x) mean(as.numeric(x)) )
+          , main=paste("Cluster ",toString(i))
+          , sub="Average"
+          , xlab="")
+
 }
 
-# Pulls out each cluster
-Cluter1 <- data[k$clust==clust[1],]
-
-(data[k$clust==clust[i],], i)
 
 
 
-# Bar plot of SUM of species in cluster
+
+
+# Bar graph each cluster by species
+for (i in 1:8){
+  cluster <- data[k$cluster==i,]
+  par(mar=c(1,1,1,1))
+  par(las=2) # make label text perpendicular to axis
+  par(mar=c(5,8,4,2)) # increase y-axis margin.
+  par(mfrow=c(2,2)) # number of plots on a page
+  
+
+  
+  barplot(sapply(cluster, function(x) mean(as.numeric(x)) )
+          , title(main=paste("Cluster ",toString(i)/ "Average"))
+          , sub="Average"
+          , xlab="")
+  
+}
+
+
+
+
+
+
+
+# Bar plot of SUM of species in cluster 
 barplot(as.matrix(Cluter1)
         , main="Cluster 1"
         , sub="Sum"
@@ -351,7 +381,7 @@ barplot(as.matrix(Cluter1)
 
 # Bar plot of SUM of species in cluster
 # Removed most abundant to see less abundant
-barplot(as.matrix(Cluter1[,-c(8,9,19,31)])
+barplot(as.matrix(Cluter1[,-c(8,9,31)])
         , main="Cluster 1"
         , sub="Sum, abundant removed"
         , xlab="")
@@ -364,7 +394,8 @@ barplot(sapply(Cluter1, function(x) mean(as.numeric(x)) )
 
 # Bar plot of AVERAGE of each species in each cluster
 # Removed most abundant to see less abundant
-barplot(sapply(Cluter1[,-c(8,9,19,31)], function(x) mean(as.numeric(x)) )
+barplot(sapply(Cluter1[,-c(8,9,31)], function(x) mean(as.numeric(x)) )
         , main="Cluster 1"
         , sub="Average, abundant removed"
         , xlab="")
+
